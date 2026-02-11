@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福感预测 - 管理系统</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <div id="app">
+        <admin-layout :active-menu="'happiness_prediction'">
+            <template slot="content">
+                <div class="prediction-container">
+                    <!-- 页面标题 -->
+                    <div class="page-header">
+                        <h2>幸福感预测</h2>
+                        <p>基于机器学习模型预测用户幸福感水平</p>
+                    </div>
+
+                    <el-row :gutter="20">
+                        <!-- 左侧预测表单 -->
+                        <el-col :xs="24" :lg="12">
+                            <el-card class="prediction-form-card">
+                                <div slot="header" class="card-header">
+                                    <span>预测信息填写</span>
+                                    <el-button type="text" @click="resetForm" icon="el-icon-refresh">
+                                        重置
+                                    </el-button>
+                                </div>
+
+                                <el-form :model="predictionForm" :rules="formRules" ref="predictionForm" label-width="120px">
+                                    <!-- 基础信息 -->
+                                    <el-divider>基础信息</el-divider>
+
+                                    <el-form-item label="年龄" prop="age">
+                                        <el-input-number
+                                            v-model="predictionForm.age"
+                                            :min="18" :max="100"
+                                            placeholder="请输入年龄">
+                                        </el-input-number>
+                                    </el-form-item>
+
+                                    <el-form-item label="性别" prop="gender">
+                                        <el-select v-model="predictionForm.gender" placeholder="请选择性别">
+                                            <el-option label="男" :value="1"></el-option>
+                                            <el-option label="女" :value="2"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                    <el-form-item label="教育水平" prop="education">
+                                        <el-select v-model="predictionForm.education" placeholder="请选择教育水平">
+                                            <el-option label="文盲" :value="1"></el-option>
+                                            <el-option label="小学" :value="2"></el-option>
+                                            <el-option label="初中" :value="3"></el-option>
+                                            <el-option label="高中" :value="4"></el-option>
+                                            <el-option label="大专" :value="5"></el-option>
+                                            <el-option label="本科" :value="6"></el-option>
+                                            <el-option label="硕士" :value="7"></el-option>
+                                            <el-option label="博士" :value="8"></el-option>
+                                            <el-option label="其他" :value="9"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                    <!-- 经济状况 -->
+                                    <el-divider>经济状况</el-divider>
+
+                                    <el-form-item label="个人年收入" prop="income">
+                                        <el-input-number
+                                            v-model="predictionForm.income"
+                                            :min="0" :max="1000000"
+                                            :precision="0"
+                                            placeholder="请输入个人年收入(元)">
+                                        </el-input-number>
+                                    </el-form-item>
+
+                                    <el-form-item label="家庭年收入" prop="family_income">
+                                        <el-input-number
+                                            v-model="predictionForm.family_income"
+                                            :min="0" :max="2000000"
+                                            :precision="0"
+                                            placeholder="请输入家庭年收入(元)">
+                                        </el-input-number>
+                                    </el-form-item>
+
+                                    <!-- 健康与生活 -->
+                                    <el-divider>健康与生活</el-divider>
+
+                                    <el-form-item label="健康状况" prop="health">
+                                        <el-select v-model="predictionForm.health" placeholder="请选择健康状况">
+                                            <el-option label="非常健康" :value="1"></el-option>
+                                            <el-option label="比较健康" :value="2"></el-option>
+                                            <el-option label="一般" :value="3"></el-option>
+                                            <el-option label="不太健康" :value="4"></el-option>
+                                            <el-option label="不健康" :value="5"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                    <el-form-item label="婚姻状况" prop="marital_status">
+                                        <el-select v-model="predictionForm.marital_status" placeholder="请选择婚姻状况">
+                                            <el-option label="未婚" :value="1"></el-option>
+                                            <el-option label="同居" :value="2"></el-option>
+                                            <el-option label="已婚有配偶" :value="3"></el-option>
+                                            <el-option label="再婚有配偶" :value="4"></el-option>
+                                            <el-option label="离婚" :value="5"></el-option>
+                                            <el-option label="丧偶" :value="6"></el-option>
+                                            <el-option label="其他" :value="7"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                    <el-form-item label="工作状态" prop="work_status">
+                                        <el-select v-model="predictionForm.work_status" placeholder="请选择工作状态">
+                                            <el-option label="无工作" :value="1"></el-option>
+                                            <el-option label="有工作" :value="2"></el-option>
+                                            <el-option label="退休" :value="3"></el-option>
+                                            <el-option label="学生" :value="4"></el-option>
+                                            <el-option label="其他" :value="5"></el-option>
+                                        </el-select>
+                                    </el-form-item>
+
+                                    <el-form-item label="住房面积" prop="floor_area">
+                                        <el-input-number
+                                            v-model="predictionForm.floor_area"
+                                            :min="0" :max="1000"
+                                            :precision="0"
+                                            placeholder="请输入住房面积(平方米)">
+                                        </el-input-number>
+                                    </el-form-item>
+
+                                    <!-- 算法选择 -->
+                                    <el-form-item label="预测算法">
+                                        <el-radio-group v-model="selectedAlgorithm">
+                                            <el-radio label="both">两个算法对比</el-radio>
+                                            <el-radio label="random_forest">仅随机森林</el-radio>
+                                            <el-radio label="linear_regression">仅线性回归</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+
+                                    <!-- 预测按钮 -->
+                                    <el-form-item>
+                                        <el-button
+                                            type="primary"
+                                            :loading="predicting"
+                                            @click="predictHappiness"
+                                            icon="el-icon-magic-stick"
+                                            style="width: 100%">
+                                            开始预测
+                                        </el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-card>
+                        </el-col>
+
+                        <!-- 右侧预测结果对比 -->
+                        <el-col :xs="24" :lg="12">
+                            <el-card class="prediction-result-card">
+                                <div slot="header" class="card-header">
+                                    <span>预测结果对比</span>
+                                    <el-button v-if="hasResults" type="text" @click="clearResult" icon="el-icon-delete">
+                                        清除
+                                    </el-button>
+                                </div>
+
+                                <div v-if="!hasResults" class="no-result">
+                                    <i class="el-icon-info"></i>
+                                    <p>请填写预测信息并点击"开始预测"按钮</p>
+                                </div>
+
+                                <div v-else class="result-content">
+                                    <!-- 算法选择状态 -->
+                                    <div class="algorithm-status" v-if="selectedAlgorithm === 'both'">
+                                        <el-alert
+                                            title="已同时使用两种算法进行预测"
+                                            type="info"
+                                            :closable="false"
+                                            show-icon>
+                                        </el-alert>
+                                    </div>
+
+                                    <!-- 预测结果对比 -->
+                                    <div class="results-comparison">
+                                        <el-row :gutter="20">
+                                            <!-- 随机森林结果 -->
+                                            <el-col :xs="24" :md="12" v-if="predictionResults.random_forest">
+                                                <div class="model-result-card rf-result">
+                                                    <div class="model-header">
+                                                        <h4>随机森林</h4>
+                                                        <el-tag type="success" size="small">最佳模型</el-tag>
+                                                    </div>
+                                                    <div class="score-display">
+                                                        <div class="score-circle" :class="getScoreClass(predictionResults.random_forest.prediction)">
+                                                            <div class="score-number">{{ predictionResults.random_forest.prediction }}</div>
+                                                        </div>
+                                                        <div class="score-details">
+                                                            <div class="score-desc">{{ getScoreDescription(predictionResults.random_forest.prediction) }}</div>
+                                                            <div class="confidence">
+                                                                <!-- <span>模型R²: {{ (predictionResults.random_forest.confidence * 100).toFixed(2) }}%</span> -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+
+                                            <!-- 线性回归结果 -->
+                                            <el-col :xs="24" :md="12" v-if="predictionResults.linear_regression">
+                                                <div class="model-result-card lr-result">
+                                                    <div class="model-header">
+                                                        <h4>线性回归</h4>
+                                                        <el-tag type="info" size="small">备选模型</el-tag>
+                                                    </div>
+                                                    <div class="score-display">
+                                                        <div class="score-circle" :class="getScoreClass(predictionResults.linear_regression.prediction)">
+                                                            <div class="score-number">{{ predictionResults.linear_regression.prediction }}</div>
+                                                        </div>
+                                                        <div class="score-details">
+                                                            <div class="score-desc">{{ getScoreDescription(predictionResults.linear_regression.prediction) }}</div>
+                                                            <div class="confidence">
+                                                                <!-- <span>模型R²: {{ (predictionResults.linear_regression.confidence * 100).toFixed(2) }}%</span> -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+
+                                        <!-- 预测差异分析 -->
+                                        <div class="difference-analysis" v-if="hasBothResults">
+                                            <el-divider>预测差异分析</el-divider>
+                                            <div class="difference-content">
+                                                <div class="difference-item">
+                                                    <label>预测差异:</label>
+                                                    <span :class="predictionDifferenceClass">
+                                                        {{ predictionDifference > 0 ? '+' : '' }}{{ predictionDifference }}
+                                                    </span>
+                                                    <span class="difference-desc">
+                                                        (随机森林 - 线性回归)
+                                                    </span>
+                                                </div>
+                                                <div class="difference-item">
+                                                    <label>一致性:</label>
+                                                    <el-tag :type="predictionConsistency ? 'success' : 'warning'">
+                                                        {{ predictionConsistency ? '预测一致' : '预测差异' }}
+                                                    </el-tag>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 详细信息 -->
+                                    <el-divider>预测详情</el-divider>
+                                    <div class="result-details">
+                                        <el-row :gutter="20">
+                                            <el-col :span="12">
+                                                <div class="detail-item">
+                                                    <label>预测算法:</label>
+                                                    <span>{{ getAlgorithmDisplayName() }}</span>
+                                                </div>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <div class="detail-item">
+                                                    <label>预测时间:</label>
+                                                    <span>{{ formatTime(getLatestTimestamp()) }}</span>
+                                                </div>
+                                            </el-col>
+                                        </el-row>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+
+                    <!-- 模型性能指标对比 -->
+                    <el-row :gutter="20" class="metrics-row" v-if="modelInfo">
+                        <el-col :xs="24">
+                            <el-card class="metrics-card">
+                                <div slot="header" class="card-header">
+                                    <span>模型性能指标</span>
+                                    <el-button type="text" @click="loadModelInfo" icon="el-icon-refresh">
+                                        刷新
+                                    </el-button>
+                                </div>
+
+                                <div class="metrics-content" v-loading="metricsLoading">
+                                    <el-row :gutter="20">
+                                        <!-- 主要指标 -->
+                                        <el-col :xs="24" :sm="12" :md="6" v-for="metric in mainMetrics" :key="metric.key">
+                                            <div class="metric-item">
+                                                <div class="metric-value">{{ metric.value }}</div>
+                                                <div class="metric-label">{{ metric.label }}</div>
+                                                <div class="metric-desc">{{ metric.desc }}</div>
+                                            </div>
+                                        </el-col>
+                                    </el-row>
+
+                                    <el-divider>详细指标</el-divider>
+
+                                    <!-- 指标对比表格 -->
+                                    <el-table :data="modelMetrics" style="width: 100%" :default-sort="{prop: 'r2_score', order: 'descending'}">
+                                        <el-table-column prop="model_name" label="模型名称"></el-table-column>
+                                        <el-table-column prop="mse" label="MSE" width="120" sortable>
+                                            <template slot-scope="scope">
+                                                {{ scope.row.mse.toFixed(4) }}
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="rmse" label="RMSE" sortable>
+                                            <template slot-scope="scope">
+                                                {{ scope.row.rmse.toFixed(4) }}
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="mae" label="MAE" sortable>
+                                            <template slot-scope="scope">
+                                                {{ scope.row.mae.toFixed(4) }}
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="r2_score" label="R²" sortable>
+                                            <template slot-scope="scope">
+                                                <span :class="scope.row.r2_score > 0 ? 'positive' : 'negative'">
+                                                    {{ scope.row.r2_score.toFixed(4) }}
+                                                </span>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column prop="cv_rmse" label="交叉验证RMSE" >
+                                            <template slot-scope="scope">
+                                                {{ scope.row.cv_rmse.toFixed(4) }}
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column label="状态" >
+                                            <template slot-scope="scope">
+                                                <el-tag :type="scope.row.model_name === '随机森林' ? 'success' : 'info'">
+                                                    {{ scope.row.model_name === '随机森林' ? '最佳' : '备选' }}
+                                                </el-tag>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+
+                                    <!-- 特征重要性图表 -->
+                                    <el-divider>特征重要性分析</el-divider>
+                                    <div v-loading="chartLoading" style="height: 400px;">
+                                        <div id="featureImportanceChart" style="height: 100%;"></div>
+                                    </div>
+                                </div>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                </div>
+            </template>
+        </admin-layout>
+    </div>
+
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/element-ui.min.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/config/layout-config.js"></script>
+    <script src="/static/js/components/layout.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    selectedAlgorithm: 'both', // 默认同时预测两个模型
+                    predictionForm: {
+                        age: null,
+                        gender: null,
+                        education: null,
+                        income: null,
+                        family_income: null,
+                        health: null,
+                        marital_status: null,
+                        work_status: null,
+                        floor_area: null
+                    },
+                    formRules: {
+                        age: [
+                            { required: true, message: '请输入年龄', trigger: 'blur' },
+                            { type: 'number', min: 18, max: 100, message: '年龄必须在18-100岁之间', trigger: 'blur' }
+                        ],
+                        gender: [
+                            { required: true, message: '请选择性别', trigger: 'change' }
+                        ],
+                        education: [
+                            { required: true, message: '请选择教育水平', trigger: 'change' }
+                        ],
+                        income: [
+                            { required: true, message: '请输入个人年收入', trigger: 'blur' },
+                            { type: 'number', min: 0, message: '收入不能为负数', trigger: 'blur' }
+                        ],
+                        health: [
+                            { required: true, message: '请选择健康状况', trigger: 'change' }
+                        ],
+                        marital_status: [
+                            { required: true, message: '请选择婚姻状况', trigger: 'change' }
+                        ]
+                    },
+                    predicting: false,
+                    predictionResults: {
+                        random_forest: null,
+                        linear_regression: null
+                    },
+                    modelInfo: null,
+                    metricsLoading: false,
+                    chartLoading: false,
+                    featureChart: null,
+                    modelMetrics: []
+                }
+            },
+            computed: {
+                hasResults() {
+                    return this.predictionResults.random_forest || this.predictionResults.linear_regression;
+                },
+                hasBothResults() {
+                    return this.predictionResults.random_forest && this.predictionResults.linear_regression;
+                },
+                predictionDifference() {
+                    if (!this.hasBothResults) return 0;
+                    return this.predictionResults.random_forest.prediction - this.predictionResults.linear_regression.prediction;
+                },
+                predictionConsistency() {
+                    if (!this.hasBothResults) return true;
+                    return Math.abs(this.predictionDifference) <= 1; // 相差1分以内认为一致
+                },
+                predictionDifferenceClass() {
+                    const diff = Math.abs(this.predictionDifference);
+                    if (diff === 0) return 'consistent';
+                    if (diff <= 1) return 'slight-diff';
+                    return 'significant-diff';
+                },
+                mainMetrics() {
+                    if (!this.modelInfo || !this.modelInfo.all_metrics) return [];
+
+                    // 使用最佳模型的指标
+                    const bestModelKey = this.modelInfo.best_model;
+                    const metrics = this.modelInfo.all_metrics[bestModelKey];
+
+                    if (!metrics) return [];
+
+                    return [
+                        {
+                            key: 'r2_score',
+                            label: 'R²得分',
+                            value: metrics.r2_score.toFixed(4),
+                            desc: '决定系数，越接近1越好'
+                        },
+                        {
+                            key: 'rmse',
+                            label: 'RMSE',
+                            value: metrics.rmse.toFixed(4),
+                            desc: '均方根误差，越小越好'
+                        },
+                        {
+                            key: 'mse',
+                            label: 'MSE',
+                            value: metrics.mse.toFixed(4),
+                            desc: '均方误差，越小越好'
+                        },
+                        {
+                            key: 'mae',
+                            label: 'MAE',
+                            value: metrics.mae.toFixed(4),
+                            desc: '平均绝对误差，越小越好'
+                        }
+                    ];
+                }
+            },
+            mounted() {
+                // 加载数据，数据加载完成后初始化图表
+                this.loadModelInfo();
+            },
+            methods: {
+                async predictHappiness() {
+                    try {
+                        await this.$refs.predictionForm.validate();
+                    } catch (error) {
+                        this.$message.error('请填写完整的预测信息');
+                        return;
+                    }
+
+                    this.predicting = true;
+                    try {
+                        if (this.selectedAlgorithm === 'both') {
+                            // 同时预测两个模型
+                            await this.predictWithBothModels();
+                        } else {
+                            // 预测单个模型
+                            await this.predictWithSingleModel(this.selectedAlgorithm);
+                        }
+
+                        this.$message.success('预测完成！');
+
+                        // 滚动到结果区域
+                        this.$nextTick(() => {
+                            const resultElement = document.querySelector('.prediction-result-card');
+                            if (resultElement) {
+                                resultElement.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        });
+                    } catch (error) {
+                        console.error('预测失败:', error);
+                        this.$message.error('预测服务暂时不可用，请稍后重试');
+                    } finally {
+                        this.predicting = false;
+                    }
+                },
+
+                async predictWithBothModels() {
+                    const algorithms = ['random_forest', 'linear_regression'];
+                    const promises = algorithms.map(algorithm =>
+                        axios.post('/api/prediction/predict', {
+                            algorithm: algorithm,
+                            prediction_data: this.predictionForm
+                        }).then(response => ({
+                            algorithm,
+                            data: response.data.data
+                        })).catch(error => ({
+                            algorithm,
+                            error: error
+                        }))
+                    );
+
+                    const results = await Promise.all(promises);
+
+                    // 重置结果
+                    this.predictionResults = {
+                        random_forest: null,
+                        linear_regression: null
+                    };
+
+                    // 处理结果
+                    results.forEach(result => {
+                        if (result.error) {
+                            console.error(`${result.algorithm}预测失败:`, result.error);
+                            this.$message.warning(`${this.getAlgorithmName(result.algorithm)}预测失败`);
+                        } else {
+                            this.predictionResults[result.algorithm] = result.data;
+                        }
+                    });
+
+                    const successCount = Object.values(this.predictionResults).filter(r => r !== null).length;
+                    if (successCount === 0) {
+                        throw new Error('所有模型预测都失败了');
+                    }
+                },
+
+                async predictWithSingleModel(algorithm) {
+                    const response = await axios.post('/api/prediction/predict', {
+                        algorithm: algorithm,
+                        prediction_data: this.predictionForm
+                    });
+
+                    if (response.data.code === 200) {
+                        // 重置结果
+                        this.predictionResults = {
+                            random_forest: null,
+                            linear_regression: null
+                        };
+
+                        // 设置预测结果
+                        this.predictionResults[algorithm] = response.data.data;
+                    } else {
+                        throw new Error(response.data.message || '预测失败');
+                    }
+                },
+
+                async loadModelInfo() {
+                    this.metricsLoading = true;
+                    try {
+                        const response = await axios.get('/api/prediction/model_info');
+                        if (response.data.code === 200) {
+                            this.modelInfo = response.data.data;
+
+                            // 准备模型对比数据 - 显示所有模型
+                            this.modelMetrics = [];
+                            if (this.modelInfo.all_metrics) {
+                                // all_metrics是对象，包含每个模型的指标
+                                Object.entries(this.modelInfo.all_metrics).forEach(([modelKey, modelData]) => {
+                                    this.modelMetrics.push({
+                                        model_name: this.getAlgorithmName(modelKey),
+                                        mse: modelData.mse,
+                                        rmse: modelData.rmse,
+                                        mae: modelData.mae,
+                                        r2_score: modelData.r2_score,
+                                        cv_rmse: modelData.cv_rmse
+                                    });
+                                });
+                            } else if (this.modelInfo.metrics) {
+                                // 兼容旧版本，只有一个模型
+                                this.modelMetrics = [
+                                    {
+                                        model_name: '随机森林',
+                                        mse: this.modelInfo.metrics.mse,
+                                        rmse: this.modelInfo.metrics.rmse,
+                                        mae: this.modelInfo.metrics.mae,
+                                        r2_score: this.modelInfo.metrics.r2_score,
+                                        cv_rmse: this.modelInfo.metrics.cv_rmse
+                                    }
+                                ];
+                            }
+
+                            // 数据加载完成后初始化图表
+                            this.$nextTick(() => {
+                                this.initFeatureChart();
+                                this.updateFeatureChart();
+                            });
+                        }
+                    } catch (error) {
+                        console.error('加载模型信息失败:', error);
+                        this.$message.error('加载模型信息失败');
+                    } finally {
+                        this.metricsLoading = false;
+                    }
+                },
+
+                initFeatureChart() {
+                    this.featureChart = echarts.init(document.getElementById('featureImportanceChart'));
+                },
+
+                updateFeatureChart() {
+                    if (!this.featureChart || !this.modelInfo || !this.modelInfo.feature_importance) return;
+
+                    this.chartLoading = true;
+
+                    // 准备特征重要性数据（只对随机森林有效）
+                    const importanceData = Object.entries(this.modelInfo.feature_importance)
+                        .map(([feature, importance]) => ({
+                            name: this.getFeatureName(feature),
+                            value: importance * 100
+                        }))
+                        .sort((a, b) => b.value - a.value);
+
+                    const option = {
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: importanceData.map(item => item.name),
+                            axisLabel: {
+                                rotate: 45,
+                                interval: 0
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '重要性 (%)',
+                            axisLabel: {
+                                formatter: '{value}%'
+                            }
+                        },
+                        series: [{
+                            name: '特征重要性',
+                            type: 'bar',
+                            data: importanceData.map(item => item.value),
+                            itemStyle: {
+                                color: function(params) {
+                                    const colors = ['#409eff', '#67c23a', '#e6a23c', '#f56c6c', '#909399',
+                                                  '#eb9a9a', '#f7c6b6', '#b6d7a8', '#a8d1e0'];
+                                    return colors[params.dataIndex % colors.length];
+                                }
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                formatter: '{c}%'
+                            }
+                        }]
+                    };
+
+                    this.featureChart.setOption(option);
+                    this.chartLoading = false;
+                },
+
+                getScoreClass(score) {
+                    if (score >= 4) return 'excellent';
+                    if (score >= 3) return 'good';
+                    if (score >= 2) return 'fair';
+                    return 'poor';
+                },
+
+                getScoreDescription(score) {
+                    const descriptions = {
+                        1: '非常不幸福',
+                        2: '不太幸福',
+                        3: '一般幸福',
+                        4: '比较幸福',
+                        5: '非常幸福'
+                    };
+                    return descriptions[score] || '未知';
+                },
+
+                getFeatureName(feature) {
+                    const nameMap = {
+                        'age': '年龄',
+                        'floorArea': '住房面积',
+                        'health': '健康状况',
+                        'familyIncome': '家庭收入',
+                        'income': '个人收入',
+                        'edu': '教育水平',
+                        'marital': '婚姻状况',
+                        'workStatus': '工作状态',
+                        'gender': '性别'
+                    };
+                    return nameMap[feature] || feature;
+                },
+
+                getTopFeatures(count) {
+                    if (!this.modelInfo || !this.modelInfo.feature_importance) return {};
+
+                    return Object.entries(this.modelInfo.feature_importance)
+                        .sort(([,a], [,b]) => b - a)
+                        .slice(0, count)
+                        .reduce((obj, [key, value]) => {
+                            obj[key] = value;
+                            return obj;
+                        }, {});
+                },
+
+                formatTime(timeStr) {
+                    return new Date(timeStr).toLocaleString();
+                },
+
+                getAlgorithmName(algorithm) {
+                    const names = {
+                        'random_forest': '随机森林',
+                        'linear_regression': '线性回归'
+                    };
+                    return names[algorithm] || algorithm;
+                },
+
+                getAlgorithmDisplayName() {
+                    if (this.selectedAlgorithm === 'both') {
+                        return '随机森林 + 线性回归';
+                    }
+                    return this.getAlgorithmName(this.selectedAlgorithm);
+                },
+
+                getLatestTimestamp() {
+                    const timestamps = Object.values(this.predictionResults)
+                        .filter(result => result && result.timestamp)
+                        .map(result => result.timestamp);
+
+                    if (timestamps.length === 0) return null;
+
+                    return timestamps.sort().pop(); // 返回最新的时间戳
+                },
+
+                resetForm() {
+                    this.$refs.predictionForm.resetFields();
+                    this.predictionResults = {
+                        random_forest: null,
+                        linear_regression: null
+                    };
+                },
+
+                clearResult() {
+                    this.predictionResults = {
+                        random_forest: null,
+                        linear_regression: null
+                    };
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .prediction-container {
+            padding: 20px;
+        }
+
+        .prediction-form-card, .prediction-result-card, .metrics-card {
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            font-weight: 600;
+        }
+
+        .no-result {
+            text-align: center;
+            padding: 40px 20px;
+            color: #909399;
+        }
+
+        .no-result i {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .prediction-score {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-right: 30px;
+            font-weight: 600;
+        }
+
+        .score-circle.excellent {
+            background: linear-gradient(135deg, #67c23a, #85ce61);
+            color: white;
+        }
+
+        .score-circle.good {
+            background: linear-gradient(135deg, #409eff, #66b1ff);
+            color: white;
+        }
+
+        .score-circle.fair {
+            background: linear-gradient(135deg, #e6a23c, #ebb563);
+            color: white;
+        }
+
+        .score-circle.poor {
+            background: linear-gradient(135deg, #f56c6c, #f78989);
+            color: white;
+        }
+
+        .score-number {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .score-info h3 {
+            margin: 0 0 10px 0;
+            color: #303133;
+        }
+
+        .score-info p {
+            margin: 0 0 15px 0;
+            color: #606266;
+            font-size: 16px;
+        }
+
+        .confidence {
+            display: flex;
+            align-items: center;
+        }
+
+        .confidence-label {
+            margin-right: 10px;
+            color: #909399;
+        }
+
+        .confidence-value {
+            font-weight: 600;
+            color: #409eff;
+        }
+
+        .result-details {
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+        }
+
+        .detail-item label {
+            font-weight: 600;
+            color: #606266;
+            margin-right: 10px;
+        }
+
+        .feature-importance {
+            max-width: 500px;
+        }
+
+        .importance-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .feature-name {
+            width: 100px;
+            font-size: 14px;
+            color: #606266;
+        }
+
+        .importance-bar {
+            flex: 1;
+            height: 20px;
+            background: #f5f7fa;
+            border-radius: 10px;
+            position: relative;
+            margin-left: 10px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #409eff, #66b1ff);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .importance-value {
+            position: absolute;
+            right: 10px;
+            top: 0;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #409eff;
+        }
+
+        .metrics-content {
+            min-height: 200px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #409eff;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #303133;
+            margin-bottom: 5px;
+        }
+
+        .metric-desc {
+            font-size: 12px;
+            color: #909399;
+        }
+
+        .positive {
+            color: #67c23a;
+            font-weight: 600;
+        }
+
+        .negative {
+            color: #f56c6c;
+            font-weight: 600;
+        }
+
+        .metrics-row {
+            margin-top: 20px;
+        }
+
+        .results-comparison {
+            margin-bottom: 20px;
+        }
+
+        .model-result-card {
+            border: 1px solid #ebeef5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+
+        .rf-result {
+            border-color: #67c23a;
+            background: linear-gradient(135deg, #f0f9ff, #f5f7fa);
+        }
+
+        .lr-result {
+            border-color: #e6a23c;
+            background: linear-gradient(135deg, #fdf6ec, #f5f7fa);
+        }
+
+        .model-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .model-header h4 {
+            margin: 0;
+            color: #303133;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .score-details {
+            flex: 1;
+        }
+
+        .score-desc {
+            font-size: 14px;
+            color: #606266;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .confidence {
+            font-size: 12px;
+            color: #909399;
+        }
+
+        .difference-analysis {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #409eff;
+        }
+
+        .difference-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .difference-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .difference-item label {
+            font-size: 12px;
+            color: #909399;
+            font-weight: 500;
+        }
+
+        .consistent {
+            color: #67c23a;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .slight-diff {
+            color: #e6a23c;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .significant-diff {
+            color: #f56c6c;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .difference-desc {
+            font-size: 11px;
+            color: #c0c4cc;
+        }
+
+        .algorithm-status {
+            margin-bottom: 20px;
+        }
+    </style>
+</body>
+</html>

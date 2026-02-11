@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析 - 后台管理系统</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/static/css/admin.css"> 
+    <style>
+        .analysis-container {
+            padding: 20px;
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .analysis-tabs {
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #e4e7ed;
+            border-radius: 4px;
+            background: white;
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .overview-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .overview-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #409EFF;
+            margin-bottom: 8px;
+        }
+
+        .overview-card .label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .conclusions-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .conclusion-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-left: 4px solid #409EFF;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .conclusion-category {
+            font-weight: bold;
+            color: #409EFF;
+            margin-bottom: 5px;
+        }
+
+        .conclusion-finding {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .conclusion-insight {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .analysis-summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 24px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .recommendations {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .recommendation-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .recommendation-icon {
+            color: #409EFF;
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .recommendation-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <admin-layout :active-menu="activeMenu">
+            <template #content>
+                <div class="analysis-container">
+                    <!-- 页面标题 -->
+                    <div class="analysis-header">
+                        <h2>幸福感数据分析</h2>
+                        <el-button type="primary" @click="refreshData" :loading="refreshing">
+                            <i class="el-icon-refresh"></i> 刷新数据
+                        </el-button>
+                    </div>
+
+                    <!-- 数据概览卡片 -->
+                    <div v-if="overviewData" class="overview-cards">
+                        <div class="overview-card">
+                            <div class="number">{{ overviewData.overview.total_count.toLocaleString() }}</div>
+                            <div class="label">总样本数</div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="number">{{ overviewData.overview.avg_happiness }}</div>
+                            <div class="label">平均幸福感</div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="number">{{ overviewData.source_stats.find(s => s.dataSource === 'train')?.count.toLocaleString() || 0 }}</div>
+                            <div class="label">训练集样本</div>
+                        </div> 
+                    </div>
+
+                    <!-- 分析标签页 -->
+                    <el-tabs v-model="activeTab" class="analysis-tabs" @tab-click="handleTabClick">
+                        <el-tab-pane label="概览分析" name="overview">
+                            <div v-loading="loading">
+                                <div id="overview-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="婚姻状况" name="marital">
+                            <div v-loading="loading">
+                                <div id="marital-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="教育水平" name="education">
+                            <div v-loading="loading">
+                                <div id="education-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="收入区间" name="income">
+                            <div v-loading="loading">
+                                <div id="income-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="健康状况" name="health">
+                            <div v-loading="loading">
+                                <div id="health-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="相关性分析" name="correlation">
+                            <div v-loading="loading">
+                                <div id="correlation-chart" class="chart-container"></div>
+                            </div>
+                        </el-tab-pane>
+
+                        <el-tab-pane label="综合结论" name="comprehensive">
+                            <div v-if="comprehensiveData" v-loading="loading">
+                                <!-- 分析摘要 -->
+                                <div class="analysis-summary">
+                                    <h3 style="margin: 0 0 15px 0;">分析摘要</h3>
+                                    <div class="summary-grid">
+                                        <div class="summary-item">
+                                            <span class="summary-number">{{ comprehensiveData.analysis_summary.total_samples.toLocaleString() }}</span>
+                                            <span class="summary-label">总样本数</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-number">{{ comprehensiveData.analysis_summary.avg_happiness }}</span>
+                                            <span class="summary-label">平均幸福感</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-number">{{ comprehensiveData.analysis_summary.key_factors.length }}</span>
+                                            <span class="summary-label">关键影响因素</span>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-number">{{ comprehensiveData.analysis_summary.recommendations.length }}</span>
+                                            <span class="summary-label">政策建议</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 分析结论 -->
+                                <div class="conclusions-section">
+                                    <h3>关键发现</h3>
+                                    <div v-for="conclusion in comprehensiveData.conclusions" :key="conclusion.category" class="conclusion-item">
+                                        <div class="conclusion-category">{{ conclusion.category }}</div>
+                                        <div class="conclusion-finding">{{ conclusion.finding }}</div>
+                                        <div class="conclusion-insight">{{ conclusion.insight }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- 政策建议 -->
+                                <div class="recommendations">
+                                    <h3>政策建议</h3>
+                                    <div class="recommendation-list">
+                                        <div v-for="(recommendation, index) in comprehensiveData.analysis_summary.recommendations"
+                                             :key="index" class="recommendation-item">
+                                            <div class="recommendation-icon">
+                                                <i class="el-icon-info"></i>
+                                            </div>
+                                            <div class="recommendation-content">
+                                                {{ recommendation }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-else class="loading-container">
+                                <el-loading text="正在生成分析结论..."></el-loading>
+                            </div>
+                        </el-tab-pane>
+                    </el-tabs>
+                </div>
+            </template>
+        </admin-layout>
+    </div>
+
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/element-ui.min.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/config/layout-config.js"></script>
+    <script src="/static/js/components/layout.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    activeMenu: 'data_analysis',
+                    activeTab: 'overview',
+                    loading: false,
+                    refreshing: false,
+                    overviewData: null,
+                    maritalData: null,
+                    educationData: null,
+                    incomeData: null,
+                    healthData: null,
+                    correlationData: null,
+                    comprehensiveData: null,
+                    charts: {} // 存储图表实例
+                }
+            },
+            mounted() {
+                this.loadAllData();
+            },
+            beforeDestroy() {
+                // 销毁所有图表实例
+                Object.values(this.charts).forEach(chart => {
+                    if (chart && chart.dispose) {
+                        chart.dispose();
+                    }
+                });
+            },
+            methods: {
+                async loadAllData() {
+                    this.loading = true;
+                    try {
+                        // 并行加载所有数据
+                        const promises = [
+                            this.loadOverviewData(),
+                            this.loadMaritalData(),
+                            this.loadEducationData(),
+                            this.loadIncomeData(),
+                            this.loadHealthData(),
+                            this.loadCorrelationData(),
+                            this.loadComprehensiveData()
+                        ];
+
+                        await Promise.all(promises);
+                        this.renderCurrentChart();
+                    } catch (error) {
+                        console.error('加载数据失败:', error);
+                        this.$message.error('加载数据失败');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async loadOverviewData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/overview');
+                        if (response.data.code === 200) {
+                            this.overviewData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载概览数据失败:', error);
+                    }
+                },
+
+                async loadMaritalData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/marital');
+                        if (response.data.code === 200) {
+                            this.maritalData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载婚姻数据失败:', error);
+                    }
+                },
+
+                async loadEducationData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/education');
+                        if (response.data.code === 200) {
+                            this.educationData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载教育数据失败:', error);
+                    }
+                },
+
+                async loadIncomeData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/income');
+                        if (response.data.code === 200) {
+                            this.incomeData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载收入数据失败:', error);
+                    }
+                },
+
+                async loadHealthData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/health');
+                        if (response.data.code === 200) {
+                            this.healthData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载健康数据失败:', error);
+                    }
+                },
+
+                async loadCorrelationData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/correlation');
+                        if (response.data.code === 200) {
+                            this.correlationData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载相关性数据失败:', error);
+                    }
+                },
+
+                async loadComprehensiveData() {
+                    try {
+                        const response = await axios.get('/api/data_analysis/comprehensive');
+                        if (response.data.code === 200) {
+                            this.comprehensiveData = response.data.data;
+                        }
+                    } catch (error) {
+                        console.error('加载综合数据失败:', error);
+                    }
+                },
+
+                async handleTabClick(tab) {
+                    this.activeTab = tab.name;
+
+                    // 检查对应数据是否已加载，如果没有则加载
+                    const needLoad = await this.checkAndLoadData(tab.name);
+                    if (needLoad) {
+                        this.loading = true;
+                        try {
+                            await this.loadDataForTab(tab.name);
+                        } catch (error) {
+                            console.error('加载标签页数据失败:', error);
+                            this.$message.error(`加载${tab.label}数据失败`);
+                            return;
+                        } finally {
+                            this.loading = false;
+                        }
+                    }
+
+                    // 渲染图表
+                    this.renderCurrentChart();
+                },
+
+                async checkAndLoadData(tabName) {
+                    // 检查对应标签页的数据是否已加载
+                    switch (tabName) {
+                        case 'overview':
+                            return !this.overviewData;
+                        case 'marital':
+                            return !this.maritalData;
+                        case 'education':
+                            return !this.educationData;
+                        case 'income':
+                            return !this.incomeData;
+                        case 'health':
+                            return !this.healthData;
+                        case 'correlation':
+                            return !this.correlationData;
+                        case 'comprehensive':
+                            return !this.comprehensiveData;
+                        default:
+                            return false;
+                    }
+                },
+
+                async loadDataForTab(tabName) {
+                    // 为指定标签页加载数据
+                    switch (tabName) {
+                        case 'overview':
+                            await this.loadOverviewData();
+                            break;
+                        case 'marital':
+                            await this.loadMaritalData();
+                            break;
+                        case 'education':
+                            await this.loadEducationData();
+                            break;
+                        case 'income':
+                            await this.loadIncomeData();
+                            break;
+                        case 'health':
+                            await this.loadHealthData();
+                            break;
+                        case 'correlation':
+                            await this.loadCorrelationData();
+                            break;
+                        case 'comprehensive':
+                            await this.loadComprehensiveData();
+                            break;
+                    }
+                },
+
+                renderCurrentChart() {
+                    // 销毁现有图表
+                    Object.values(this.charts).forEach(chart => {
+                        if (chart && chart.dispose) {
+                            chart.dispose();
+                        }
+                    });
+                    this.charts = {};
+
+                    // 根据当前标签渲染对应图表
+                    switch (this.activeTab) {
+                        case 'overview':
+                            this.renderOverviewChart();
+                            break;
+                        case 'marital':
+                            this.renderMaritalChart();
+                            break;
+                        case 'education':
+                            this.renderEducationChart();
+                            break;
+                        case 'income':
+                            this.renderIncomeChart();
+                            break;
+                        case 'health':
+                            this.renderHealthChart();
+                            break;
+                        case 'correlation':
+                            this.renderCorrelationChart();
+                            break;
+                    }
+                },
+
+                renderOverviewChart() {
+                    const chartDom = document.getElementById('overview-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.overview = chart;
+
+                    if (!this.overviewData) {
+                        // 数据未加载时显示提示
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    const option = {
+                        title: {
+                            text: '幸福感数据概览',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['训练集', '测试集'],
+                            top: '30px'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['样本数量', '平均幸福感']
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '数量',
+                                position: 'left'
+                            },
+                            {
+                                type: 'value',
+                                name: '幸福感',
+                                position: 'right',
+                                min: 0,
+                                max: 5
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '训练集',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: [
+                                    this.overviewData.source_stats.find(s => s.dataSource === 'train')?.count || 0,
+                                    null
+                                ]
+                            },
+                            {
+                                name: '测试集',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: [
+                                    this.overviewData.source_stats.find(s => s.dataSource === 'test')?.count || 0,
+                                    null
+                                ]
+                            },
+                            {
+                                name: '平均幸福感',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: [
+                                    null,
+                                    this.overviewData.overview.avg_happiness
+                                ]
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                renderMaritalChart() {
+                    const chartDom = document.getElementById('marital-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.marital = chart;
+
+                    if (!this.maritalData) {
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    const data = this.maritalData.marital_analysis;
+                    const option = {
+                        title: {
+                            text: '婚姻状况与幸福感分析',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross'
+                            }
+                        },
+                        legend: {
+                            data: ['样本数量', '平均幸福感'],
+                            top: '30px'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.marital_status)
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '样本数量',
+                                position: 'left'
+                            },
+                            {
+                                type: 'value',
+                                name: '幸福感',
+                                position: 'right',
+                                min: 1,
+                                max: 5
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '样本数量',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: data.map(item => item.count)
+                            },
+                            {
+                                name: '平均幸福感',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: data.map(item => item.avg_happiness),
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                        {type: 'min', name: '最小值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                renderEducationChart() {
+                    const chartDom = document.getElementById('education-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.education = chart;
+
+                    if (!this.educationData) {
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    const data = this.educationData.education_analysis;
+                    const groupedData = this.educationData.education_groups;
+
+                    const option = {
+                        title: {
+                            text: '教育水平与幸福感分析',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: '{a} <br/>{b}: {c}% ({d}%)'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                name: '教育分布',
+                                type: 'pie',
+                                radius: '50%',
+                                center: ['50%', '50%'],
+                                data: data.map(item => ({
+                                    name: item.education_level,
+                                    value: item.count
+                                })),
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                renderIncomeChart() {
+                    const chartDom = document.getElementById('income-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.income = chart;
+
+                    if (!this.incomeData) {
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    const data = this.incomeData.income_analysis;
+                    const option = {
+                        title: {
+                            text: '收入区间与幸福感分析',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['样本数量', '平均幸福感'],
+                            top: '30px'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.income_range)
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '样本数量',
+                                position: 'left'
+                            },
+                            {
+                                type: 'value',
+                                name: '幸福感',
+                                position: 'right',
+                                min: 1,
+                                max: 5
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '样本数量',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: data.map(item => item.count)
+                            },
+                            {
+                                name: '平均幸福感',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: data.map(item => item.avg_happiness),
+                                smooth: true,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最高幸福感'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                renderHealthChart() {
+                    const chartDom = document.getElementById('health-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.health = chart;
+
+                    if (!this.healthData) {
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    const data = this.healthData.health_analysis;
+                    const option = {
+                        title: {
+                            text: '健康状况与幸福感分析',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['平均年龄', '平均幸福感'],
+                            top: '30px'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.health_status)
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '年龄',
+                                position: 'left'
+                            },
+                            {
+                                type: 'value',
+                                name: '幸福感',
+                                position: 'right',
+                                min: 1,
+                                max: 5
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '平均年龄',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: data.map(item => item.avg_age)
+                            },
+                            {
+                                name: '平均幸福感',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: data.map(item => item.avg_happiness),
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                renderCorrelationChart() {
+                    const chartDom = document.getElementById('correlation-chart');
+                    const chart = echarts.init(chartDom);
+                    this.charts.correlation = chart;
+
+                    if (!this.correlationData) {
+                        const option = {
+                            title: {
+                                text: '数据加载中...',
+                                left: 'center',
+                                top: 'center',
+                                textStyle: {
+                                    color: '#999',
+                                    fontSize: 16
+                                }
+                            },
+                            graphic: {
+                                type: 'text',
+                                left: 'center',
+                                top: 'middle',
+                                style: {
+                                    text: '请稍候...',
+                                    fontSize: 14,
+                                    fill: '#999'
+                                }
+                            }
+                        };
+                        chart.setOption(option);
+                        return;
+                    }
+
+                    // 使用年龄-幸福感相关性数据
+                    const data = this.correlationData.age_happiness;
+                    const option = {
+                        title: {
+                            text: '年龄段与幸福感相关性分析',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['样本数量', '平均幸福感'],
+                            top: '30px'
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: data.map(item => item.age_group)
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: '样本数量',
+                                position: 'left'
+                            },
+                            {
+                                type: 'value',
+                                name: '幸福感',
+                                position: 'right',
+                                min: 1,
+                                max: 5
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '样本数量',
+                                type: 'bar',
+                                yAxisIndex: 0,
+                                data: data.map(item => item.count)
+                            },
+                            {
+                                name: '平均幸福感',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: data.map(item => item.avg_happiness),
+                                smooth: true,
+                                areaStyle: {}
+                            }
+                        ]
+                    };
+
+                    chart.setOption(option);
+                },
+
+                async refreshData() {
+                    this.refreshing = true;
+                    try {
+                        await this.loadAllData();
+                        this.$message.success('数据刷新完成');
+                    } catch (error) {
+                        this.$message.error('数据刷新失败');
+                    } finally {
+                        this.refreshing = false;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

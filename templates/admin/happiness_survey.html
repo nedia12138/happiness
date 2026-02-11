@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福感调查表管理 - 后台管理系统</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <style>
+        .page-container {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+        .page-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .search-card {
+            margin-bottom: 20px;
+        }
+        .table-card {
+            margin-bottom: 20px;
+        }
+        .pagination-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .form-tip {
+            margin-left: 10px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* 操作按钮样式 */
+        .el-table .el-button--mini {
+            margin: 0 2px;
+        }
+
+        .el-dropdown {
+            margin-left: 5px;
+        }
+
+        .el-dropdown .el-button--text {
+            color: #606266;
+            padding: 5px 8px;
+        }
+
+        .el-dropdown .el-button--text:hover {
+            color: #409EFF;
+            background-color: #ecf5ff;
+        }
+
+        /* 详情弹窗样式 */
+        .survey-detail-alert .el-message-box__content {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .survey-detail-alert .el-message-box {
+            width: 800px;
+            max-width: 90vw;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            width: 120px;
+            font-weight: bold;
+            color: #606266;
+            flex-shrink: 0;
+        }
+
+        .detail-value {
+            color: #303133;
+            flex: 1;
+        }
+
+        /* 统计卡片样式 */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stats-title {
+            font-size: 14px;
+            color: #909399;
+            margin-bottom: 10px;
+        }
+
+        .stats-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #409EFF;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <admin-layout :active-menu="activeMenu">
+            <template #content>
+                <div class="page-container">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <h2>幸福感调查表管理</h2>
+                    <div class="page-actions" v-show="false">
+                        <el-button type="primary" @click="showStatistics">
+                            <i class="el-icon-s-data"></i> 查看统计
+                        </el-button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区域 -->
+                <div class="stats-container" v-if="showStats">
+                    <div class="stats-card">
+                        <div class="stats-title">总记录数</div>
+                        <div class="stats-value">{{ statistics.total || 0 }}</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stats-title">平均幸福感</div>
+                        <div class="stats-value">{{ avgHappiness || '0.0' }}</div>
+                    </div>
+                </div>
+
+                <!-- 搜索筛选区域 -->
+                <el-card class="search-card">
+                    <el-form :inline="true" :model="searchForm" class="search-form">
+                        <el-form-item label="幸福感评分">
+                            <el-select v-model="searchForm.happiness" placeholder="请选择幸福感评分" clearable>
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="1分" :value="1"></el-option>
+                                <el-option label="2分" :value="2"></el-option>
+                                <el-option label="3分" :value="3"></el-option>
+                                <el-option label="4分" :value="4"></el-option>
+                                <el-option label="5分" :value="5"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="性别">
+                            <el-select v-model="searchForm.gender" placeholder="请选择性别" clearable>
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="男" :value="1"></el-option>
+                                <el-option label="女" :value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="教育水平">
+                            <el-select v-model="searchForm.edu" placeholder="请选择教育水平" clearable>
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="初中及以下" :value="1"></el-option>
+                                <el-option label="高中" :value="2"></el-option>
+                                <el-option label="大专" :value="3"></el-option>
+                                <el-option label="本科" :value="4"></el-option>
+                                <el-option label="研究生及以上" :value="5"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="数据来源">
+                            <el-select v-model="searchForm.dataSource" placeholder="请选择数据来源" clearable>
+                                <el-option label="全部" value=""></el-option>
+                                <el-option label="训练集" value="train"></el-option>
+                                <el-option label="测试集" value="test"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="handleSearch">
+                                <i class="el-icon-search"></i> 搜索
+                            </el-button>
+                            <el-button @click="handleReset">
+                                <i class="el-icon-refresh"></i> 重置
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </el-card>
+
+                <!-- 数据表格 -->
+                <el-card class="table-card">
+                    <el-table
+                        :data="tableData"
+                        v-loading="loading"
+                        stripe
+                        style="width: 100%">
+                        <!-- <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column> -->
+                        <el-table-column prop="happiness" label="幸福感"  align="center">
+                            <template slot-scope="scope">
+                                <el-tag :type="getHappinessTagType(scope.row.happiness)">
+                                    {{ scope.row.happiness }}分
+                                </el-tag>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="province" label="省份" align="center"></el-table-column>
+                        <el-table-column prop="city" label="城市" align="center"></el-table-column>
+                        <el-table-column prop="gender" label="性别" align="center">
+                            <template slot-scope="scope">
+                                {{ scope.row.gender === 1 ? '男' : scope.row.gender === 2 ? '女' : '未知' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="birth" label="出生年份" align="center"></el-table-column>
+                        <el-table-column prop="edu" label="教育水平" align="center">
+                            <template slot-scope="scope">
+                                {{ getEduText(scope.row.edu) }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="income" label="个人收入" align="center">
+                            <template slot-scope="scope">
+                                {{ scope.row.income ? '¥' + scope.row.income : '未填写' }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="health" label="健康状况" align="center">
+                            <template slot-scope="scope">
+                                {{ scope.row.health }}/5
+                            </template>
+                        </el-table-column>
+                        <!-- <el-table-column prop="dataSource" label="数据来源" align="center">
+                            <template slot-scope="scope">
+                                <el-tag :type="scope.row.dataSource === 'train' ? 'success' : 'info'">
+                                    {{ scope.row.dataSource === 'train' ? '训练集' : '测试集' }}
+                                </el-tag>
+                            </template>
+                        </el-table-column> -->
+                        <el-table-column label="操作" align="center" fixed="right" width="120">
+                            <template slot-scope="scope">
+                                <el-button size="mini" type="primary" @click="handleViewDetail(scope.row)">详情</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <!-- 分页 -->
+                    <div class="pagination-container">
+                        <el-pagination
+                            @size-change="handleSizeChange"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.pageNum"
+                            :page-sizes="[10, 20, 50, 100]"
+                            :page-size="pagination.pageSize"
+                            layout="total, sizes, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+                </el-card>
+            </div>
+            </template>
+        </admin-layout>
+    </div>
+
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/element-ui.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/config/layout-config.js"></script>
+    <script src="/static/js/components/layout.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    activeMenu: 'happiness_survey',
+                    loading: false,
+                    showStats: false,
+                    tableData: [],
+                    statistics: {},
+                    searchForm: {
+                        happiness: '',
+                        gender: '',
+                        edu: '',
+                        dataSource: ''
+                    },
+                    pagination: {
+                        pageNum: 1,
+                        pageSize: 10,
+                        total: 0
+                    }
+                }
+            },
+            computed: {
+                avgHappiness() {
+                    if (this.statistics.happinessStats && this.statistics.happinessStats.length > 0) {
+                        const total = this.statistics.happinessStats.reduce((sum, item) => sum + (item.happiness * item.count), 0);
+                        const count = this.statistics.happinessStats.reduce((sum, item) => sum + item.count, 0);
+                        return (total / count).toFixed(1);
+                    }
+                    return '0.0';
+                }
+            },
+            mounted() {
+                console.log('幸福感调查表管理页面已挂载');
+                this.loadData();
+            },
+            methods: {
+                // 加载数据
+                loadData() {
+                    console.log('开始加载数据...');
+                    this.loading = true;
+                    const params = {
+                        pageNum: this.pagination.pageNum,
+                        pageSize: this.pagination.pageSize,
+                        happiness: this.searchForm.happiness,
+                        gender: this.searchForm.gender,
+                        edu: this.searchForm.edu,
+                        dataSource: this.searchForm.dataSource
+                    };
+
+                    console.log('请求参数:', params);
+                    console.log('请求URL:', '/api/happiness_survey/admin/list');
+
+                    axios.get('/api/happiness_survey/admin/list', { params })
+                        .then(response => {
+                            console.log('API响应:', response.data);
+                            if (response.data.code === 200) {
+                                this.tableData = response.data.data.rows;
+                                this.pagination.total = response.data.data.total;
+                                console.log('数据加载成功:', this.tableData);
+                            } else {
+                                console.error('API返回错误:', response.data.message);
+                                this.$message.error(response.data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('加载数据失败:', error);
+                            this.$message.error('加载数据失败');
+                        })
+                        .finally(() => {
+                            this.loading = false;
+                            console.log('数据加载完成');
+                        });
+                },
+
+                // 显示统计数据
+                showStatistics() {
+                    axios.get('/api/happiness_survey/admin/statistics')
+                        .then(response => {
+                            if (response.data.code === 200) {
+                                this.statistics = response.data.data;
+                                this.showStats = !this.showStats;
+                            } else {
+                                this.$message.error(response.data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('获取统计数据失败:', error);
+                            this.$message.error('获取统计数据失败');
+                        });
+                },
+
+                // 搜索
+                handleSearch() {
+                    this.pagination.pageNum = 1;
+                    this.loadData();
+                },
+
+                // 重置搜索
+                handleReset() {
+                    this.searchForm = {
+                        happiness: '',
+                        gender: '',
+                        edu: '',
+                        dataSource: ''
+                    };
+                    this.pagination.pageNum = 1;
+                    this.loadData();
+                },
+
+                // 分页大小改变
+                handleSizeChange(val) {
+                    this.pagination.pageSize = val;
+                    this.pagination.pageNum = 1;
+                    this.loadData();
+                },
+
+                // 当前页改变
+                handleCurrentChange(val) {
+                    this.pagination.pageNum = val;
+                    this.loadData();
+                },
+
+                // 获取幸福感标签类型
+                getHappinessTagType(happiness) {
+                    if (happiness >= 4) return 'success';
+                    if (happiness >= 3) return 'warning';
+                    return 'danger';
+                },
+
+                // 获取教育水平文本
+                getEduText(edu) {
+                    const eduMap = {
+                        1: '初中及以下',
+                        2: '高中',
+                        3: '大专',
+                        4: '本科',
+                        5: '研究生及以上'
+                    };
+                    return eduMap[edu] || '未知';
+                },
+
+                // 查看详情
+                handleViewDetail(row) {
+                    let detailHtml = `
+                        <div style="text-align: left; max-height: 400px; overflow-y: auto;">
+                            <div class="detail-row">
+                                <span class="detail-label">ID:</span>
+                                <span class="detail-value">${row.id}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">幸福感评分:</span>
+                                <span class="detail-value">${row.happiness}/5</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">调查类型:</span>
+                                <span class="detail-value">${row.surveyType || '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">地区:</span>
+                                <span class="detail-value">省份${row.province || '未知'} - 城市${row.city || '未知'} - 县区${row.county || '未知'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">调查时间:</span>
+                                <span class="detail-value">${row.surveyTime || '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">性别:</span>
+                                <span class="detail-value">${row.gender === 1 ? '男' : row.gender === 2 ? '女' : '未知'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">出生年份:</span>
+                                <span class="detail-value">${row.birth || '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">民族:</span>
+                                <span class="detail-value">${row.nationality || '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">宗教信仰:</span>
+                                <span class="detail-value">${row.religion === 1 ? '有' : row.religion === 0 ? '无' : '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">教育水平:</span>
+                                <span class="detail-value">${this.getEduText(row.edu)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">个人收入:</span>
+                                <span class="detail-value">${row.income ? '¥' + row.income : '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">政治面貌:</span>
+                                <span class="detail-value">${row.political || '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">住房面积:</span>
+                                <span class="detail-value">${row.floorArea ? row.floorArea + '平方米' : '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">身高体重:</span>
+                                <span class="detail-value">${row.heightCm ? row.heightCm + 'cm' : '未填写'} / ${row.weightJin ? row.weightJin + '斤' : '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">健康状况:</span>
+                                <span class="detail-value">${row.health ? row.health + '/5' : '未填写'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">数据来源:</span>
+                                <span class="detail-value">${row.dataSource === 'train' ? '训练集' : '测试集'}</span>
+                            </div>
+                        </div>
+                    `;
+
+                    this.$alert(detailHtml, '调查记录详情', {
+                        dangerouslyUseHTMLString: true,
+                        customClass: 'survey-detail-alert'
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

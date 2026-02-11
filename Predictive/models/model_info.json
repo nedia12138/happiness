@@ -1,0 +1,70 @@
+{
+  "best_model": "random_forest",
+  "all_models": {
+    "linear_regression": {
+      "metrics": {
+        "model_name": "linear_regression",
+        "mse": 0.6104,
+        "rmse": 0.7813,
+        "mae": 0.5538,
+        "r2_score": 0.0873,
+        "cv_rmse": 0.7826,
+        "cv_scores": [
+          -0.6152,
+          -0.5763,
+          -0.6265,
+          -0.6669,
+          -0.5777
+        ]
+      },
+      "path": "linear_regression_20260206_172908.pkl"
+    },
+    "random_forest": {
+      "metrics": {
+        "model_name": "random_forest",
+        "mse": 0.5259,
+        "rmse": 0.7252,
+        "mae": 0.5232,
+        "r2_score": 0.2136,
+        "cv_rmse": 0.7268,
+        "cv_scores": [
+          -0.5248,
+          -0.4933,
+          -0.5415,
+          -0.5821,
+          -0.4997
+        ]
+      },
+      "path": "random_forest_20260206_172908.pkl"
+    }
+  },
+  "feature_importance": {
+    "health_age": 0.18427377363701483,
+    "health": 0.15281555538497538,
+    "floorArea": 0.1416335764553791,
+    "familyIncome": 0.13765622222460877,
+    "age": 0.08028385503842517,
+    "edu_income": 0.07957894238245576,
+    "income_ratio": 0.06647413468983651,
+    "income": 0.05906144988767151,
+    "marital": 0.03804000416642825,
+    "edu": 0.02959285966545778,
+    "gender": 0.018362347574866277,
+    "workStatus": 0.012227278892880729
+  },
+  "feature_columns": [
+    "edu",
+    "income",
+    "health",
+    "marital",
+    "age",
+    "gender",
+    "familyIncome",
+    "workStatus",
+    "floorArea",
+    "edu_income",
+    "health_age",
+    "income_ratio"
+  ],
+  "timestamp": "2026-02-06 17:29:08"
+}

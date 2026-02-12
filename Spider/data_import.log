@@ -587,3 +587,464 @@
 2026-01-23 14:49:30,905 - INFO - 索引 idx_complete_edu_income 已存在，跳过
 2026-01-23 14:49:30,906 - INFO - 索引 idx_complete_marital 已存在，跳过
 2026-01-23 14:49:30,906 - INFO - 数据导入流程完成，总耗时: 5.65秒
+2026-02-12 11:40:34,931 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 11:40:34,931 - INFO - 开始导入简化版数据...
+2026-02-12 11:40:34,965 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 11:40:34,988 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 11:40:35,136 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 11:40:35,144 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 11:40:35,197 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 11:40:35,670 - INFO - 已插入py_happiness_survey表第1批数据，共1000条记录
+2026-02-12 11:40:35,736 - INFO - 已插入py_happiness_survey表第2批数据，共1000条记录
+2026-02-12 11:40:35,791 - INFO - 已插入py_happiness_survey表第3批数据，共1000条记录
+2026-02-12 11:40:35,846 - INFO - 已插入py_happiness_survey表第4批数据，共1000条记录
+2026-02-12 11:40:35,902 - INFO - 已插入py_happiness_survey表第5批数据，共1000条记录
+2026-02-12 11:40:35,955 - INFO - 已插入py_happiness_survey表第6批数据，共1000条记录
+2026-02-12 11:40:36,008 - INFO - 已插入py_happiness_survey表第7批数据，共1000条记录
+2026-02-12 11:40:36,063 - INFO - 已插入py_happiness_survey表第8批数据，共1000条记录
+2026-02-12 11:40:36,117 - INFO - 已插入py_happiness_survey表第9批数据，共1000条记录
+2026-02-12 11:40:36,172 - INFO - 已插入py_happiness_survey表第10批数据，共1000条记录
+2026-02-12 11:40:36,224 - INFO - 已插入py_happiness_survey表第11批数据，共968条记录
+2026-02-12 11:40:36,224 - INFO - 成功插入py_happiness_survey表总计10968条记录
+2026-02-12 11:40:36,238 - INFO - 简化版数据导入完成
+2026-02-12 11:40:36,239 - INFO - 开始导入完整版数据...
+2026-02-12 11:40:36,253 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 11:40:36,253 - INFO - 读取完整版训练数据...
+2026-02-12 11:40:36,281 - ERROR - 导入完整版数据失败: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:40:36,282 - WARNING - 完整版数据导入失败，跳过: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:40:36,282 - INFO - 开始创建额外的索引和约束...
+2026-02-12 11:40:36,285 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 11:40:36,285 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 11:40:36,286 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 11:40:36,286 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 11:40:36,288 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 11:40:36,289 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 11:40:36,289 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 11:40:36,289 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 11:40:36,289 - INFO - 数据导入流程完成，总耗时: 1.36秒
+2026-02-12 11:44:14,024 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 11:44:14,024 - INFO - 开始导入简化版数据...
+2026-02-12 11:44:14,051 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 11:44:14,075 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 11:44:14,227 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 11:44:14,236 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 11:44:14,292 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 11:44:14,782 - INFO - 已插入py_happiness_survey表第1批数据，共1000条记录
+2026-02-12 11:44:14,844 - INFO - 已插入py_happiness_survey表第2批数据，共1000条记录
+2026-02-12 11:44:14,898 - INFO - 已插入py_happiness_survey表第3批数据，共1000条记录
+2026-02-12 11:44:14,952 - INFO - 已插入py_happiness_survey表第4批数据，共1000条记录
+2026-02-12 11:44:15,007 - INFO - 已插入py_happiness_survey表第5批数据，共1000条记录
+2026-02-12 11:44:15,059 - INFO - 已插入py_happiness_survey表第6批数据，共1000条记录
+2026-02-12 11:44:15,115 - INFO - 已插入py_happiness_survey表第7批数据，共1000条记录
+2026-02-12 11:44:15,169 - INFO - 已插入py_happiness_survey表第8批数据，共1000条记录
+2026-02-12 11:44:15,226 - INFO - 已插入py_happiness_survey表第9批数据，共1000条记录
+2026-02-12 11:44:15,280 - INFO - 已插入py_happiness_survey表第10批数据，共1000条记录
+2026-02-12 11:44:15,334 - INFO - 已插入py_happiness_survey表第11批数据，共968条记录
+2026-02-12 11:44:15,334 - INFO - 成功插入py_happiness_survey表总计10968条记录
+2026-02-12 11:44:15,348 - INFO - 简化版数据导入完成
+2026-02-12 11:44:15,349 - INFO - 开始导入完整版数据...
+2026-02-12 11:44:15,360 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 11:44:15,360 - INFO - 读取完整版训练数据...
+2026-02-12 11:44:15,392 - ERROR - 导入完整版数据失败: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:44:15,392 - WARNING - 完整版数据导入失败，跳过: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:44:15,392 - INFO - 开始创建额外的索引和约束...
+2026-02-12 11:44:15,394 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 11:44:15,394 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 11:44:15,395 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 11:44:15,395 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 11:44:15,398 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 11:44:15,398 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 11:44:15,398 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 11:44:15,399 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 11:44:15,399 - INFO - 数据导入流程完成，总耗时: 1.38秒
+2026-02-12 11:58:47,152 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 11:58:47,152 - INFO - 开始导入简化版数据...
+2026-02-12 11:58:47,175 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 11:58:47,197 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 11:58:47,341 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 11:58:47,349 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 11:58:47,403 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 11:58:47,888 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 11:58:47,956 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 11:58:48,015 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 11:58:48,076 - INFO - 已插入py_happiness_survey_complete表第4批数据，共1000条记录
+2026-02-12 11:58:48,135 - INFO - 已插入py_happiness_survey_complete表第5批数据，共1000条记录
+2026-02-12 11:58:48,193 - INFO - 已插入py_happiness_survey_complete表第6批数据，共1000条记录
+2026-02-12 11:58:48,253 - INFO - 已插入py_happiness_survey_complete表第7批数据，共1000条记录
+2026-02-12 11:58:48,315 - INFO - 已插入py_happiness_survey_complete表第8批数据，共1000条记录
+2026-02-12 11:58:48,376 - INFO - 已插入py_happiness_survey_complete表第9批数据，共1000条记录
+2026-02-12 11:58:48,437 - INFO - 已插入py_happiness_survey_complete表第10批数据，共1000条记录
+2026-02-12 11:58:48,496 - INFO - 已插入py_happiness_survey_complete表第11批数据，共968条记录
+2026-02-12 11:58:48,496 - INFO - 成功插入py_happiness_survey_complete表总计10968条记录
+2026-02-12 11:58:48,510 - INFO - 简化版数据导入完成
+2026-02-12 11:58:48,511 - INFO - 开始导入完整版数据...
+2026-02-12 11:58:48,525 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 11:58:48,525 - INFO - 读取完整版训练数据...
+2026-02-12 11:58:48,556 - ERROR - 导入完整版数据失败: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:58:48,556 - WARNING - 完整版数据导入失败，跳过: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:58:48,556 - INFO - 开始创建额外的索引和约束...
+2026-02-12 11:58:48,560 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 11:58:48,560 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 11:58:48,560 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 11:58:48,561 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 11:58:48,563 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 11:58:48,563 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 11:58:48,563 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 11:58:48,564 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 11:58:48,564 - INFO - 数据导入流程完成，总耗时: 1.41秒
+2026-02-12 11:58:49,081 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 11:58:49,081 - INFO - 开始导入简化版数据...
+2026-02-12 11:58:49,100 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 11:58:49,121 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 11:58:49,264 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 11:58:49,287 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 11:58:49,417 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 11:58:49,969 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 11:58:50,033 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 11:58:50,089 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 11:58:50,146 - INFO - 已插入py_happiness_survey_complete表第4批数据，共1000条记录
+2026-02-12 11:58:50,204 - INFO - 已插入py_happiness_survey_complete表第5批数据，共1000条记录
+2026-02-12 11:58:50,265 - INFO - 已插入py_happiness_survey_complete表第6批数据，共1000条记录
+2026-02-12 11:58:50,323 - INFO - 已插入py_happiness_survey_complete表第7批数据，共1000条记录
+2026-02-12 11:58:50,381 - INFO - 已插入py_happiness_survey_complete表第8批数据，共1000条记录
+2026-02-12 11:58:50,439 - INFO - 已插入py_happiness_survey_complete表第9批数据，共1000条记录
+2026-02-12 11:58:50,497 - INFO - 已插入py_happiness_survey_complete表第10批数据，共1000条记录
+2026-02-12 11:58:50,552 - INFO - 已插入py_happiness_survey_complete表第11批数据，共968条记录
+2026-02-12 11:58:50,552 - INFO - 成功插入py_happiness_survey_complete表总计10968条记录
+2026-02-12 11:58:50,560 - INFO - 简化版数据导入完成
+2026-02-12 11:58:50,561 - INFO - 开始导入完整版数据...
+2026-02-12 11:58:50,570 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 11:58:50,570 - INFO - 读取完整版训练数据...
+2026-02-12 11:58:50,595 - ERROR - 导入完整版数据失败: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:58:50,595 - WARNING - 完整版数据导入失败，跳过: 'utf-8' codec can't decode byte 0xce in position 0: invalid continuation byte
+2026-02-12 11:58:50,595 - INFO - 开始创建额外的索引和约束...
+2026-02-12 11:58:50,598 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 11:58:50,599 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 11:58:50,599 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 11:58:50,599 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 11:58:50,601 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 11:58:50,601 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 11:58:50,602 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 11:58:50,602 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 11:58:50,602 - INFO - 数据导入流程完成，总耗时: 1.52秒
+2026-02-12 11:59:59,035 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 11:59:59,035 - INFO - 开始导入简化版数据...
+2026-02-12 11:59:59,053 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 11:59:59,074 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 11:59:59,220 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 11:59:59,228 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 11:59:59,281 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 11:59:59,761 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 11:59:59,826 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 11:59:59,890 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 12:00:00,363 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:00:00,363 - INFO - 开始导入简化版数据...
+2026-02-12 12:00:00,384 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:00:00,403 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:00:00,543 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:00:00,550 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:00:00,602 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:00:01,075 - ERROR - 插入py_happiness_survey_complete表失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:00:01,075 - ERROR - 导入简化版数据失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:00:01,075 - ERROR - 数据导入流程失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:34:13,502 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:34:13,502 - INFO - 开始导入简化版数据...
+2026-02-12 12:34:13,527 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:34:13,545 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:34:13,686 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:34:13,694 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:34:13,747 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:34:14,193 - ERROR - 插入py_happiness_survey_complete表失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:34:14,193 - ERROR - 导入简化版数据失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:34:14,193 - ERROR - 数据导入流程失败: (1062, "Duplicate entry '1' for key 'py_happiness_survey_complete.PRIMARY'")
+2026-02-12 12:36:42,426 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:36:42,427 - INFO - 开始导入简化版数据...
+2026-02-12 12:36:42,447 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:36:42,469 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:36:42,610 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:36:42,618 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:36:42,670 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:36:43,160 - INFO - 已插入py_happiness_survey表第1批数据，共1000条记录
+2026-02-12 12:36:43,224 - INFO - 已插入py_happiness_survey表第2批数据，共1000条记录
+2026-02-12 12:36:43,281 - INFO - 已插入py_happiness_survey表第3批数据，共1000条记录
+2026-02-12 12:36:43,337 - INFO - 已插入py_happiness_survey表第4批数据，共1000条记录
+2026-02-12 12:36:43,393 - INFO - 已插入py_happiness_survey表第5批数据，共1000条记录
+2026-02-12 12:36:43,449 - INFO - 已插入py_happiness_survey表第6批数据，共1000条记录
+2026-02-12 12:36:43,502 - INFO - 已插入py_happiness_survey表第7批数据，共1000条记录
+2026-02-12 12:36:43,556 - INFO - 已插入py_happiness_survey表第8批数据，共1000条记录
+2026-02-12 12:36:43,610 - INFO - 已插入py_happiness_survey表第9批数据，共1000条记录
+2026-02-12 12:36:43,663 - INFO - 已插入py_happiness_survey表第10批数据，共1000条记录
+2026-02-12 12:36:43,714 - INFO - 已插入py_happiness_survey表第11批数据，共968条记录
+2026-02-12 12:36:43,714 - INFO - 成功插入py_happiness_survey表总计10968条记录
+2026-02-12 12:36:43,722 - INFO - 简化版数据导入完成
+2026-02-12 12:36:43,723 - INFO - 开始导入完整版数据...
+2026-02-12 12:36:43,735 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 12:36:43,844 - INFO - 成功使用 gbk 编码读取完整版train集
+2026-02-12 12:36:43,844 - INFO - 开始预处理完整版train数据集，原始数据量: 8000
+2026-02-12 12:36:44,335 - INFO - 完整版train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:36:44,360 - INFO - 成功使用 gbk 编码读取完整版test集
+2026-02-12 12:36:44,360 - INFO - 开始预处理完整版test数据集，原始数据量: 2968
+2026-02-12 12:36:44,537 - INFO - 完整版test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:36:45,693 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 12:36:45,835 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 12:36:45,975 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 12:36:46,115 - INFO - 已插入py_happiness_survey_complete表第4批数据，共1000条记录
+2026-02-12 12:36:46,253 - INFO - 已插入py_happiness_survey_complete表第5批数据，共1000条记录
+2026-02-12 12:36:46,389 - INFO - 已插入py_happiness_survey_complete表第6批数据，共1000条记录
+2026-02-12 12:36:46,527 - INFO - 已插入py_happiness_survey_complete表第7批数据，共1000条记录
+2026-02-12 12:36:46,669 - INFO - 已插入py_happiness_survey_complete表第8批数据，共1000条记录
+2026-02-12 12:36:46,805 - INFO - 已插入py_happiness_survey_complete表第9批数据，共1000条记录
+2026-02-12 12:36:46,941 - INFO - 已插入py_happiness_survey_complete表第10批数据，共1000条记录
+2026-02-12 12:36:47,075 - INFO - 已插入py_happiness_survey_complete表第11批数据，共968条记录
+2026-02-12 12:36:47,075 - INFO - 成功插入py_happiness_survey_complete表总计10968条记录
+2026-02-12 12:36:47,120 - INFO - 完整版数据导入完成，总计条数: 10968
+2026-02-12 12:36:47,125 - INFO - 开始创建额外的索引和约束...
+2026-02-12 12:36:47,126 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 12:36:47,127 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 12:36:47,127 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 12:36:47,127 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 12:36:47,128 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 12:36:47,128 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 12:36:47,128 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 12:36:47,129 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 12:36:47,129 - INFO - 数据导入流程完成，总耗时: 4.70秒
+2026-02-12 12:37:43,564 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:37:43,564 - INFO - 开始导入简化版数据...
+2026-02-12 12:37:43,594 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:37:43,616 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:37:43,766 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:37:43,775 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:37:43,830 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:37:44,392 - INFO - 已插入py_happiness_survey表第1批数据，共1000条记录
+2026-02-12 12:37:44,455 - INFO - 已插入py_happiness_survey表第2批数据，共1000条记录
+2026-02-12 12:37:44,514 - INFO - 已插入py_happiness_survey表第3批数据，共1000条记录
+2026-02-12 12:37:44,574 - INFO - 已插入py_happiness_survey表第4批数据，共1000条记录
+2026-02-12 12:37:44,634 - INFO - 已插入py_happiness_survey表第5批数据，共1000条记录
+2026-02-12 12:37:44,691 - INFO - 已插入py_happiness_survey表第6批数据，共1000条记录
+2026-02-12 12:37:44,747 - INFO - 已插入py_happiness_survey表第7批数据，共1000条记录
+2026-02-12 12:37:44,803 - INFO - 已插入py_happiness_survey表第8批数据，共1000条记录
+2026-02-12 12:37:44,859 - INFO - 已插入py_happiness_survey表第9批数据，共1000条记录
+2026-02-12 12:37:44,913 - INFO - 已插入py_happiness_survey表第10批数据，共1000条记录
+2026-02-12 12:37:44,968 - INFO - 已插入py_happiness_survey表第11批数据，共968条记录
+2026-02-12 12:37:44,968 - INFO - 成功插入py_happiness_survey表总计10968条记录
+2026-02-12 12:37:44,979 - INFO - 简化版数据导入完成
+2026-02-12 12:37:44,980 - INFO - 开始导入完整版数据...
+2026-02-12 12:37:44,994 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 12:37:45,074 - INFO - 成功使用 gbk 编码读取完整版train集
+2026-02-12 12:37:45,074 - INFO - 开始预处理完整版train数据集，原始数据量: 8000
+2026-02-12 12:37:45,573 - INFO - 完整版train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:37:45,604 - INFO - 成功使用 gbk 编码读取完整版test集
+2026-02-12 12:37:45,604 - INFO - 开始预处理完整版test数据集，原始数据量: 2968
+2026-02-12 12:37:45,790 - INFO - 完整版test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:37:46,982 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 12:37:47,124 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 12:37:47,267 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 12:37:47,405 - INFO - 已插入py_happiness_survey_complete表第4批数据，共1000条记录
+2026-02-12 12:37:47,542 - INFO - 已插入py_happiness_survey_complete表第5批数据，共1000条记录
+2026-02-12 12:37:47,680 - INFO - 已插入py_happiness_survey_complete表第6批数据，共1000条记录
+2026-02-12 12:37:47,820 - INFO - 已插入py_happiness_survey_complete表第7批数据，共1000条记录
+2026-02-12 12:37:47,957 - INFO - 已插入py_happiness_survey_complete表第8批数据，共1000条记录
+2026-02-12 12:37:48,099 - INFO - 已插入py_happiness_survey_complete表第9批数据，共1000条记录
+2026-02-12 12:37:48,233 - INFO - 已插入py_happiness_survey_complete表第10批数据，共1000条记录
+2026-02-12 12:37:48,367 - INFO - 已插入py_happiness_survey_complete表第11批数据，共968条记录
+2026-02-12 12:37:48,367 - INFO - 成功插入py_happiness_survey_complete表总计10968条记录
+2026-02-12 12:37:48,411 - INFO - 完整版数据导入完成，总计条数: 10968
+2026-02-12 12:37:48,416 - INFO - 开始创建额外的索引和约束...
+2026-02-12 12:37:48,418 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 12:37:48,418 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 12:37:48,419 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 12:37:48,419 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 12:37:48,420 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 12:37:48,420 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 12:37:48,420 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 12:37:48,421 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 12:37:48,421 - INFO - 数据导入流程完成，总耗时: 4.86秒
+2026-02-12 12:37:54,279 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:37:54,279 - INFO - 开始导入简化版数据...
+2026-02-12 12:37:54,309 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:37:54,329 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:37:54,498 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:37:54,511 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:37:54,578 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:37:55,064 - INFO - 已插入py_happiness_survey表第1批数据，共1000条记录
+2026-02-12 12:37:55,160 - INFO - 已插入py_happiness_survey表第2批数据，共1000条记录
+2026-02-12 12:37:55,220 - INFO - 已插入py_happiness_survey表第3批数据，共1000条记录
+2026-02-12 12:37:55,277 - INFO - 已插入py_happiness_survey表第4批数据，共1000条记录
+2026-02-12 12:37:55,333 - INFO - 已插入py_happiness_survey表第5批数据，共1000条记录
+2026-02-12 12:37:55,419 - INFO - 已插入py_happiness_survey表第6批数据，共1000条记录
+2026-02-12 12:37:55,489 - INFO - 已插入py_happiness_survey表第7批数据，共1000条记录
+2026-02-12 12:37:55,553 - INFO - 已插入py_happiness_survey表第8批数据，共1000条记录
+2026-02-12 12:37:55,609 - INFO - 已插入py_happiness_survey表第9批数据，共1000条记录
+2026-02-12 12:37:55,664 - INFO - 已插入py_happiness_survey表第10批数据，共1000条记录
+2026-02-12 12:37:55,719 - INFO - 已插入py_happiness_survey表第11批数据，共968条记录
+2026-02-12 12:37:55,719 - INFO - 成功插入py_happiness_survey表总计10968条记录
+2026-02-12 12:37:55,730 - INFO - 简化版数据导入完成
+2026-02-12 12:37:55,731 - INFO - 开始导入完整版数据...
+2026-02-12 12:37:55,743 - INFO - 已清空 py_happiness_survey_complete 表
+2026-02-12 12:37:55,832 - INFO - 成功使用 gbk 编码读取完整版train集
+2026-02-12 12:37:55,832 - INFO - 开始预处理完整版train数据集，原始数据量: 8000
+2026-02-12 12:37:56,375 - INFO - 完整版train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:37:56,404 - INFO - 成功使用 gbk 编码读取完整版test集
+2026-02-12 12:37:56,404 - INFO - 开始预处理完整版test数据集，原始数据量: 2968
+2026-02-12 12:37:56,647 - INFO - 完整版test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:37:57,947 - INFO - 已插入py_happiness_survey_complete表第1批数据，共1000条记录
+2026-02-12 12:37:58,088 - INFO - 已插入py_happiness_survey_complete表第2批数据，共1000条记录
+2026-02-12 12:37:58,224 - INFO - 已插入py_happiness_survey_complete表第3批数据，共1000条记录
+2026-02-12 12:37:58,358 - INFO - 已插入py_happiness_survey_complete表第4批数据，共1000条记录
+2026-02-12 12:37:58,496 - INFO - 已插入py_happiness_survey_complete表第5批数据，共1000条记录
+2026-02-12 12:37:58,635 - INFO - 已插入py_happiness_survey_complete表第6批数据，共1000条记录
+2026-02-12 12:37:58,775 - INFO - 已插入py_happiness_survey_complete表第7批数据，共1000条记录
+2026-02-12 12:37:58,911 - INFO - 已插入py_happiness_survey_complete表第8批数据，共1000条记录
+2026-02-12 12:37:59,055 - INFO - 已插入py_happiness_survey_complete表第9批数据，共1000条记录
+2026-02-12 12:37:59,191 - INFO - 已插入py_happiness_survey_complete表第10批数据，共1000条记录
+2026-02-12 12:37:59,322 - INFO - 已插入py_happiness_survey_complete表第11批数据，共968条记录
+2026-02-12 12:37:59,323 - INFO - 成功插入py_happiness_survey_complete表总计10968条记录
+2026-02-12 12:37:59,365 - INFO - 完整版数据导入完成，总计条数: 10968
+2026-02-12 12:37:59,369 - INFO - 开始创建额外的索引和约束...
+2026-02-12 12:37:59,371 - INFO - 索引 idx_happiness_gender 已存在，跳过
+2026-02-12 12:37:59,372 - INFO - 索引 idx_province_city 已存在，跳过
+2026-02-12 12:37:59,372 - INFO - 索引 idx_edu_income 已存在，跳过
+2026-02-12 12:37:59,372 - INFO - 索引 idx_marital_status 已存在，跳过
+2026-02-12 12:37:59,373 - INFO - 索引 idx_complete_happiness_gender 已存在，跳过
+2026-02-12 12:37:59,373 - INFO - 索引 idx_complete_province_city 已存在，跳过
+2026-02-12 12:37:59,373 - INFO - 索引 idx_complete_edu_income 已存在，跳过
+2026-02-12 12:37:59,374 - INFO - 索引 idx_complete_marital 已存在，跳过
+2026-02-12 12:37:59,374 - INFO - 数据导入流程完成，总耗时: 5.09秒
+2026-02-12 12:44:05,462 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:44:05,462 - INFO - 开始导入简化版数据...
+2026-02-12 12:44:05,491 - INFO - 已清空 py_happiness_survey 表
+2026-02-12 12:44:05,514 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:44:05,520 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:44:05,530 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:44:05,538 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:44:05,602 - ERROR - 插入py_happiness_survey表失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:44:05,602 - ERROR - 导入简化版数据失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:44:05,602 - ERROR - 数据导入流程失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:52:15,448 - INFO - 开始幸福感数据集导入流程...
+2026-02-12 12:52:15,448 - INFO - 开始导入简化版数据...
+2026-02-12 12:52:15,491 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:52:15,496 - INFO - train数据集预处理完成，清洗后数据量: 8000
+2026-02-12 12:52:15,504 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:52:15,507 - INFO - test数据集预处理完成，清洗后数据量: 2968
+2026-02-12 12:52:15,570 - ERROR - 插入py_happiness_survey表失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:52:15,570 - ERROR - 导入简化版数据失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:52:15,570 - ERROR - 导入失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:53:47,127 - INFO - 开始导入简化版数据...
+2026-02-12 12:53:47,193 - ERROR - 导入失败: 0
+2026-02-12 12:53:51,189 - INFO - 开始导入简化版数据...
+2026-02-12 12:53:51,241 - ERROR - 导入失败: 0
+2026-02-12 12:53:59,788 - INFO - 开始导入简化版数据...
+2026-02-12 12:53:59,847 - ERROR - 导入失败: 0
+2026-02-12 12:54:34,553 - INFO - 开始导入简化版数据...
+2026-02-12 12:54:34,627 - ERROR - 导入最终失败: 0
+2026-02-12 12:55:10,395 - INFO - 正在启动简化版导入...
+2026-02-12 12:55:10,546 - INFO - 正在启动完整版导入...
+2026-02-12 12:55:10,905 - INFO - 🎉 数据导入流程圆满完成！
+2026-02-12 12:55:18,487 - INFO - 正在启动简化版导入...
+2026-02-12 12:55:18,622 - INFO - 正在启动完整版导入...
+2026-02-12 12:55:18,917 - INFO - 🎉 数据导入流程圆满完成！
+2026-02-12 12:57:17,634 - INFO - 数据导入开始...
+2026-02-12 12:57:17,634 - INFO - 开始导入简化版数据...
+2026-02-12 12:57:17,692 - INFO - 开始预处理train数据集，原始数据量: 8000
+2026-02-12 12:57:17,698 - INFO - train数据集预处理完成
+2026-02-12 12:57:17,706 - INFO - 开始预处理test数据集，原始数据量: 2968
+2026-02-12 12:57:17,709 - INFO - test数据集预处理完成
+2026-02-12 12:57:17,779 - ERROR - 插入py_happiness_survey失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:57:17,780 - ERROR - 简化版导入失败: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:57:17,780 - ERROR - 流程中断: (1054, "Unknown column 'religion_freq' in 'field list'")
+2026-02-12 12:58:18,711 - INFO - 开始导入简化版数据...
+2026-02-12 12:58:18,761 - ERROR - 导入流程中断: 0
+2026-02-12 12:58:47,466 - INFO - 开始导入简化版数据...
+2026-02-12 12:58:47,994 - INFO - 成功向 py_happiness_survey 插入 10968 条数据
+2026-02-12 12:58:47,995 - INFO - 开始导入完整版数据...
+2026-02-12 12:58:48,094 - INFO - 读取完整版train成功 (编码: gbk)
+2026-02-12 12:58:48,178 - INFO - 读取完整版test成功 (编码: gbk)
+2026-02-12 12:58:49,580 - INFO - 成功向 py_happiness_survey_complete 插入 10968 条数据
+2026-02-12 12:58:49,596 - INFO - 完整版总计导入: 10968 条
+2026-02-12 12:58:49,599 - INFO - 🎉 导入全部圆满完成，耗时: 2.13s
+2026-02-12 20:09:13,255 - INFO - 开始导入简化版数据...
+2026-02-12 20:09:13,846 - INFO - 成功向 py_happiness_survey 插入 10968 条数据
+2026-02-12 20:09:13,848 - INFO - 开始导入完整版数据...
+2026-02-12 20:09:13,964 - INFO - 读取完整版train成功 (编码: gbk)
+2026-02-12 20:09:14,014 - INFO - 读取完整版test成功 (编码: gbk)
+2026-02-12 20:09:15,453 - INFO - 成功向 py_happiness_survey_complete 插入 10968 条数据
+2026-02-12 20:09:15,469 - INFO - 完整版总计导入: 10968 条
+2026-02-12 20:09:15,473 - INFO - 🎉 导入全部圆满完成，耗时: 2.22s
+2026-02-12 20:10:40,255 - INFO - 开始导入简化版数据...
+2026-02-12 20:10:40,891 - INFO - 成功向 py_happiness_survey 插入 10968 条数据
+2026-02-12 20:10:40,894 - INFO - 开始导入完整版数据...
+2026-02-12 20:10:40,995 - INFO - 读取完整版train成功 (编码: gbk)
+2026-02-12 20:10:41,037 - INFO - 读取完整版test成功 (编码: gbk)
+2026-02-12 20:10:42,421 - INFO - 成功向 py_happiness_survey_complete 插入 10968 条数据
+2026-02-12 20:10:42,438 - INFO - 完整版总计导入: 10968 条
+2026-02-12 20:10:42,441 - INFO - 🎉 导入流程全部圆满完成，耗时: 2.19s
+2026-02-12 20:17:04,513 - ERROR - 导入流程中断: nan can not be used with MySQL
+2026-02-12 20:18:02,347 - INFO - 成功向 py_happiness_survey 插入数据共 10968 条
+2026-02-12 20:18:04,023 - INFO - 成功向 py_happiness_survey_complete 插入数据共 10968 条
+2026-02-12 20:18:04,039 - INFO - 🎉 导入流程圆满完成，NaN 报错已彻底解决！
+2026-02-12 20:20:15,720 - INFO - ========================================
+2026-02-12 20:20:15,720 - INFO - 待插入表 py_happiness_survey 的详细分布:
+2026-02-12 20:20:15,720 - INFO -  - 数据源 [train]: 8000 条
+2026-02-12 20:20:15,720 - INFO -  - 数据源 [test]: 2968 条
+2026-02-12 20:20:15,720 - INFO - ========================================
+2026-02-12 20:20:16,361 - INFO - 插入完成：py_happiness_survey 共写入 10968 条记录
+2026-02-12 20:20:16,488 - INFO - ========================================
+2026-02-12 20:20:16,488 - INFO - 待插入表 py_happiness_survey_complete 的详细分布:
+2026-02-12 20:20:16,488 - INFO -  - 数据源 [train]: 8000 条
+2026-02-12 20:20:16,488 - INFO -  - 数据源 [test]: 2968 条
+2026-02-12 20:20:16,488 - INFO - ========================================
+2026-02-12 20:20:18,059 - INFO - 插入完成：py_happiness_survey_complete 共写入 10968 条记录
+2026-02-12 20:20:18,077 - INFO - 🎉 数据导入流程圆满完成！
+2026-02-12 20:37:11,367 - INFO - 正在处理 简化版 数据...
+2026-02-12 20:37:11,417 - INFO - 成功读取文件: happiness_train_abbr.csv
+2026-02-12 20:37:11,431 - INFO - 成功读取文件: happiness_test_abbr.csv
+2026-02-12 20:37:11,433 - INFO - =============================================
+2026-02-12 20:37:11,433 - INFO - 📊 准备入库统计 [py_happiness_survey]:
+2026-02-12 20:37:11,433 - INFO -    -> 标签 'train': 8000 条
+2026-02-12 20:37:11,433 - INFO -    -> 标签 'test': 2968 条
+2026-02-12 20:37:11,433 - INFO - =============================================
+2026-02-12 20:37:12,091 - INFO - ✅ 成功写入 py_happiness_survey，共 10968 条记录
+2026-02-12 20:37:12,094 - INFO - 正在处理 完整版 数据...
+2026-02-12 20:37:12,173 - INFO - 成功读取文件: happiness_train_complete.csv
+2026-02-12 20:37:12,205 - INFO - 成功读取文件: happiness_test_complete.csv
+2026-02-12 20:37:12,208 - INFO - =============================================
+2026-02-12 20:37:12,208 - INFO - 📊 准备入库统计 [py_happiness_survey_complete]:
+2026-02-12 20:37:12,208 - INFO -    -> 标签 'train': 8000 条
+2026-02-12 20:37:12,208 - INFO -    -> 标签 'test': 2968 条
+2026-02-12 20:37:12,208 - INFO - =============================================
+2026-02-12 20:37:13,771 - INFO - ✅ 成功写入 py_happiness_survey_complete，共 10968 条记录
+2026-02-12 20:37:13,788 - INFO - 🎉 恭喜！所有数据已根本性修复并入库。
+2026-02-12 20:44:06,421 - INFO - 读取成功: happiness_train_abbr.csv
+2026-02-12 20:44:06,435 - INFO - 读取成功: happiness_test_abbr.csv
+2026-02-12 20:44:06,438 - INFO - ==================================================
+2026-02-12 20:44:06,438 - INFO - 📊 准备写入数据库表: py_happiness_survey
+2026-02-12 20:44:06,438 - INFO -    >>> 发现数据源 [train]: 8000 条
+2026-02-12 20:44:06,438 - INFO -    >>> 发现数据源 [test]: 2968 条
+2026-02-12 20:44:06,438 - INFO - ==================================================
+2026-02-12 20:44:07,101 - INFO - ✅ py_happiness_survey 入库成功
+2026-02-12 20:44:07,211 - INFO - 读取成功: happiness_train_complete.csv
+2026-02-12 20:44:07,252 - INFO - 读取成功: happiness_test_complete.csv
+2026-02-12 20:44:07,256 - INFO - ==================================================
+2026-02-12 20:44:07,256 - INFO - 📊 准备写入数据库表: py_happiness_survey_complete
+2026-02-12 20:44:07,256 - INFO -    >>> 发现数据源 [train]: 8000 条
+2026-02-12 20:44:07,256 - INFO -    >>> 发现数据源 [test]: 2968 条
+2026-02-12 20:44:07,256 - INFO - ==================================================
+2026-02-12 20:44:08,928 - INFO - ✅ py_happiness_survey_complete 入库成功
+2026-02-12 20:44:08,941 - INFO - 🎉 数据导入流程全部圆满完成！
+2026-02-12 20:48:21,897 - INFO - 读取成功: happiness_train_abbr.csv
+2026-02-12 20:48:21,917 - INFO - 读取成功: happiness_test_abbr.csv
+2026-02-12 20:48:21,920 - INFO - ==================================================
+2026-02-12 20:48:21,920 - INFO - 📊 准备写入数据库表: py_happiness_survey
+2026-02-12 20:48:21,920 - INFO -    >>> 发现数据源 [train]: 8000 条
+2026-02-12 20:48:21,920 - INFO -    >>> 发现数据源 [test]: 2968 条
+2026-02-12 20:48:21,920 - INFO - ==================================================
+2026-02-12 20:48:22,596 - INFO - ✅ py_happiness_survey 入库成功
+2026-02-12 20:48:22,684 - INFO - 读取成功: happiness_train_complete.csv
+2026-02-12 20:48:22,721 - INFO - 读取成功: happiness_test_complete.csv
+2026-02-12 20:48:22,724 - INFO - ==================================================
+2026-02-12 20:48:22,724 - INFO - 📊 准备写入数据库表: py_happiness_survey_complete
+2026-02-12 20:48:22,724 - INFO -    >>> 发现数据源 [train]: 8000 条
+2026-02-12 20:48:22,724 - INFO -    >>> 发现数据源 [test]: 2968 条
+2026-02-12 20:48:22,724 - INFO - ==================================================
+2026-02-12 20:48:24,287 - INFO - ✅ py_happiness_survey_complete 入库成功
+2026-02-12 20:48:24,305 - INFO - 🎉 数据导入流程全部圆满完成！

@@ -7,34 +7,63 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="/static/css/admin.css">
     <style>
-        .prediction-container { padding: 20px; background: #f4f7f9; min-height: 100vh; }
+        .prediction-container { padding: 25px; background: #f0f2f5; min-height: 100vh; font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif; }
+        .full-width-content { width: 100%; max-width: 1100px; margin: 0 auto; }
 
-        /* --- 赛博能量环样式 (收缩版) --- */
-        .cool-result-card {
-            background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            position: relative; overflow: hidden; border: 1px solid #ebeef5;
-            background-image: radial-gradient(rgba(24, 144, 255, 0.05) 1px, transparent 1px), linear-gradient(rgba(24, 144, 255, 0.02) 1px, transparent 1px);
-            background-size: 20px 20px;
+        /* 卡片风格 */
+        .group-card {
+            margin-bottom: 20px; border-radius: 12px; border: none;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.05); transition: all 0.3s;
         }
-        .energy-ring-wrapper { position: relative; width: 200px; height: 200px; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; }
-        .energy-ring-bg { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 2px dashed rgba(24, 144, 255, 0.2); animation: rotating 25s linear infinite; }
-        .score-number { font-size: 58px; font-weight: 900; background: linear-gradient(135deg, #1890ff 0%, #36cfc9 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 8px 15px rgba(24, 144, 255, 0.15); line-height: 1; z-index: 10; }
-        .score-desc-tag { position: absolute; bottom: -5px; width: 70%; left: 15%; text-align: center; font-size: 10px; color: #1890ff; letter-spacing: 2px; font-weight: bold; background: rgba(24, 144, 255, 0.08); padding: 2px 0; border-radius: 4px; }
-        @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .group-card:hover { box-shadow: 0 4px 16px 0 rgba(0,0,0,0.08); }
+        .group-title { font-size: 16px; font-weight: 700; color: #303133; border-left: 5px solid #409EFF; padding-left: 12px; }
 
-        /* --- 算法对照与解读区 (收缩间距) --- */
-        .mini-card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
-        .mini-card { background: #f8f9fb; padding: 12px; border-radius: 12px; border: 1px solid #edf0f5; text-align: center; }
-        .mini-score { font-size: 18px; font-weight: bold; color: #303133; }
-        .analysis-hint-box { margin-top: 20px; padding: 15px; background: linear-gradient(135deg, rgba(24, 144, 255, 0.03) 0%, rgba(54, 207, 201, 0.06) 100%); border-radius: 12px; border: 1px solid rgba(24, 144, 255, 0.1); font-size: 13px; color: #5c6b77; line-height: 1.5; }
+        /* 结果展示区 */
+        .result-section-card {
+            background: #ffffff; border-radius: 16px; padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            margin-top: 30px; border: 1px solid #ebeef5;
+            position: relative; overflow: hidden;
+        }
+        /* 顶部装饰条 */
+        .result-section-card::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+        }
 
-        /* --- 阶层备注：醒目大字号 --- */
-        .class-hint { font-size: 14px; color: #606266; margin-top: 12px; padding: 12px; background: #fdf6ec; border-left: 5px solid #e6a23c; border-radius: 4px; font-weight: 500; }
+        /* 仪表盘容器 */
+        .gauge-container {
+            position: relative; width: 180px; height: 180px; margin: 0 auto;
+            display: flex; justify-content: center; align-items: center;
+        }
+        #scoreGauge { width: 100%; height: 100%; position: absolute; z-index: 10; }
+        /* 呼吸光环 */
+        .energy-halo {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.3) inset;
+            animation: breathe 3s ease-in-out infinite; z-index: 1;
+        }
+        .score-val { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: 900; color: #1890ff; z-index: 20; text-shadow: 0 2px 10px rgba(24,144,255,0.2); }
+        @keyframes breathe { 0%, 100% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.05); } }
 
-        /* --- 底部图表区域 --- */
-        .chart-card { margin-top: 20px; }
-        #importanceChart { width: 100%; height: 350px; }
-        .el-card { border-radius: 16px; margin-bottom: 20px; }
+        /* 算法数据块 */
+        .algo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .algo-cell { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .algo-name { font-size: 12px; color: #909399; margin-bottom: 4px; }
+        .algo-num { font-size: 18px; font-weight: bold; font-family: Monaco, monospace; }
+
+        /* AI 解读 */
+        .ai-note {
+            margin-top: 20px; padding: 12px 16px; background: #eef7fe; border-radius: 8px;
+            font-size: 13px; color: #506175; line-height: 1.6; border: 1px solid #cce5ff;
+        }
+
+        /* 炫酷图表容器 */
+        .chart-container {
+            margin-top: 30px; padding-top: 25px; border-top: 1px dashed #e0e0e0;
+            width: 100%; height: 500px;
+        }
+        .chart-title { text-align: center; font-size: 18px; font-weight: 800; color: #303133; margin-bottom: 20px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -42,103 +71,108 @@
         <admin-layout :active-menu="'happiness_prediction'">
             <template slot="content">
                 <div class="prediction-container">
-                    <el-row :gutter="25">
-                        <el-col :xs="24" :lg="13">
-                            <el-card shadow="never">
-                                <div slot="header" style="font-weight: bold;"><i class="el-icon-edit"></i> 详细参数录入</div>
-                                <el-form :model="predictionForm" label-width="120px" size="small">
-                                    <el-form-item label="用户姓名"><el-input v-model="predictionForm.username"></el-input></el-form-item>
-                                    <el-form-item label="性别">
-                                        <el-radio-group v-model="predictionForm.gender">
-                                            <el-radio :label="1">男</el-radio><el-radio :label="2">女</el-radio>
-                                        </el-radio-group>
-                                    </el-form-item>
-                                    <el-form-item label="出生年份"><el-input-number v-model="predictionForm.birth" style="width:100%"></el-input-number></el-form-item>
-                                    <el-form-item label="最高学历">
-                                        <el-select v-model="predictionForm.edu" style="width:100%">
-                                            <el-option label="初中及以下" :value="3"></el-option><el-option label="高中/中专" :value="4"></el-option>
-                                            <el-option label="大专" :value="5"></el-option><el-option label="本科" :value="6"></el-option>
-                                            <el-option label="研究生及以上" :value="8"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="婚姻状况">
-                                        <el-select v-model="predictionForm.marital" style="width:100%">
-                                            <el-option label="未婚" :value="1"></el-option><el-option label="已婚有配偶" :value="3"></el-option><el-option label="离异/丧偶" :value="5"></el-option>
-                                        </el-select>
-                                    </el-form-item>
+                    <div class="full-width-content">
 
-                                    <el-divider content-position="left"><span style="color:#1890ff">经济与生活状况</span></el-divider>
-                                    <el-form-item label="个人年收入"><el-input v-model="predictionForm.income" placeholder="元"></el-input></el-form-item>
-                                    <el-form-item label="家庭年收入"><el-input v-model="predictionForm.familyIncome" placeholder="元"></el-input></el-form-item>
-                                    <el-form-item label="住房面积"><el-input v-model="predictionForm.floorArea" placeholder="㎡"></el-input></el-form-item>
-                                    <el-form-item label="拥有汽车">
-                                        <el-radio-group v-model="predictionForm.car">
-                                            <el-radio :label="1">有</el-radio><el-radio :label="2">无</el-radio>
-                                        </el-radio-group>
-                                    </el-form-item>
-
-                                    <el-divider content-position="left"><span style="color:#1890ff">主观感知因子</span></el-divider>
-                                    <el-form-item label="健康状况">
-                                        <el-select v-model="predictionForm.health" style="width:100%">
-                                            <el-option label="非常健康" :value="5"></el-option><el-option label="比较健康" :value="4"></el-option>
-                                            <el-option label="一般" :value="3"></el-option><el-option label="不健康" :value="1"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="心理忧郁感">
-                                        <el-select v-model="predictionForm.depression" style="width:100%">
-                                            <el-option label="从不" :value="5"></el-option><el-option label="很少" :value="4"></el-option>
-                                            <el-option label="有时" :value="3"></el-option><el-option label="总是" :value="1"></el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="社会阶层">
-                                        <el-slider v-model="predictionForm.class" :min="1" :max="10" show-input></el-slider>
-                                        <div class="class-hint">
-                                            <i class="el-icon-warning-outline"></i> <strong>评分参考：</strong> 1代表社会底层，5-6代表中产阶层，10代表社会顶层。
-                                        </div>
-                                    </el-form-item>
-
-                                    <el-button type="primary" @click="handlePredict" :loading="loading" style="width:100%; height:45px; font-weight:bold; margin-top:10px;">执行深度挖掘报告</el-button>
-                                </el-form>
+                        <el-form :model="predictionForm" label-position="top" size="medium">
+                            <el-card class="group-card">
+                                <div slot="header" class="group-title">人口基础画像</div>
+                                <el-row :gutter="40">
+                                    <el-col :span="12"><el-form-item label="1. 性别"><el-select v-model="predictionForm.gender" style="width:100%"><el-option label="男" :value="1"></el-option><el-option label="女" :value="2"></el-option></el-select></el-form-item></el-col>
+                                    <el-col :span="12"><el-form-item label="2. 出生年份"><el-input-number v-model="predictionForm.birth" :min="1940" :max="2026" style="width:100%"></el-input-number></el-form-item></el-col>
+                                </el-row>
+                                <el-row :gutter="40">
+                                    <el-col :span="12"><el-form-item label="3. 婚姻状况"><el-select v-model="predictionForm.marital" style="width:100%"><el-option label="未婚" :value="1"></el-option><el-option label="已婚" :value="3"></el-option><el-option label="离异/丧偶" :value="5"></el-option></el-select></el-form-item></el-col>
+                                    <el-col :span="12"><el-form-item label="4. 最高学历"><el-select v-model="predictionForm.edu" style="width:100%"><el-option label="初中及以下" :value="3"></el-option><el-option label="高中/中专" :value="4"></el-option><el-option label="本科/大专" :value="6"></el-option><el-option label="研究生及以上" :value="8"></el-option></el-select></el-form-item></el-col>
+                                </el-row>
                             </el-card>
-                        </el-col>
 
-                        <el-col :xs="24" :lg="11">
-                            <div class="cool-result-card" style="min-height: 520px;">
-                                <div v-if="predictionResult">
-                                    <div style="font-weight: bold; margin-bottom: 15px; color:#303133;"><i class="el-icon-cpu" style="color:#1890ff"></i> 智能挖掘引擎结论</div>
-                                    <div class="energy-ring-wrapper">
-                                        <div class="energy-ring-bg"></div>
-                                        <div id="scoreGauge" style="width:100%; height:100%; position:absolute;"></div>
-                                        <div class="score-number">{{predictionResult.hybrid}}</div>
-                                        <div class="score-desc-tag">COMPOSITE SCORE</div>
+                            <el-card class="group-card">
+                                <div slot="header" class="group-title">经济与资产实力</div>
+                                <el-row :gutter="40">
+                                    <el-col :span="12"><el-form-item label="5. 个人年收入 (元)"><el-input-number v-model="predictionForm.income" :min="0" :step="1000" style="width:100%"></el-input-number></el-form-item></el-col>
+                                    <el-col :span="12"><el-form-item label="6. 家庭年收入 (元)"><el-input-number v-model="predictionForm.family_income" :min="0" :step="1000" style="width:100%"></el-input-number></el-form-item></el-col>
+                                </el-row>
+                                <el-row :gutter="30">
+                                    <el-col :span="8"><el-form-item label="7. 住房面积 (平)"><el-input-number v-model="predictionForm.floor_area" :min="0" style="width:100%"></el-input-number></el-form-item></el-col>
+                                    <el-col :span="8"><el-form-item label="8. 私家车数量"><el-input-number v-model="predictionForm.car" :min="0" style="width:100%"></el-input-number></el-form-item></el-col>
+                                    <el-col :span="8"><el-form-item label="9. 住房产权"><el-select v-model="predictionForm.house" style="width:100%"><el-option label="自有产权" :value="1"></el-option><el-option label="租赁/其他" :value="0"></el-option></el-select></el-form-item></el-col>
+                                </el-row>
+                            </el-card>
+
+                            <el-card class="group-card">
+                                <div slot="header" class="group-title">身心健康自评</div>
+                                <el-row :gutter="40">
+                                    <el-col :span="8"><el-form-item label="10. 生理健康"><el-rate v-model="predictionForm.health" show-text :texts="['极差','差','一般','好','极好']"></el-rate></el-form-item></el-col>
+                                    <el-col :span="8"><el-form-item label="11. 抑郁频率"><el-rate v-model="predictionForm.depression" show-text :texts="['总是','多','有时','少','从不']"></el-rate></el-form-item></el-col>
+                                    <el-col :span="8"><el-form-item label="12. 休闲放松"><el-rate v-model="predictionForm.relax"></el-rate></el-form-item></el-col>
+                                </el-row>
+                            </el-card>
+
+                            <el-card class="group-card">
+                                <div slot="header" class="group-title">社会阶层感知</div>
+                                <el-row :gutter="40">
+                                    <el-col :span="12"><el-form-item label="13. 社会公平感"><el-select v-model="predictionForm.equity" style="width:100%"><el-option label="极不公平" :value="1"></el-option><el-option label="一般" :value="3"></el-option><el-option label="非常公平" :value="5"></el-option></el-select></el-form-item></el-col>
+                                    <el-col :span="12"><el-form-item label="14. 主观社会阶层"><el-slider v-model="predictionForm.class" :min="1" :max="10" show-input></el-slider></el-form-item></el-col>
+                                </el-row>
+                                <el-form-item label="15. 同龄人地位感知"><el-rate v-model="predictionForm.status_peer" :max="5"></el-rate></el-form-item>
+                            </el-card>
+
+                            <el-button type="primary" @click="handlePredict" :loading="loading" style="width:100%; height:55px; font-size:18px; font-weight:bold; margin-bottom:20px; border-radius:30px; box-shadow: 0 8px 20px rgba(64, 158, 255, 0.3);">启动幸福感预测</el-button>
+                        </el-form>
+
+                        <div v-if="predictionResult" id="result-section" class="result-section-card">
+                            <h3 style="margin:0 0 25px 0; font-size:20px; color:#303133; text-align:center;">
+                                <i class="el-icon-odometer" style="color:#1890ff; margin-right:8px;"></i> 智能挖掘结论反馈
+                            </h3>
+
+                            <el-row :gutter="40" type="flex" align="middle">
+                                <el-col :span="8" style="text-align: center;">
+                                    <div class="gauge-container">
+                                        <div class="energy-halo"></div>
+                                        <div id="scoreGauge"></div>
+                                        <div class="score-val">{{predictionResult.hybrid.toFixed(2)}}</div>
                                     </div>
-                                    <div class="mini-card-grid">
-                                        <div class="mini-card" style="border-bottom: 3px solid #1890ff;"><div class="mini-label">线性回归预测</div><div class="mini-score">{{predictionResult.lr}}</div></div>
-                                        <div class="mini-card" style="border-bottom: 3px solid #67C23A;"><div class="mini-label">随机森林预测</div><div class="mini-score" style="color:#67C23A">{{predictionResult.rf}}</div></div>
+                                    <div style="font-weight:bold; color:#606266; margin-top:10px;">综合预测指数</div>
+                                </el-col>
+
+                                <el-col :span="16">
+                                    <div class="algo-grid">
+                                        <div class="algo-cell">
+                                            <span class="algo-name">线性回归 (LR)</span>
+                                            <span class="algo-num" style="color:#67C23A">{{predictionResult.lr.toFixed(2)}}</span>
+                                        </div>
+                                        <div class="algo-cell">
+                                            <span class="algo-name">随机森林 (RF)</span>
+                                            <span class="algo-num" style="color:#E6A23C">{{predictionResult.rf.toFixed(2)}}</span>
+                                        </div>
                                     </div>
-                                    <div class="analysis-hint-box">
-                                        <p style="margin: 0;"><i class="el-icon-s-opportunity" style="color:#fadb14"></i> <strong>挖掘结论解读：</strong></p>
-                                        <p style="margin-top: 5px;">基于当前样本的 25 维特征，模型判定其幸福感处于 {{predictionResult.hybrid > 3.5 ? '优良' : '一般'}} 状态。核心驱动力主要来源于心理韧性与阶层认同。</p>
+                                    <div class="ai-note">
+                                        <i class="el-icon-chat-dot-round" style="font-size:16px;"></i> <strong> AI 智能解读：</strong><br>
+                                        <span v-if="predictionResult.hybrid >= 3.5">
+                                            您的幸福感指数<span style="color:#67C23A;font-weight:bold;">较高</span>。模型分析显示，您在心态调节和社会感知方面表现出积极的正向反馈，建议继续保持当前的社交频率与休闲习惯。
+                                        </span>
+                                        <span v-else>
+                                            您的幸福感指数<span style="color:#E6A23C;font-weight:bold;">有待提升</span>。模型建议您优先关注下方图表中权重较高的因子（如健康、阶层认同），适当增加休闲放松频率。
+                                        </span>
                                     </div>
-                                </div>
-                                <el-empty v-else description="请输入数据并生成结论" style="height:480px"></el-empty>
+                                </el-col>
+                            </el-row>
+
+                            <div class="chart-container">
+                                <div class="chart-title">影响居民幸福感的主要因素排行top(10)</div>
+                                <div id="importanceChart" style="width:100%; height:100%;"></div>
                             </div>
-                        </el-col>
-                    </el-row>
-
-                    <el-card shadow="never" class="chart-card">
-                        <div slot="header" style="font-weight: bold;"><i class="el-icon-pie-chart" style="color:#1890ff"></i> 核心驱动因子排名 (Top 10)</div>
-                        <div id="importanceChart"></div>
-                    </el-card>
+                        </div>
+                    </div>
                 </div>
             </template>
         </admin-layout>
     </div>
 
     <script src="/static/js/vue.js"></script>
-    <script src="/static/js/axios.min.js"></script>
     <script src="/static/js/element-ui.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="/static/js/axios.min.js"></script>
+    <script src="/static/js/echarts.min.js"></script>
     <script src="/static/js/config/layout-config.js"></script>
     <script src="/static/js/components/layout.js"></script>
 
@@ -149,57 +183,114 @@
                 return {
                     loading: false,
                     predictionForm: {
-                        username: '测试样本', birth: 1995, gender: 1, edu: 6, marital: 3, income: 80000,
-                        familyIncome: 120000, floorArea: 100, car: 2, health: 5, depression: 5, equity: 5, class: 5,
-                        familyStatus: 3, statusPeer: 3, incAbility: 3, relax: 3, workStatus: 1
+                        gender: 1, birth: 1995, marital: 3, edu: 6, income: 50000,
+                        family_income: 100000, floor_area: 90, car: 0, house: 1,
+                        health: 4, depression: 4, relax: 3, equity: 3, class: 5, status_peer: 3,
+                        political: 1, hukou: 1, religion: 0, socialize: 3, learn: 2,
+                        work_status: 1, family_status: 3, inc_ability: 3, trust: 3,
+                        media_internet: 4, media_tv: 3, height_cm: 165, weight_jin: 130
                     },
-                    predictionResult: null, gaugeChart: null, importanceChart: null
+                    predictionResult: null,
+                    chartInstance: null,
+                    gaugeInstance: null
                 }
             },
-            mounted() { this.$nextTick(() => { this.initMainChart(); }); },
             methods: {
-                initMainChart() {
-                    this.importanceChart = echarts.init(document.getElementById('importanceChart'));
-                    this.loadImportanceData();
-                },
-                initGaugeChart(val) {
-                    const dom = document.getElementById('scoreGauge');
-                    if (!dom) return;
-                    this.gaugeChart = echarts.init(dom);
-                    this.gaugeChart.setOption({
-                        series: [{
-                            type: 'gauge', min: 1, max: 5, progress: { show: true, width: 10, itemStyle: { color: '#1890ff' } },
-                            axisLine: { lineStyle: { width: 10, color: [[1, '#f0f2f5']] } },
-                            axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false }, pointer: { show: false }, detail: { show: false },
-                            data: [{ value: val }]
-                        }]
-                    });
-                },
-                loadImportanceData() {
-                    axios.get('/api/prediction/model_info').then(res => {
-                        const data = res.data.data.importances.slice(0, 10).reverse();
-                        this.importanceChart.setOption({
-                            tooltip: { trigger: 'axis' },
-                            grid: { top: 20, bottom: 20, left: 100, right: 40 },
-                            xAxis: { type: 'value', splitLine: { lineStyle: { type: 'dashed' } } },
-                            yAxis: { type: 'category', data: data.map(i => i.name) },
-                            series: [{
-                                type: 'bar', data: data.map(i => i.value),
-                                itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#83bff6' }, { offset: 1, color: '#1890ff' }]), borderRadius: [0, 5, 5, 0] },
-                                label: { show: true, position: 'right', formatter: '{c}%' }
-                            }]
-                        });
-                    });
-                },
                 handlePredict() {
                     this.loading = true;
                     axios.post('/api/prediction/predict', this.predictionForm).then(res => {
                         if (res.data.code === 200) {
                             this.predictionResult = res.data.data;
-                            this.$message.success('挖掘计算完成');
-                            this.$nextTick(() => { this.initGaugeChart(this.predictionResult.hybrid); });
+                            this.$message.success('分析完成');
+                            this.$nextTick(() => {
+                                setTimeout(() => {
+                                    document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+                                    this.initGaugeChart(this.predictionResult.hybrid);
+                                    this.initImportanceChart();
+                                }, 300);
+                            });
                         }
                     }).finally(() => { this.loading = false; });
+                },
+                initGaugeChart(val) {
+                    const dom = document.getElementById('scoreGauge');
+                    if (this.gaugeInstance) this.gaugeInstance.dispose();
+                    this.gaugeInstance = echarts.init(dom);
+                    this.gaugeInstance.setOption({
+                        series: [{
+                            type: 'gauge', min: 1, max: 5, startAngle: 210, endAngle: -30,
+                            progress: { show: true, width: 12, itemStyle: { color: { type: 'linear', x: 0, y: 0, x2: 1, y2: 0, colorStops: [{ offset: 0, color: '#36cfc9' }, { offset: 1, color: '#1890ff' }] } } },
+                            axisLine: { lineStyle: { width: 12, color: [[1, '#f0f2f5']] } },
+                            axisTick: { show: false }, splitLine: { show: false }, axisLabel: { show: false },
+                            pointer: { show: false }, detail: { show: false },
+                            data: [{ value: val }]
+                        }]
+                    });
+                },
+                initImportanceChart() {
+                    const chartDom = document.getElementById('importanceChart');
+                    if (this.chartInstance) this.chartInstance.dispose();
+                    this.chartInstance = echarts.init(chartDom);
+
+                    axios.get('/api/prediction/model_info').then(res => {
+                        if (res.data.code === 200) {
+                            const rawData = res.data.data.feature_importance || res.data.data.importances || [];
+                            const top10Data = rawData.slice(0, 10).reverse();
+
+                            this.chartInstance.setOption({
+                                // 酷炫的提示框
+                                tooltip: {
+                                    trigger: 'axis', axisPointer: { type: 'none' },
+                                    backgroundColor: 'rgba(50, 50, 50, 0.9)',
+                                    borderColor: '#00f2fe', borderWidth: 1,
+                                    textStyle: { color: '#fff' },
+                                    formatter: '{b} : <span style="color:#00f2fe;font-weight:bold">{c}%</span>'
+                                },
+                                grid: { top: 20, bottom: 20, left: '22%', right: '12%', containLabel: false },
+                                xAxis: { type: 'value', show: false },
+                                yAxis: {
+                                    type: 'category',
+                                    data: top10Data.map(i => i.name || i.feature),
+                                    axisLine: { show: false }, axisTick: { show: false },
+                                    axisLabel: {
+                                        fontWeight: 'bold', fontSize: 13, color: '#506175',
+                                        formatter: function(value, index) {
+                                            // 前3名加个皇冠图标（用emoji代替）
+                                            const icons = ['🥇', '🥈', '🥉'];
+                                            const i = top10Data.length - 1 - index;
+                                            return (i < 3 ? icons[i] + ' ' : '') + value;
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    type: 'bar',
+                                    data: top10Data.map(i => i.value || i.importance),
+                                    barWidth: 18,
+                                    showBackground: true,
+                                    backgroundStyle: { color: '#f0f2f5', borderRadius: 10 },
+                                    itemStyle: {
+                                        borderRadius: 10,
+                                        // 极光渐变 + 投影光晕
+                                        color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                            { offset: 0, color: '#00c6fb' },
+                                            { offset: 1, color: '#005bea' }
+                                        ]),
+                                        shadowBlur: 10,
+                                        shadowColor: 'rgba(0, 91, 234, 0.3)'
+                                    },
+                                    label: {
+                                        show: true, position: 'right', formatter: '{c}%',
+                                        fontSize: 12, fontWeight: 'bold', color: '#005bea',
+                                        offset: [5, 0]
+                                    },
+                                    // 弹性入场动画
+                                    animationDuration: 1500,
+                                    animationEasing: 'elasticOut'
+                                }]
+                            });
+                            this.chartInstance.resize();
+                        }
+                    });
                 }
             }
         });

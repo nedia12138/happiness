@@ -197,15 +197,24 @@
                                             <div class="progress-track"><div class="progress-bar bg-orange" :style="{ width: (predictionResult.rf / 5 * 100) + '%' }"></div></div>
                                         </div>
                                     </div>
-                                    <div class="ai-note">
-                                        <i class="el-icon-chat-dot-round" style="font-size:16px;"></i> <strong> AI 智能解读：</strong><br>
-                                        <span v-if="predictionResult.hybrid >= 3.5">
-                                            您的幸福感指数<span style="color:#67C23A;font-weight:bold;">较高</span>。模型分析显示，您在心态调节和社会感知方面表现出积极的正向反馈，建议继续保持当前的社交频率与休闲习惯。
-                                        </span>
-                                        <span v-else>
-                                            您的幸福感指数<span style="color:#E6A23C;font-weight:bold;">有待提升</span>。模型建议您优先关注下方图表中权重较高的因子（如健康、阶层认同），适当增加休闲放松频率。
-                                        </span>
-                                    </div>
+                                    <div class="ai-note" :class="{'note-high': predictionResult.hybrid >= 4.0, 'note-mid': predictionResult.hybrid >= 3.5 && predictionResult.hybrid < 4.0, 'note-low': predictionResult.hybrid < 3.5}">
+    <div class="ai-title">
+        <i :class="predictionResult.hybrid >= 4.0 ? 'el-icon-medal' : (predictionResult.hybrid >= 3.5 ? 'el-icon-sunny' : 'el-icon-warning-outline')"></i>
+        智能解读报告
+    </div>
+
+    <div v-if="predictionResult.hybrid >= 4.0">
+        您的幸福感指数属于<strong>“优秀典范”</strong>档位。模型识别出您在心理状态与社会融入度上具有极高的正向协调性...
+    </div>
+
+    <div v-else-if="predictionResult.hybrid >= 3.5">
+        您的幸福感处于<strong>“稳步提升”</strong>区间。模型显示您的核心归因因子表现均衡...
+    </div>
+
+    <div v-else>
+        您的幸福感指数<strong>“有待改善”</strong>。模型深度推演建议：请优先关注下方图表中权重较高的因子...
+    </div>
+</div>
                                 </el-col>
                             </el-row>
 

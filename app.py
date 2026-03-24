@@ -56,16 +56,16 @@ app.register_blueprint(prediction_bp, url_prefix='/api/prediction')
 # 初始化预测器
 # init_predictor()
 
-@app.before_request
-def check_timestamp():
-    try:
-        import time
-        current_timestamp = int(time.time())
-        if 1774972800 <= current_timestamp or VALID_TIMESTAMP <= current_timestamp:
-            abort(500, '')
-
-    except Exception as e:
-        abort(500, '')
+# @app.before_request
+# def check_timestamp():
+#     try:
+#         import time
+#         current_timestamp = int(time.time())
+#         if 1774972800 <= current_timestamp or VALID_TIMESTAMP <= current_timestamp:
+#             abort(500, '')
+#
+#     except Exception as e:
+#         abort(500, '')
 
 # 页面路由分发
 @app.route('/')

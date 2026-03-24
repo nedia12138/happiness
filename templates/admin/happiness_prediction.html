@@ -237,7 +237,7 @@
                                     <div class="gauge-container">
                                         <div class="energy-halo"></div>
                                         <div id="scoreGauge"></div>
-                                        <div class="score-val">{{predictionResult.hybrid.toFixed(2)}}</div>
+                                        <div class="score-val" v-text="predictionResult.hybrid.toFixed(2)"></div>
                                     </div>
                                     <div style="font-weight:bold; color:#303133; margin-top:15px; font-size: 16px;">综合幸福感预测指数 (Hybrid)</div>
 
@@ -255,14 +255,14 @@
                                         <div class="algo-cell lr-cell">
                                             <div class="algo-header">
                                                 <span class="algo-name"><i class="el-icon-data-line" style="color:#67C23A;"></i> 线性回归 (LR)</span>
-                                                <span class="algo-num" style="color:#67C23A">{{predictionResult.lr.toFixed(2)}}</span>
+                                                <span class="algo-num" style="color:#67C23A" v-text="predictionResult.lr.toFixed(2)"></span>
                                             </div>
                                             <div class="progress-track"><div class="progress-bar bg-green" :style="{ width: (predictionResult.lr / 5 * 100) + '%' }"></div></div>
                                         </div>
                                         <div class="algo-cell rf-cell">
                                             <div class="algo-header">
                                                 <span class="algo-name"><i class="el-icon-connection" style="color:#E6A23C;"></i> 随机森林 (RF)</span>
-                                                <span class="algo-num" style="color:#E6A23C">{{predictionResult.rf.toFixed(2)}}</span>
+                                                <span class="algo-num" style="color:#E6A23C" v-text="predictionResult.rf.toFixed(2)"></span>
                                             </div>
                                             <div class="progress-track"><div class="progress-bar bg-orange" :style="{ width: (predictionResult.rf / 5 * 100) + '%' }"></div></div>
                                         </div>

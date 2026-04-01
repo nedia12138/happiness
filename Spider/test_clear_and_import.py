@@ -33,7 +33,6 @@ def test_clear_and_import():
         cursor.execute("TRUNCATE TABLE py_happiness_survey")
         conn.commit()
         print("已执行清空操作")
-
         # 检查清空后数据量
         cursor.execute("SELECT COUNT(*) FROM py_happiness_survey")
         count_after_clear = cursor.fetchone()[0]

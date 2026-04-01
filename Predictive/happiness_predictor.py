@@ -87,10 +87,9 @@ class HappinessPredictor:
             else:
                 # 预设权重（根据项目 0.24 模型的实际贡献度分布）
                 weights = {
-                    'depression': 0.28, 'equity': 0.22, 'class': 0.15,
-                    'health': 0.12, 'income': 0.08, 'familyIncome': 0.05,
-                    'edu': 0.04, 'floorArea': 0.03, 'age': 0.03
-                }
+                    'depression': 0.21, 'equity': 0.19, 'class': 0.21,
+                    'health': 0.06, 'income': 0.06, 'familyIncome': 0.08,
+                    'edu': 0.03, 'floorArea': 0.09, 'age': 0.09                }
                 importances = [weights.get(c, 0.01) for c in self.cols]
         except:
             importances = [0.04] * len(self.cols)

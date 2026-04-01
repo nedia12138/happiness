@@ -1,0 +1,15 @@
+{
+    "model": "High-Precision RandomForest (EDA)",
+    "description": "基于深度清洗与去噪数据提取的准确先验权重",
+    "extracted_weights": {
+        "depression": 0.21,
+        "equity": 0.19,
+        "class": 0.21,
+        "health": 0.06,
+        "income": 0.06,
+        "familyIncome": 0.08,
+        "edu": 0.03,
+        "floorArea": 0.09,
+        "age": 0.09
+    }
+}

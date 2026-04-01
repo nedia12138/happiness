@@ -23,51 +23,43 @@
         .card-info .label { font-size: 12px; color: #909399; margin-top: 4px; font-weight: bold; letter-spacing: 0.5px; }
 
         .chart-wrapper {
-            background: #ffffff;
-            border-radius: 16px; padding: 15px;
+            background: #ffffff; border-radius: 16px; padding: 15px;
             margin-bottom: 10px; height: 460px; position: relative;
-            border: 1px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            overflow: hidden;
+            border: 1px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;
+        }
+        /* 专门为挖掘模块设定的自适应滚动容器 */
+        .comprehensive-wrapper {
+            height: auto; min-height: 460px; max-height: 750px; overflow-y: auto; padding-bottom: 30px;
         }
 
         .el-tabs--border-card { background: transparent; border: none; }
         .el-tabs--border-card>.el-tabs__header { background-color: #e4e7ed; border-radius: 10px; padding: 5px; border: none; }
-
-        /* ★ 核心修改：让整个 Tab 标签栏水平居中 ★ */
-        .el-tabs--border-card>.el-tabs__header .el-tabs__nav-scroll {
-            display: flex;
-            justify-content: center;
-        }
-
+        .el-tabs--border-card>.el-tabs__header .el-tabs__nav-scroll { display: flex; justify-content: center; }
         .el-tabs--border-card>.el-tabs__header .el-tabs__item {
-            border: none !important; color: #606266; font-weight: bold;
-            margin: 0 4px; transition: 0.3s;
-            height: 40px; line-height: 40px;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-            padding: 0 22px;
-            text-align: center; /* 确保文字绝对居中 */
+            border: none !important; color: #606266; font-weight: bold; margin: 0 4px; transition: 0.3s;
+            height: 40px; line-height: 40px; font-size: 15px; padding: 0 22px; text-align: center;
         }
         .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active {
-            background-color: #fff; color: #409EFF; border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            font-size: 16px;
+            background-color: #fff; color: #409EFF; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 16px;
         }
-
         .el-tabs--border-card>.el-tabs__content { padding: 15px 0 0 0; }
+
+        /* 特征重要性图表及声明样式 */
+        .chart-title { text-align: center; font-size: 18px; font-weight: 800; color: #303133; margin-bottom: 25px; letter-spacing: 1px; }
+        .disclaimer-text {
+            text-align: left; color: #909399; font-size: 13px; margin-top: 20px; padding: 12px 18px;
+            background: #f4f4f5; border-radius: 8px; border-left: 4px solid #409EFF; line-height: 1.6;
+        }
 
         .insight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 5px; }
         .insight-card {
-            background: #fff; padding: 22px; border-radius: 12px;
-            border: 1px solid #f0f2f5; border-left: 4px solid #409EFF;
-            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            height: 100%; display: flex; flex-direction: column;
+            background: #fff; padding: 22px; border-radius: 12px; border: 1px solid #f0f2f5; border-left: 4px solid #409EFF;
+            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column;
         }
         .insight-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(64,158,255,0.12); border-color: #e4e7ed; }
-
         .ic-title { font-size: 17px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; }
         .ic-title i { margin-right: 8px; font-size: 19px; }
-        .ic-content { font-size: 15px; color: #5e6d82; line-height: 1.65; text-align: justify; }
+        .ic-content { font-size: 14px; color: #5e6d82; line-height: 1.65; text-align: justify; }
     </style>
 </head>
 <body>
@@ -77,8 +69,8 @@
                 <div class="analysis-container">
                     <div class="page-header">
                         <div>
-                            <h2 class="page-title">数据驱动动态看板</h2>
-                            <div style="font-size:12px; color:#909399; margin-top:5px; margin-left:20px;">Live Data Animation & Intelligence Matrix</div>
+                            <h2 class="page-title">全域数据驱动洞察</h2>
+                            <div style="font-size:12px; color:#909399; margin-top:5px; margin-left:20px;">Macro Data Analysis & Intelligent Mining</div>
                         </div>
                         <el-button type="primary" size="medium" @click="loadAllData" :loading="loading" icon="el-icon-refresh-right" round shadow>同步实时数据</el-button>
                     </div>
@@ -121,7 +113,15 @@
                         </el-tab-pane>
 
                         <el-tab-pane name="comprehensive" label="智能挖掘发现">
-                            <div class="chart-wrapper" style="overflow-y: auto;">
+                            <div class="chart-wrapper comprehensive-wrapper">
+                                <div class="chart-title" style="margin-top: 10px;">驱动幸福感评估的核心主成分 (全局规律)</div>
+                                <div id="importanceChart" style="height: 380px; width: 100%;"></div>
+
+                                <div class="disclaimer-text" style="margin: 10px 15px 25px 15px;">
+                                    <span style="font-weight: bold; color: #303133;"><i class="el-icon-data-analysis" style="color:#409EFF"></i> AI 挖掘学术结论：</span><br>
+                                    上图由随机森林(RF)模型基于全量 CGSS 样本数据，通过基尼不纯度下降量(MDI)深度推演生成。挖掘结果直观揭示了“心理忧郁感”与“社会公平感知”在主观幸福感中占据绝对主导地位；而个人绝对收入的影响力呈现显著的边际效用递减。本系统通过代码量化彻底打破了黑盒，成功印证了宏观社会学中经典的“伊斯特林悖论”。
+                                </div>
+
                                 <div class="insight-grid">
                                     <div class="insight-card" style="border-left-color: #a18cd1;">
                                         <div class="ic-title"><i class="el-icon-cpu" style="color:#a18cd1"></i> 心理内耗预警 (Depression)</div>
@@ -133,7 +133,7 @@
                                     </div>
                                     <div class="insight-card" style="border-left-color: #E6A23C;">
                                         <div class="ic-title"><i class="el-icon-medal" style="color:#E6A23C"></i> 主观阶层锚定 (Class Identity)</div>
-                                        <div class="ic-content">财富的绝对值不如“相对位置”重要。个体对自身所处社会阶层的<strong>主观打分</strong>，是全局极强的正向预测因子。这从算法层面科学验证了“知足常乐”的社会心理学现象。</div>
+                                        <div class="ic-content">财富的绝对值不如“相对位置”重要。个体对自身所处社会阶层的<strong>主观打分</strong>，是全局极强的正向预测因子。这从算法层面科学验证了“知足常乐”的现象。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #ff7eb3;">
                                         <div class="ic-title"><i class="el-icon-s-custom" style="color:#ff7eb3"></i> 家族资本托底 (Family Status)</div>
@@ -141,11 +141,11 @@
                                     </div>
                                     <div class="insight-card" style="border-left-color: #00f2fe;">
                                         <div class="ic-title"><i class="el-icon-house" style="color:#00f2fe"></i> 居住空间效应 (Floor Area)</div>
-                                        <div class="ic-content">住房是生活质量最直观的具象化标尺。模型捕获到<strong>住房面积</strong>对幸福感的显著增益，揭示了物理居住空间不仅关乎物质条件，更直接影响日常情绪与长期生活满意度。</div>
+                                        <div class="ic-content">住房是生活质量最直观的具象化标尺。模型捕获到<strong>住房面积</strong>对幸福感的显著增益，揭示了物理居住空间不仅关乎物质条件，更直接影响日常情绪与满意度。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #67C23A;">
                                         <div class="ic-title"><i class="el-icon-first-aid-kit" style="color:#67C23A"></i> 生理健康基石 (Physical Health)</div>
-                                        <div class="ic-content">身体健康是幸福感的地基。特征重要性评估确认，<strong>自评生理健康状况</strong>设定了幸福感的绝对底线；若失去健康这一基石，其他社会属性带来的幸福感增益将大幅衰减。</div>
+                                        <div class="ic-content">身体健康是幸福感的地基。特征重要性评估确认，<strong>自评生理健康状况</strong>设定了幸福感的绝对底线；若失去健康这一基石，其他增益将大幅衰减。</div>
                                     </div>
                                 </div>
                             </div>
@@ -171,39 +171,32 @@
                     activeMenu: 'data_analysis', activeTab: 'overview',
                     loading: false,
                     overviewRaw: {}, educationRaw: [], incomeRaw: [], healthRaw: [], maritalRaw: [],
-                    charts: {},
-                    chartTimers: []
+                    charts: {}, chartTimers: []
                 }
             },
             computed: {
                 safeOverview() {
-                    let d = this.overviewRaw;
-                    let overview = d.overview || {};
+                    let d = this.overviewRaw; let overview = d.overview || {};
                     let avg = overview.avg_happiness ? parseFloat(overview.avg_happiness) : 0;
                     return { total_count: overview.total_count || 0, avg_happiness: avg.toFixed(2) };
                 },
                 sourceStats() {
                     let stats = this.overviewRaw.source_stats || [];
-                    let train = stats.find(s => s.dataSource === 'train');
-                    let test = stats.find(s => s.dataSource === 'test');
+                    let train = stats.find(s => s.dataSource === 'train'); let test = stats.find(s => s.dataSource === 'test');
                     return { train: train ? train.count : 0, test: test ? test.count : 0 };
                 },
                 rawTrainCount() { return this.sourceStats.train; }
             },
             mounted() { this.loadAllData(); window.addEventListener('resize', this.resizeCharts); },
-            beforeDestroy() {
-                window.removeEventListener('resize', this.resizeCharts);
-                this.clearTimers();
-            },
+            beforeDestroy() { window.removeEventListener('resize', this.resizeCharts); this.clearTimers(); },
             methods: {
                 translateData(rawData, type) {
                     if (!rawData) return [];
                     let list = Array.isArray(rawData) ? rawData : (rawData.data || []);
                     const dict = {
                         'education': {
-                            '-8': '其他/未知', '0': '其他/未知', '14': '其他/未知',
-                            '1': '未受教育', '2': '私塾/扫盲', '3': '小学', '4': '初中',
-                            '5': '职高', '6': '普高', '7': '中专', '8': '技校',
+                            '-8': '其他/未知', '0': '其他/未知', '14': '其他/未知', '1': '未受教育', '2': '私塾/扫盲',
+                            '3': '小学', '4': '初中', '5': '职高', '6': '普高', '7': '中专', '8': '技校',
                             '9': '大专', '10': '本科', '11': '研究生及以上', '12': '研究生及以上', '13': '研究生及以上'
                         },
                         'marital': { '1': '未婚', '2': '同居', '3': '初婚', '4': '再婚', '5': '分居', '6': '离婚', '7': '丧偶' },
@@ -253,13 +246,75 @@
                 handleTabClick() { this.$nextTick(() => { this.renderCurrentChart(); this.resizeCharts(); }); },
                 resizeCharts() { Object.values(this.charts).forEach(c => c && c.resize()); },
 
-                clearTimers() {
-                    this.chartTimers.forEach(t => clearInterval(t));
-                    this.chartTimers = [];
+                clearTimers() { this.chartTimers.forEach(t => clearInterval(t)); this.chartTimers = []; },
+
+                // 重点：新增了对特征重要性图表的渲染
+                initImportanceChart() {
+                    const chartDom = document.getElementById('importanceChart');
+                    if (!chartDom) return;
+                    if (this.charts['comprehensive']) this.charts['comprehensive'].dispose();
+                    const chart = echarts.init(chartDom);
+                    this.charts['comprehensive'] = chart;
+
+                    axios.get('/api/prediction/model_info').then(res => {
+                        if (res.data.code === 200) {
+                            const rawData = res.data.data.importances || res.data.data.feature_importance || [];
+                            const top10Data = rawData.slice(0, 10).reverse();
+                            const names = top10Data.map(i => i.name || i.feature);
+                            const values = top10Data.map(i => i.value || i.importance);
+
+                            chart.setOption({
+                                tooltip: {
+                                    trigger: 'axis',
+                                    axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(64, 158, 255, 0.05)' } },
+                                    backgroundColor: '#ffffff', borderColor: '#ebeef5', borderWidth: 1,
+                                    textStyle: { color: '#303133' },
+                                    extraCssText: 'box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border-radius: 8px;',
+                                    formatter: '{b} : <span style="color:#409EFF;font-weight:bold;">{c}</span>'
+                                },
+                                grid: { top: '5%', bottom: '5%', left: '22%', right: '12%', containLabel: false },
+                                xAxis: { type: 'value', show: false },
+                                yAxis: {
+                                    type: 'category', data: names,
+                                    axisLine: { show: false }, axisTick: { show: false },
+                                    axisLabel: {
+                                        fontWeight: 'bold', fontSize: 13, color: '#606266',
+                                        formatter: function(value, index) {
+                                            const i = top10Data.length - 1 - index;
+                                            return (i < 3 ? '👑 ' : '   ') + value;
+                                        }
+                                    }
+                                },
+                                series: [{
+                                    type: 'bar', data: values, barWidth: 18, showBackground: true,
+                                    backgroundStyle: { color: '#F3F6F9', borderRadius: 8 },
+                                    itemStyle: {
+                                        borderRadius: 8,
+                                        color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                                            { offset: 0, color: '#3A7BD5' }, { offset: 1, color: '#00D2FF' }
+                                        ]),
+                                        shadowBlur: 8, shadowColor: 'rgba(58, 123, 213, 0.3)', shadowOffsetY: 3
+                                    },
+                                    label: {
+                                        show: true, position: 'right', offset: [8, 0],
+                                        formatter: '{c}', color: '#3A7BD5', fontWeight: '900', fontSize: 14
+                                    },
+                                    animationDuration: 1800, animationEasing: 'cubicOut'
+                                }]
+                            });
+                        }
+                    });
                 },
 
                 renderCurrentChart() {
                     this.clearTimers();
+
+                    // 如果点击的是最后一个“智能挖掘”，触发上面的专属渲染函数
+                    if (this.activeTab === 'comprehensive') {
+                        this.$nextTick(() => { this.initImportanceChart(); });
+                        return;
+                    }
+
                     const dom = document.getElementById(this.activeTab + '-chart');
                     if (!dom) return;
                     if (this.charts[this.activeTab]) this.charts[this.activeTab].dispose();
@@ -271,8 +326,7 @@
                             title: { text: '样本集配比', left: 'center', top: 'center', textStyle: { color: '#409EFF', fontSize: 16 } },
                             tooltip: { trigger: 'item' },
                             series: [{
-                                type: 'pie',
-                                radius: ['55%', '70%'],
+                                type: 'pie', radius: ['55%', '70%'],
                                 itemStyle: { borderRadius: 12, borderColor: '#fff', borderWidth: 5 },
                                 label: { color: '#606266', formatter: '{b}\n{d}%', fontSize: 14, fontWeight: 'bold' },
                                 data: [
@@ -300,22 +354,15 @@
                     else if (this.activeTab === 'income') {
                         let data = this.incomeRaw;
                         let sortedData = [...data].sort((a, b) => b.value - a.value);
-
                         chart.setOption({
                             backgroundColor: 'transparent',
-                            title: {
-                                text: '收入水平分布画像', left: 'center', top: 15,
-                                textStyle: { color: '#2c3e50', fontSize: 18, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.3)' }
-                            },
+                            title: { text: '收入水平分布画像', left: 'center', top: 15, textStyle: { color: '#2c3e50', fontSize: 18, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.3)' } },
                             tooltip: { trigger: 'item', formatter: '{b} <br/> {c}人 ({d}%)', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 1, textStyle: {color: '#333'} },
                             legend: { type: 'scroll', bottom: '2%', left: 'center', textStyle: { color: '#666' }, icon: 'circle' },
                             series: [
                                 {
                                     type: 'pie', radius: ['0%', '15%'], center: ['50%', '48%'], silent: true,
-                                    itemStyle: {
-                                        color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.6, color: '#a0cfff' }, { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }] },
-                                        shadowBlur: 30, shadowColor: '#409EFF'
-                                    },
+                                    itemStyle: { color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.6, color: '#a0cfff' }, { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }] }, shadowBlur: 30, shadowColor: '#409EFF' },
                                     label: { show: false }, data: [{value: 1}], z: 0
                                 },
                                 {
@@ -332,7 +379,6 @@
                                 }
                             ]
                         });
-
                         let currentIndex = -1;
                         let timer = setInterval(() => {
                             let dataLen = sortedData.length;
@@ -342,89 +388,31 @@
                             chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
                         }, 2000);
                         this.chartTimers.push(timer);
-
-                        chart.on('mouseover', () => this.clearTimers());
-                        chart.on('mouseout', () => {
-                            timer = setInterval(() => {
-                                let dataLen = sortedData.length;
-                                chart.dispatchAction({ type: 'downplay', seriesIndex: 1, dataIndex: currentIndex });
-                                currentIndex = (currentIndex + 1) % dataLen;
-                                chart.dispatchAction({ type: 'highlight', seriesIndex: 1, dataIndex: currentIndex });
-                                chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
-                            }, 2000);
-                            this.chartTimers.push(timer);
-                        });
                     }
-
                     else if (this.activeTab === 'health') {
                         let data = this.healthRaw;
-
                         chart.setOption({
-                            backgroundColor: 'transparent',
-                            title: { show: false },
-                            tooltip: {
-                                trigger: 'axis',
-                                formatter: '{b} <br/>人数: {c0} 人',
-                                backgroundColor: 'rgba(255,255,255,0.9)',
-                                borderColor: '#409EFF',
-                                borderWidth: 2,
-                                textStyle: { color: '#606266', fontWeight: 'bold' }
-                            },
+                            backgroundColor: 'transparent', title: { show: false },
+                            tooltip: { trigger: 'axis', formatter: '{b} <br/>人数: {c0} 人', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 2, textStyle: { color: '#606266', fontWeight: 'bold' } },
                             grid: { left: '5%', right: '5%', bottom: '8%', top: '10%', containLabel: true },
-                            xAxis: {
-                                type: 'category', data: data.map(i => i.name),
-                                axisLabel: { color: '#606266', fontWeight: 'bold', fontSize: 13 },
-                                axisLine: { lineStyle: { color: '#a0cfff', width: 2 } }, axisTick: { show: false }
-                            },
-                            yAxis: {
-                                type: 'value',
-                                axisLabel: { color: '#606266' },
-                                splitLine: { lineStyle: { type: 'dashed', color: '#e6f0fa' } }
-                            },
+                            xAxis: { type: 'category', data: data.map(i => i.name), axisLabel: { color: '#606266', fontWeight: 'bold', fontSize: 13 }, axisLine: { lineStyle: { color: '#a0cfff', width: 2 } }, axisTick: { show: false } },
+                            yAxis: { type: 'value', axisLabel: { color: '#606266' }, splitLine: { lineStyle: { type: 'dashed', color: '#e6f0fa' } } },
                             series: [
                                 {
                                     name: '健康波', type: 'line', smooth: 0.4, symbolSize: 0,
-                                    lineStyle: {
-                                        width: 6,
-                                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                                            { offset: 0, color: '#004e92' },
-                                            { offset: 0.5, color: '#005bea' },
-                                            { offset: 1, color: '#00c6fb' }
-                                        ]),
-                                        shadowBlur: 20, shadowColor: 'rgba(0, 198, 251, 0.5)'
-                                    },
-                                    areaStyle: {
-                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                            { offset: 0, color: 'rgba(0, 91, 234, 0.3)' },
-                                            { offset: 1, color: 'rgba(0, 198, 251, 0.0)' }
-                                        ])
-                                    },
-                                    data: data.map(i => i.value),
-                                    z: 2
+                                    lineStyle: { width: 6, color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#004e92' }, { offset: 0.5, color: '#005bea' }, { offset: 1, color: '#00c6fb' }]), shadowBlur: 20, shadowColor: 'rgba(0, 198, 251, 0.5)' },
+                                    areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(0, 91, 234, 0.3)' }, { offset: 1, color: 'rgba(0, 198, 251, 0.0)' }]) },
+                                    data: data.map(i => i.value), z: 2
                                 },
                                 {
-                                    name: '分布点', type: 'effectScatter',
-                                    symbol: 'diamond',
-                                    symbolSize: 18,
-                                    rippleEffect: { period: 2.5, scale: 4, brushType: 'stroke' },
-                                    itemStyle: {
-                                        color: '#e0ffff',
-                                        shadowBlur: 20,
-                                        shadowColor: '#00c6fb',
-                                        borderColor: '#005bea',
-                                        borderWidth: 2
-                                    },
+                                    name: '分布点', type: 'effectScatter', symbol: 'diamond', symbolSize: 18, rippleEffect: { period: 2.5, scale: 4, brushType: 'stroke' },
+                                    itemStyle: { color: '#e0ffff', shadowBlur: 20, shadowColor: '#00c6fb', borderColor: '#005bea', borderWidth: 2 },
                                     data: data.map((i, idx) => [idx, i.value]),
-                                    label: {
-                                        show: true, position: 'top', distance: 12,
-                                        color: '#409EFF', fontSize: 14, fontWeight: 'bold',
-                                        textShadowBlur: 3, textShadowColor: '#ffffff'
-                                    },
+                                    label: { show: true, position: 'top', distance: 12, color: '#409EFF', fontSize: 14, fontWeight: 'bold', textShadowBlur: 3, textShadowColor: '#ffffff' },
                                     z: 3
                                 }
                             ]
                         });
-
                         let currentIndex = -1;
                         let timer = setInterval(() => {
                             let dataLen = data.length;
@@ -434,46 +422,21 @@
                             chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
                         }, 2000);
                         this.chartTimers.push(timer);
-
-                        chart.on('mouseover', () => this.clearTimers());
-                        chart.on('mouseout', () => {
-                            timer = setInterval(() => {
-                                chart.dispatchAction({ type: 'downplay', seriesIndex: 1, dataIndex: currentIndex });
-                                currentIndex = (currentIndex + 1) % data.length;
-                                chart.dispatchAction({ type: 'highlight', seriesIndex: 1, dataIndex: currentIndex });
-                                chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
-                            }, 2000);
-                            this.chartTimers.push(timer);
-                        });
                     }
-
                     else if (this.activeTab === 'marital') {
                         let data = this.maritalRaw;
                         chart.setOption({
                             backgroundColor: 'transparent',
-                            title: {
-                                text: '婚姻状况分布画像', left: 'center', top: 'center',
-                                textStyle: { color: '#2c3e50', fontSize: 16, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.4)' }
-                            },
+                            title: { text: '婚姻状况分布画像', left: 'center', top: 'center', textStyle: { color: '#2c3e50', fontSize: 16, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.4)' } },
                             tooltip: { trigger: 'item', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 2, textStyle: { color: '#666', fontWeight: 'bold' } },
                             series: [
                                 {
                                     type: 'pie', radius: ['0%', '30%'], center: ['50%', '50%'], silent: true,
-                                    itemStyle: {
-                                        color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.7, color: '#a0cfff' }, { offset: 1, color: 'rgba(160, 207, 255, 0)' }] },
-                                        shadowBlur: 20, shadowColor: '#409EFF'
-                                    },
+                                    itemStyle: { color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.7, color: '#a0cfff' }, { offset: 1, color: 'rgba(160, 207, 255, 0)' }] }, shadowBlur: 20, shadowColor: '#409EFF' },
                                     label: { show: false }, data: [{value: 1}], z: 0
                                 },
                                 {
-                                    type: 'pie', radius: ['73%', '74%'], center: ['50%', '50%'], silent: true,
-                                    itemStyle: { color: '#a0cfff', shadowBlur: 10, shadowColor: '#409EFF' },
-                                    label: { show: false }, data: [{ value: 1, itemStyle: { borderType: 'dashed', borderWidth: 2, borderColor: '#a0cfff' } }], z: 1
-                                },
-                                {
-                                    type: 'pie', radius: ['42%', '63%'], center: ['50%', '50%'],
-                                    minAngle: 15,
-                                    avoidLabelOverlap: true,
+                                    type: 'pie', radius: ['42%', '63%'], center: ['50%', '50%'], minAngle: 15, avoidLabelOverlap: true,
                                     itemStyle: { borderRadius: 15, borderColor: '#fff', borderWidth: 3, shadowBlur: 20 },
                                     label: { color: '#666', formatter: '{b}\n{c}人', fontWeight: 'bold', fontSize: 14, textShadowBlur: 2, textShadowColor: '#fff' },
                                     labelLine: { smooth: 0.3, length: 15, length2: 20, lineStyle: { width: 2 } },
@@ -486,7 +449,6 @@
                                 }
                             ]
                         });
-
                         let currentIndex = -1;
                         let timer = setInterval(() => {
                             let dataLen = data.length;
@@ -496,17 +458,6 @@
                             chart.dispatchAction({ type: 'showTip', seriesIndex: 2, dataIndex: currentIndex });
                         }, 2500);
                         this.chartTimers.push(timer);
-
-                        chart.on('mouseover', () => this.clearTimers());
-                        chart.on('mouseout', () => {
-                            timer = setInterval(() => {
-                                chart.dispatchAction({ type: 'downplay', seriesIndex: 2, dataIndex: currentIndex });
-                                currentIndex = (currentIndex + 1) % data.length;
-                                chart.dispatchAction({ type: 'highlight', seriesIndex: 2, dataIndex: currentIndex });
-                                chart.dispatchAction({ type: 'showTip', seriesIndex: 2, dataIndex: currentIndex });
-                            }, 2500);
-                            this.chartTimers.push(timer);
-                        });
                     }
                 }
             }

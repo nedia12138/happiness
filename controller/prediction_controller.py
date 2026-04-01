@@ -31,7 +31,23 @@ def predict():
 
     try:
         data = request.json
+        # 调用底层算法大脑，算出三个分数，存入 res 字典
         res = p.predict(data)
+
+        # ====================================================
+        # 👇 答辩终端炫技专属：打印后台运行日志 👇
+        print("\n" + "🚀" * 15)
+        print(">>> 收到新的前端个体特征数据，开启在线智能预测！")
+        print(">>> 正在启动底层混合算法引擎 (Hybrid Engine)...")
+        # 从 res 字典中提取出三个分数进行终端打印
+        print(f" [模型 1] 线性回归 (LR) 并行推演结果 : {res.get('lr', 0):.3f}")
+        print(f" [模型 2] 随机森林 (RF) 并行推演结果 : {res.get('rf', 0):.3f}")
+        print("-" * 37)
+        print(f" [最终决策] 软投票加权融合输出 (Hybrid) : {res.get('hybrid', 0):.3f}")
+        print("<<< 预测完成！JSON 结果已通过 RESTful API 返回给 Vue 前端")
+        print("🚀" * 15 + "\n")
+        # ====================================================
+
         return jsonify({"code": 200, "data": res, "msg": "预测成功"})
     except Exception as e:
         return jsonify({"code": 500, "msg": str(e)})

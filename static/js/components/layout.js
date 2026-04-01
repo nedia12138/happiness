@@ -18,7 +18,7 @@ Vue.component('front-layout', {
     mounted() {
         this.checkAuth();
         this.setActiveMenu();
-        
+
         // 监听用户信息更新事件
         window.addEventListener('userInfoUpdated', this.handleUserInfoUpdate);
     },
@@ -31,7 +31,7 @@ Vue.component('front-layout', {
             // 基于本地缓存检查登录状态
             const token = localStorage.getItem('token') || sessionStorage.getItem('token');
             const userInfo = localStorage.getItem('userInfo') || sessionStorage.getItem('userInfo');
-            
+
             if (token && userInfo) {
                 try {
                     this.userInfo = JSON.parse(userInfo);
@@ -67,10 +67,10 @@ Vue.component('front-layout', {
                 localStorage.removeItem('userInfo');
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('userInfo');
-                
+
                 // 清除用户信息
                 this.userInfo = null;
-                
+
                 this.$message.success('退出登录成功');
                 window.location.href = '/login';
             });
@@ -99,7 +99,6 @@ Vue.component('front-layout', {
     },
     template: `
         <div id="front-layout">
-            <!-- 顶部导航栏 -->
             <el-header class="header">
                 <div class="header-content">
                     <div class="logo">
@@ -107,8 +106,8 @@ Vue.component('front-layout', {
                     </div>
                     <div class="nav-menu">
                         <el-menu mode="horizontal" :default-active="activeMenu" @select="handleMenuClick">
-                            <el-menu-item 
-                                v-for="item in menuItems" 
+                            <el-menu-item
+                                v-for="item in menuItems"
                                 :key="item.index"
                                 :index="item.index">
                                 <i :class="item.icon"></i>
@@ -139,12 +138,10 @@ Vue.component('front-layout', {
                 </div>
             </el-header>
 
-            <!-- 主要内容区域 -->
             <div class="main-content">
                 <slot></slot>
             </div>
 
-            <!-- 底部 -->
             <el-footer class="footer">
                 <div class="footer-content">
                     <p>&copy; 2030 {{ systemConfig.title }}. All rights reserved.</p>
@@ -173,7 +170,7 @@ Vue.component('admin-layout', {
     },
     mounted() {
         this.checkAuth();
-        
+
         // 监听用户信息更新事件
         window.addEventListener('userInfoUpdated', this.handleUserInfoUpdate);
     },
@@ -262,10 +259,10 @@ Vue.component('admin-layout', {
                 localStorage.removeItem('userInfo');
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('userInfo');
-                
+
                 // 清除用户信息
                 this.userInfo = null;
-                
+
                 this.$message.success('退出登录成功');
                 window.location.href = '/login';
             });
@@ -293,13 +290,12 @@ Vue.component('admin-layout', {
     },
     template: `
         <el-container class="admin-container">
-            <!-- 左侧菜单 -->
             <el-aside :width="isCollapse ? '64px' : '200px'" class="sidebar">
                 <div class="logo-container">
                     <h3 v-if="!isCollapse">{{ systemConfig.title }}</h3>
                     <i v-else class="el-icon-s-platform"></i>
                 </div>
-                
+
                 <el-menu
                     :default-active="activeMenu"
                     :collapse="isCollapse"
@@ -311,7 +307,6 @@ Vue.component('admin-layout', {
                     router>
 
                     <template v-for="item in filteredMenuItems">
-                        <!-- 有子菜单的项目 -->
                         <el-submenu
                             v-if="item.children && item.children.length > 0"
                             :key="item.index"
@@ -329,7 +324,6 @@ Vue.component('admin-layout', {
                             </el-menu-item>
                         </el-submenu>
 
-                        <!-- 无子菜单的项目 -->
                         <el-menu-item
                             v-else
                             :key="item.index"
@@ -341,13 +335,11 @@ Vue.component('admin-layout', {
                 </el-menu>
             </el-aside>
 
-            <!-- 主要内容区域 -->
             <el-container>
-                <!-- 顶部导航栏 -->
                 <el-header class="header">
                     <div class="header-left">
-                        <el-button 
-                            type="text" 
+                        <el-button
+                            type="text"
                             @click="toggleCollapse"
                             class="collapse-btn">
                             <i :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"></i>
@@ -357,7 +349,7 @@ Vue.component('admin-layout', {
                             <el-breadcrumb-item>{{ menuItems.find(item => item.index === activeMenu)?.title || '页面' }}</el-breadcrumb-item>
                         </el-breadcrumb>
                     </div>
-                    
+
                     <div class="header-right">
                         <el-dropdown @command="handleCommand">
                             <span class="user-dropdown">
@@ -367,14 +359,15 @@ Vue.component('admin-layout', {
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item command="profile">个人中心</el-dropdown-item>
-                                <el-dropdown-item command="users">用户管理</el-dropdown-item>
+
+                                <el-dropdown-item v-if="userInfo && userInfo.role === 'admin'" command="users">用户权限管理</el-dropdown-item>
+
                                 <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </div>
                 </el-header>
 
-                <!-- 内容区域 -->
                 <el-main class="main-content">
                     <slot name="content"></slot>
                 </el-main>

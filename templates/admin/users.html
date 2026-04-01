@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户管理 - 管理系统</title>
+    <title>用户管理 - 幸福感智能分析系统</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="/static/css/admin.css">
 </head>
@@ -12,12 +12,11 @@
         <admin-layout :active-menu="activeMenu">
             <template #content>
                 <div class="user-management-container">
-                    <!-- 搜索和操作区域 -->
                     <el-card class="search-card">
                         <el-form :model="searchForm" :inline="true" class="search-form">
                             <el-form-item label="关键词">
-                                <el-input 
-                                    v-model="searchForm.keyword" 
+                                <el-input
+                                    v-model="searchForm.keyword"
                                     placeholder="用户名/姓名/邮箱"
                                     clearable>
                                 </el-input>
@@ -47,76 +46,57 @@
                             </el-form-item>
                         </el-form>
                     </el-card>
-                    
-                    <!-- 用户列表 -->
+
                     <el-card class="table-card">
                         <div slot="header" class="card-header">
-                            <span>用户列表</span>
-                            <el-button type="primary" icon="el-icon-plus" @click="showAddDialog">添加用户</el-button>
+                            <span>系统用户列表</span>
+                            <el-button type="primary" icon="el-icon-plus" @click="showAddDialog">新增用户账号</el-button>
                         </div>
-                        
-                        <el-table 
-                            :data="userList" 
+
+                        <el-table
+                            :data="userList"
                             v-loading="tableLoading"
                             stripe
                             style="width: 100%">
-                            <el-table-column prop="id" label="ID"></el-table-column>
-                            <el-table-column prop="username" label="用户名"></el-table-column>
-                            <el-table-column prop="nickname" label="真实姓名"></el-table-column>
-                            <el-table-column prop="avatar" label="头像">
+                            <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                            <el-table-column prop="username" label="用户名" width="120"></el-table-column>
+                            <el-table-column prop="nickname" label="真实姓名" width="120"></el-table-column>
+                            <el-table-column prop="avatar" label="头像" width="80">
                                 <template #default="scope">
                                     <el-avatar :src="scope.row.avatar || '/static/image/profile.png'" size="small"></el-avatar>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="email" label="邮箱" ></el-table-column>
-                            <el-table-column prop="phone" label="手机号"></el-table-column>
-                            <el-table-column prop="role" label="角色">
+                            <el-table-column prop="email" label="邮箱" min-width="150"></el-table-column>
+                            <el-table-column prop="phone" label="手机号" width="120"></el-table-column>
+                            <el-table-column prop="role" label="权限角色" width="120">
                                 <template #default="scope">
-                                    <el-tag 
+                                    <el-tag
                                         :type="getRoleTagType(scope.row.role)"
-                                        size="small">
+                                        size="small" effect="dark">
                                         {{ getRoleText(scope.row.role) }}
                                     </el-tag>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="status" label="状态">
+                            <el-table-column prop="status" label="状态" width="100">
                                 <template #default="scope">
-                                    <el-tag 
+                                    <el-tag
                                         :type="getStatusTagType(scope.row.status)"
                                         size="small">
                                         {{ getStatusText(scope.row.status) }}
                                     </el-tag>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="last_login_time" label="最后登录"></el-table-column>
-                            <el-table-column prop="createtime" label="创建时间"></el-table-column>
-                            <el-table-column label="操作" width="200" fixed="right">
+                            <el-table-column prop="last_login_time" label="最后登录" width="160"></el-table-column>
+                            <el-table-column label="操作" width="220" fixed="right">
                                 <template #default="scope">
-                                    <el-button 
-                                        type="text" 
-                                        size="small" 
-                                        @click="editUser(scope.row)">
-                                        编辑
-                                    </el-button>
-                                    <el-button 
-                                        type="text" 
-                                        size="small" 
-                                        @click="changePassword(scope.row)">
-                                        改密码
-                                    </el-button>
-                                    <el-button 
-                                        type="text" 
-                                        size="small" 
-                                        @click="deleteUser(scope.row)"
-                                        style="color: #f56c6c;">
-                                        删除
-                                    </el-button>
+                                    <el-button type="text" size="small" icon="el-icon-edit" @click="editUser(scope.row)">编辑</el-button>
+                                    <el-button type="text" size="small" icon="el-icon-key" @click="changePassword(scope.row)">改密</el-button>
+                                    <el-button type="text" size="small" icon="el-icon-delete" @click="deleteUser(scope.row)" style="color: #f56c6c;">删除</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
-                        
-                        <!-- 分页 -->
-                        <div class="pagination-container">
+
+                        <div class="pagination-container" style="margin-top: 20px; text-align: right;">
                             <el-pagination
                                 @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
@@ -129,64 +109,35 @@
                         </div>
                     </el-card>
                 </div>
-                
-                <!-- 添加/编辑用户对话框 -->
-                <el-dialog 
-                    :title="dialogTitle" 
+
+                <el-dialog
+                    :title="dialogTitle"
                     :visible.sync="dialogVisible"
                     width="45%"
                     @close="resetForm">
-                    <el-form 
-                        :model="userForm" 
-                        :rules="userRules" 
-                        ref="userForm"
-                        label-width="100px">
+                    <el-form :model="userForm" :rules="userRules" ref="userForm" label-width="100px">
                         <el-row :gutter="20">
                             <el-col :span="12">
                                 <el-form-item label="用户名" prop="username">
-                                    <el-input v-model="userForm.username" :disabled="isEdit"></el-input>
+                                    <el-input v-model="userForm.username" :disabled="isEdit" placeholder="用于系统登录"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="密码" prop="password" v-if="!isEdit">
-                                    <el-input v-model="userForm.password" type="password"></el-input>
+                                <el-form-item label="初始密码" prop="password" v-if="!isEdit">
+                                    <el-input v-model="userForm.password" type="password" placeholder="建议不少于6位"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        
+
                         <el-row :gutter="20">
                             <el-col :span="12">
                                 <el-form-item label="真实姓名" prop="nickname">
-                                    <el-input v-model="userForm.nickname"></el-input>
+                                    <el-input v-model="userForm.nickname" placeholder="如：张三"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <el-form-item label="邮箱" prop="email">
-                                    <el-input v-model="userForm.email"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        
-                        <el-row :gutter="20">
-                            <el-col :span="12">
-                                <el-form-item label="手机号" prop="phone">
-                                    <el-input v-model="userForm.phone"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="性别">
-                                    <el-select v-model="userForm.sex" placeholder="选择性别">
-                                        <el-option label="男" value="男"></el-option>
-                                        <el-option label="女" value="女"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        
-                        <el-row :gutter="20">
-                            <el-col :span="12">
-                                <el-form-item label="角色" prop="role">
-                                    <el-select v-model="userForm.role" placeholder="选择角色">
+                                <el-form-item label="分配角色" prop="role">
+                                    <el-select v-model="userForm.role" placeholder="选择系统权限" style="width:100%">
                                         <el-option
                                             v-for="role in roleOptions"
                                             :key="role.value"
@@ -196,100 +147,65 @@
                                     </el-select>
                                 </el-form-item>
                             </el-col>
+                        </el-row>
+
+                        <el-row :gutter="20">
                             <el-col :span="12">
                                 <el-form-item label="状态" prop="status">
-                                    <el-select v-model="userForm.status" placeholder="选择状态">
+                                    <el-select v-model="userForm.status" placeholder="账号状态" style="width:100%">
                                         <el-option label="正常" value="active"></el-option>
                                         <el-option label="锁定" value="locked"></el-option>
                                         <el-option label="禁用" value="disabled"></el-option>
                                     </el-select>
                                 </el-form-item>
                             </el-col>
-                        </el-row>
-                        
-                        <el-row :gutter="20">
                             <el-col :span="12">
                                 <el-form-item label="年龄">
-                                    <el-input v-model="userForm.age" type="number" placeholder="请输入年龄"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="生日">
-                                    <el-date-picker 
-                                        v-model="userForm.birthday" 
-                                        type="date" 
-                                        placeholder="选择生日"
-                                        format="yyyy-MM-dd"
-                                        value-format="yyyy-MM-dd">
-                                    </el-date-picker>
+                                    <el-input v-model.number="userForm.age" type="number" placeholder="选填"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        
-                        <el-row :gutter="20">
-                            <el-col :span="12">
-                                <el-form-item label="学历">
-                                    <el-select v-model="userForm.education" placeholder="选择学历">
-                                        <el-option label="小学" value="小学"></el-option>
-                                        <el-option label="初中" value="初中"></el-option>
-                                        <el-option label="高中" value="高中"></el-option>
-                                        <el-option label="大专" value="大专"></el-option>
-                                        <el-option label="本科" value="本科"></el-option>
-                                        <el-option label="硕士" value="硕士"></el-option>
-                                        <el-option label="博士" value="博士"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :span="12">
-                                <el-form-item label="职业">
-                                    <el-input v-model="userForm.profession" placeholder="请输入职业"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                        
-                        <el-form-item label="地址">
-                            <el-input v-model="userForm.address" placeholder="请输入地址"></el-input>
-                        </el-form-item>
-                        
-                        <el-form-item label="公司">
-                            <el-input v-model="userForm.company" placeholder="请输入公司名称"></el-input>
-                        </el-form-item>
-                        
-                        <el-form-item label="简介">
-                            <el-input 
-                                v-model="userForm.content" 
-                                type="textarea" 
-                                :rows="3"
-                                placeholder="请输入用户简介">
-                            </el-input>
-                        </el-form-item>
-                        
-                        <el-form-item label="备注">
-                            <el-input 
-                                v-model="userForm.remarks" 
-                                type="textarea" 
-                                :rows="2"
-                                placeholder="请输入备注信息">
-                            </el-input>
-                        </el-form-item>
+
+                        <el-collapse style="margin-top: 10px; border:none;">
+                            <el-collapse-item title="更多选填信息 (点击展开)" name="1">
+                                <div style="padding: 10px 0;">
+                                    <el-row :gutter="20">
+                                        <el-col :span="12">
+                                            <el-form-item label="手机号" prop="phone">
+                                                <el-input v-model="userForm.phone" placeholder="选填"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="邮箱" prop="email">
+                                                <el-input v-model="userForm.email" placeholder="选填"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                    <el-row :gutter="20">
+                                        <el-col :span="12">
+                                            <el-form-item label="性别">
+                                                <el-select v-model="userForm.sex" placeholder="选填" style="width:100%"><el-option label="男" value="男"></el-option><el-option label="女" value="女"></el-option></el-select>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="12">
+                                            <el-form-item label="职业">
+                                                <el-input v-model="userForm.profession" placeholder="选填"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                            </el-collapse-item>
+                        </el-collapse>
                     </el-form>
-                    
-                    <div class="dialog-footer">
-                        <el-button @click="dialogVisible = false">取消</el-button>
-                        <el-button type="primary" @click="saveUser" :loading="saveLoading">确定</el-button>
+
+                    <div class="dialog-footer" style="text-align: right; margin-top: 20px;">
+                        <el-button @click="dialogVisible = false">取 消</el-button>
+                        <el-button type="primary" @click="saveUser" :loading="saveLoading">确 定 提 交</el-button>
                     </div>
                 </el-dialog>
-                
-                <!-- 修改密码对话框 -->
-                <el-dialog 
-                    title="修改密码" 
-                    :visible.sync="passwordDialogVisible"
-                    width="400px">
-                    <el-form 
-                        :model="passwordForm" 
-                        :rules="passwordRules" 
-                        ref="passwordForm"
-                        label-width="100px">
+
+                <el-dialog title="修改系统密码" :visible.sync="passwordDialogVisible" width="400px">
+                    <el-form :model="passwordForm" :rules="passwordRules" ref="passwordForm" label-width="100px">
                         <el-form-item label="新密码" prop="newPassword">
                             <el-input v-model="passwordForm.newPassword" type="password"></el-input>
                         </el-form-item>
@@ -297,10 +213,9 @@
                             <el-input v-model="passwordForm.confirmPassword" type="password"></el-input>
                         </el-form-item>
                     </el-form>
-                    
-                    <div class="dialog-footer">
+                    <div class="dialog-footer" style="text-align: right; margin-top: 20px;">
                         <el-button @click="passwordDialogVisible = false">取消</el-button>
-                        <el-button type="primary" @click="savePassword" :loading="passwordLoading">确定</el-button>
+                        <el-button type="primary" @click="savePassword" :loading="passwordLoading">确认修改</el-button>
                     </div>
                 </el-dialog>
             </template>
@@ -320,76 +235,46 @@
                     activeMenu: 'users',
                     roleOptions: LayoutConfig.roleOptions,
                     roleMap: this.buildRoleMap(LayoutConfig.roleOptions),
-                    searchForm: {
-                        keyword: '',
-                        role: '',
-                        status: ''
-                    },
+                    searchForm: { keyword: '', role: '', status: '' },
                     userList: [],
                     tableLoading: false,
-                    pagination: {
-                        pageNum: 1,
-                        pageSize: 10,
-                        total: 0
-                    },
-                    dialogVisible: false,
-                    dialogTitle: '添加用户',
-                    isEdit: false,
-                    saveLoading: false,
+                    pagination: { pageNum: 1, pageSize: 10, total: 0 },
+                    dialogVisible: false, dialogTitle: '新增用户账号', isEdit: false, saveLoading: false,
                     userForm: {
-                        username: '',
-                        password: '',
-                        nickname: '',
-                        email: '',
-                        phone: '',
-                        sex: '',
-                        age: '',
-                        birthday: '',
-                        address: '',
-                        education: '',
-                        profession: '',
-                        company: '',
-                        role: '',
-                        status: 'active',
-                        content: '',
-                        remarks: ''
+                        username: '', password: '', nickname: '', email: '', phone: '', sex: '', age: '', birthday: '', address: '', education: '', profession: '', company: '', role: '', status: 'active', content: '', remarks: ''
                     },
                     userRules: {
                         username: [
                             { required: true, message: '请输入用户名', trigger: 'blur' },
-                            { min: 3, max: 20, message: '用户名长度在3到20个字符', trigger: 'blur' }
+                            { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
                         ],
                         password: [
                             { required: true, message: '请输入密码', trigger: 'blur' },
-                            { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+                            { min: 6, message: '密码不能少于6位', trigger: 'blur' }
                         ],
                         nickname: [
-                            { required: true, message: '请输入真实姓名', trigger: 'blur' }
-                        ],
-                        email: [
-                            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-                        ],
-                        phone: [
-                            { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+                            { required: true, message: '真实姓名必填', trigger: 'blur' }
                         ],
                         role: [
-                            { required: true, message: '请选择角色', trigger: 'change' }
+                            { required: true, message: '请分配系统角色', trigger: 'change' }
                         ],
                         status: [
-                            { required: true, message: '请选择状态', trigger: 'change' }
+                            { required: true, message: '请选择账号状态', trigger: 'change' }
+                        ],
+                        // ★ 修复点：正则允许为空（^$），但如果填写必须符合格式
+                        email: [
+                            { pattern: /^$|^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/, message: '邮箱格式不正确', trigger: 'blur' }
+                        ],
+                        phone: [
+                            { pattern: /^$|^1[3-9]\d{9}$/, message: '手机号格式不正确', trigger: 'blur' }
                         ]
                     },
-                    passwordDialogVisible: false,
-                    passwordLoading: false,
-                    passwordForm: {
-                        userId: null,
-                        newPassword: '',
-                        confirmPassword: ''
-                    },
+                    passwordDialogVisible: false, passwordLoading: false,
+                    passwordForm: { userId: null, newPassword: '', confirmPassword: '' },
                     passwordRules: {
                         newPassword: [
                             { required: true, message: '请输入新密码', trigger: 'blur' },
-                            { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+                            { min: 6, message: '密码不能少于6位', trigger: 'blur' }
                         ],
                         confirmPassword: [
                             { required: true, message: '请确认密码', trigger: 'blur' }
@@ -403,216 +288,98 @@
             },
             methods: {
                 initPasswordValidation() {
-                    // 添加密码确认验证规则
-                    this.passwordRules.confirmPassword.push({
-                        validator: this.validateConfirmPassword,
-                        trigger: 'blur'
-                    });
+                    this.passwordRules.confirmPassword.push({ validator: this.validateConfirmPassword, trigger: 'blur' });
                 },
                 loadUserList() {
                     this.tableLoading = true;
-                    
-                    const params = {
-                        pageNum: this.pagination.pageNum,
-                        pageSize: this.pagination.pageSize,
-                        ...this.searchForm
-                    };
-                    
-                    axios.get('/api/user/list', { params })
-                        .then(response => {
-                            if (response.data.code === 200) {
-                                this.userList = response.data.data.rows;
-                                this.pagination.total = response.data.data.total;
-                            } else {
-                                this.$message.error(response.data.message);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('获取用户列表失败:', error);
-                            this.$message.error('获取用户列表失败');
-                        })
-                        .finally(() => {
-                            this.tableLoading = false;
-                        });
+                    const params = { pageNum: this.pagination.pageNum, pageSize: this.pagination.pageSize, ...this.searchForm };
+                    axios.get('/api/user/list', { params }).then(response => {
+                        if (response.data.code === 200) {
+                            this.userList = response.data.data.rows;
+                            this.pagination.total = response.data.data.total;
+                        } else {
+                            this.$message.error(response.data.message);
+                        }
+                    }).finally(() => { this.tableLoading = false; });
                 },
-                searchUsers() {
-                    this.pagination.pageNum = 1;
-                    this.loadUserList();
-                },
-                resetSearch() {
-                    this.searchForm = {
-                        keyword: '',
-                        role: '',
-                        status: ''
-                    };
-                    this.pagination.pageNum = 1;
-                    this.loadUserList();
-                },
-                handleSizeChange(size) {
-                    this.pagination.pageSize = size;
-                    this.pagination.pageNum = 1;
-                    this.loadUserList();
-                },
-                handleCurrentChange(page) {
-                    this.pagination.pageNum = page;
-                    this.loadUserList();
-                },
-                showAddDialog() {
-                    this.dialogTitle = '添加用户';
-                    this.isEdit = false;
-                    this.dialogVisible = true;
-                },
-                editUser(user) {
-                    this.dialogTitle = '编辑用户';
-                    this.isEdit = true;
-                    this.userForm = { ...user };
-                    this.dialogVisible = true;
-                },
+                searchUsers() { this.pagination.pageNum = 1; this.loadUserList(); },
+                resetSearch() { this.searchForm = { keyword: '', role: '', status: '' }; this.pagination.pageNum = 1; this.loadUserList(); },
+                handleSizeChange(size) { this.pagination.pageSize = size; this.pagination.pageNum = 1; this.loadUserList(); },
+                handleCurrentChange(page) { this.pagination.pageNum = page; this.loadUserList(); },
+                showAddDialog() { this.dialogTitle = '新增用户账号'; this.isEdit = false; this.dialogVisible = true; },
+                editUser(user) { this.dialogTitle = '编辑用户信息'; this.isEdit = true; this.userForm = { ...user }; this.dialogVisible = true; },
+
                 saveUser() {
                     this.$refs.userForm.validate((valid) => {
                         if (valid) {
                             this.saveLoading = true;
 
+                            // ★ 修复点：数据清洗，防止后端报 500 Integer 错误
+                            let submitData = { ...this.userForm };
+                            if (submitData.age === '') submitData.age = null;
 
-                            const url = this.isEdit ? `/api/user/${this.userForm.id}` : '/api/user/add';
+                            const url = this.isEdit ? `/api/user/${submitData.id}` : '/api/user/add';
                             const method = this.isEdit ? 'put' : 'post';
 
-                            axios[method](url, this.userForm)
-                                .then(response => {
-                                    if (response.data.code === 200) {
-                                        this.$message.success(response.data.message);
-                                        this.dialogVisible = false;
-                                        this.loadUserList();
-                                    } else {
-                                        this.$message.error(response.data.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('保存用户失败:', error);
-                                    this.$message.error('保存用户失败');
-                                })
-                                .finally(() => {
-                                    this.saveLoading = false;
-                                });
+                            axios[method](url, submitData).then(response => {
+                                if (response.data.code === 200) {
+                                    this.$message.success('用户保存成功！');
+                                    this.dialogVisible = false;
+                                    this.loadUserList();
+                                } else {
+                                    this.$message.error(response.data.message || '保存失败');
+                                }
+                            }).catch(error => {
+                                console.error(error);
+                                this.$message.error('网络请求失败，请检查后端是否报错');
+                            }).finally(() => { this.saveLoading = false; });
+                        } else {
+                            this.$message.warning('请检查表单中必填项是否漏填或填错！');
+                            return false;
                         }
                     });
                 },
+
                 deleteUser(user) {
-                    this.$confirm(`确定要删除用户 "${user.nickname || user.username}" 吗？`, '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
+                    this.$confirm(`确定要删除用户 "${user.nickname || user.username}" 吗？该操作不可逆！`, '危险警告', {
+                        confirmButtonText: '确定删除', cancelButtonText: '取消', type: 'error'
                     }).then(() => {
-                        axios.delete(`/api/user/${user.id}`)
-                            .then(response => {
-                                if (response.data.code === 200) {
-                                    this.$message.success(response.data.message);
-                                    this.loadUserList();
-                                } else {
-                                    this.$message.error(response.data.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('删除用户失败:', error);
-                                this.$message.error('删除用户失败');
-                            });
+                        axios.delete(`/api/user/${user.id}`).then(response => {
+                            if (response.data.code === 200) {
+                                this.$message.success('删除成功！');
+                                this.loadUserList();
+                            } else { this.$message.error(response.data.message); }
+                        });
                     });
                 },
-                changePassword(user) {
-                    this.passwordForm.userId = user.id;
-                    this.passwordForm.newPassword = '';
-                    this.passwordForm.confirmPassword = '';
-                    this.passwordDialogVisible = true;
-                },
+                changePassword(user) { this.passwordForm.userId = user.id; this.passwordForm.newPassword = ''; this.passwordForm.confirmPassword = ''; this.passwordDialogVisible = true; },
                 savePassword() {
                     this.$refs.passwordForm.validate((valid) => {
                         if (valid) {
                             this.passwordLoading = true;
-
                             axios.post('/api/user/admin/change-user-password', {
-                                userId: this.passwordForm.userId,
-                                newPassword: this.passwordForm.newPassword
-                            })
-                                .then(response => {
-                                    if (response.data.code === 200) {
-                                        this.$message.success(response.data.message);
-                                        this.passwordDialogVisible = false;
-                                    } else {
-                                        this.$message.error(response.data.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('修改密码失败:', error);
-                                    this.$message.error('修改密码失败');
-                                })
-                                .finally(() => {
-                                    this.passwordLoading = false;
-                                });
+                                userId: this.passwordForm.userId, newPassword: this.passwordForm.newPassword
+                            }).then(response => {
+                                if (response.data.code === 200) {
+                                    this.$message.success('密码修改成功');
+                                    this.passwordDialogVisible = false;
+                                } else { this.$message.error(response.data.message); }
+                            }).finally(() => { this.passwordLoading = false; });
                         }
                     });
                 },
                 validateConfirmPassword(rule, value, callback) {
-                    if (value !== this.passwordForm.newPassword) {
-                        callback(new Error('两次输入密码不一致'));
-                    } else {
-                        callback();
-                    }
+                    if (value !== this.passwordForm.newPassword) { callback(new Error('两次输入的密码不一致！')); } else { callback(); }
                 },
                 resetForm() {
-                    this.userForm = {
-                        username: '',
-                        password: '',
-                        nickname: '',
-                        email: '',
-                        phone: '',
-                        sex: '',
-                        age: '',
-                        birthday: '',
-                        address: '',
-                        education: '',
-                        profession: '',
-                        company: '',
-                        role: '',
-                        status: 'active',
-                        content: '',
-                        remarks: ''
-                    };
+                    this.userForm = { username: '', password: '', nickname: '', email: '', phone: '', sex: '', age: '', birthday: '', address: '', education: '', profession: '', company: '', role: '', status: 'active', content: '', remarks: '' };
                     this.$refs.userForm && this.$refs.userForm.resetFields();
                 },
-                buildRoleMap(options) {
-                    const map = {};
-                    options.forEach(option => {
-                        map[option.value] = option.label;
-                    });
-                    return map;
-                },
-                getRoleText(role) {
-                    return this.roleMap[role] || role;
-                },
-                getRoleTagType(role) {
-                    const typeMap = {
-                        'admin': 'danger',
-                        'operation': 'warning', 
-                        'user': 'success'
-                    };
-                    return typeMap[role] || 'info';
-                },
-                getStatusText(status) {
-                    const statusMap = {
-                        'active': '正常',
-                        'locked': '锁定',
-                        'disabled': '禁用'
-                    };
-                    return statusMap[status] || status;
-                },
-                getStatusTagType(status) {
-                    const typeMap = {
-                        'active': 'success',
-                        'locked': 'warning',
-                        'disabled': 'danger'
-                    };
-                    return typeMap[status] || 'info';
-                }
+                buildRoleMap(options) { const map = {}; options.forEach(option => { map[option.value] = option.label; }); return map; },
+                getRoleText(role) { return this.roleMap[role] || role; },
+                getRoleTagType(role) { const typeMap = { 'admin': 'danger', 'operation': 'warning', 'user': 'success' }; return typeMap[role] || 'info'; },
+                getStatusText(status) { const statusMap = { 'active': '正常', 'locked': '锁定', 'disabled': '禁用' }; return statusMap[status] || status; },
+                getStatusTagType(status) { const typeMap = { 'active': 'success', 'locked': 'warning', 'disabled': 'danger' }; return typeMap[status] || 'info'; }
             }
         });
     </script>

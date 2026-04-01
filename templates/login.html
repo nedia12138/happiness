@@ -3,165 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户登录 - 管理系统</title>
+    <title>登录 - 幸福感智能分析系统</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-            background: url('/static/image/bg.jpg') center center no-repeat;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0f172a; }
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
+            background: radial-gradient(circle at 15% 50%, rgba(20, 83, 154, 0.4), transparent 50%),
+                        radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.3), transparent 50%);
+            animation: bg-pulse 15s infinite alternate;
         }
-        
-        .login-container {
-            width: 400px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+        @keyframes bg-pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
+        .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; animation: float 10s infinite ease-in-out alternate; }
+        .orb-1 { width: 300px; height: 300px; background: #38bdf8; top: -10%; left: -10%; }
+        .orb-2 { width: 400px; height: 400px; background: #818cf8; bottom: -10%; right: -5%; animation-delay: -5s; }
+        @keyframes float { 0% { transform: translateY(0) translateX(0); } 100% { transform: translateY(50px) translateX(30px); } }
+
+        #app { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; }
+        .login-card {
+            width: 420px; padding: 40px; border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center; color: #fff; transition: transform 0.3s ease;
         }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
+        .login-card:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.4); }
+        .logo-box i { font-size: 48px; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .system-title { font-size: 24px; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; color: #f8fafc; }
+        .system-subtitle { font-size: 13px; color: #94a3b8; letter-spacing: 1px; margin-bottom: 30px; text-transform: uppercase; }
+
+        .el-input__inner {
+            background-color: rgba(15, 23, 42, 0.6) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #f8fafc !important; height: 48px; border-radius: 8px; font-size: 15px;
         }
-        
-        .login-header h2 {
-            color: #2563eb;
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
+        .el-input__inner:focus { border-color: #38bdf8 !important; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
+        .el-input__prefix { left: 10px; color: #94a3b8; font-size: 18px; }
+        .el-form-item { margin-bottom: 22px; }
+        .el-form-item__error { color: #f87171; padding-top: 5px; }
+
+        .el-select-dropdown { background-color: #1e293b !important; border: 1px solid #334155 !important; }
+        .el-select-dropdown__item { color: #cbd5e1 !important; }
+        .el-select-dropdown__item.hover, .el-select-dropdown__item:hover { background-color: #334155 !important; }
+        .el-select-dropdown__item.selected { color: #38bdf8 !important; font-weight: bold; }
+
+        .btn-login {
+            width: 100%; height: 50px; border-radius: 8px; font-size: 16px; font-weight: bold; letter-spacing: 2px; border: none;
+            background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; cursor: pointer;
+            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.8); transition: all 0.3s; margin-top: 10px;
         }
-        
-        .login-header p {
-            color: #64748b;
-            margin: 10px 0 0 0;
-            font-size: 14px;
-        }
-        
-        .login-form {
-            margin-top: 20px;
-        }
-        
-        .form-item {
-            margin-bottom: 20px;
-        }
-        
-        .login-button {
-            width: 100%;
-            height: 45px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #64748b;
-            font-size: 14px;
-        }
-        
-        .login-footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        
-        .login-footer a:hover {
-            text-decoration: underline;
-        }
-        
-        .demo-account {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #64748b;
-        }
-        
-        .demo-account h4 {
-            margin: 0 0 10px 0;
-            color: #374151;
-        }
-        
-        .demo-item {
-            margin: 5px 0;
-        }
+        .btn-login:hover { transform: scale(1.02); box-shadow: 0 15px 25px -10px rgba(99, 102, 241, 0.9); }
+        .btn-login.is-loading { pointer-events: none; opacity: 0.8; }
+        .footer-text { margin-top: 25px; font-size: 12px; color: #64748b; }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
-            <h2>幸福感数据挖掘系统</h2>
-            <p>欢迎登录</p>
-        </div>
-        
-        <div id="app">
-            <el-form :model="loginForm" :rules="loginRules" ref="loginForm" class="login-form">
-                <div class="form-item">
-                    <el-form-item prop="username">
-                        <el-input
-                            v-model="loginForm.username"
-                            placeholder="请输入用户名"
-                            prefix-icon="el-icon-user"
-                            size="large">
-                        </el-input>
-                    </el-form-item>
-                </div>
+    <div class="bg-container">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+    <div id="app">
+        <div class="login-card">
+            <div class="logo-box"><i class="el-icon-cpu"></i></div>
+            <h2 class="system-title">幸福感挖掘系统</h2>
+            <p class="system-subtitle">Well-being Intelligent Platform</p>
 
-                <div class="form-item">
-                    <el-form-item prop="password">
-                        <el-input
-                            v-model="loginForm.password"
-                            type="password"
-                            placeholder="请输入密码"
-                            prefix-icon="el-icon-lock"
-                            size="large"
-                            @keyup.enter.native="handleLogin">
-                        </el-input>
-                    </el-form-item>
-                </div>
-                
-                <div class="form-item">
-                    <el-form-item prop="role">
-                        <el-select
-                            v-model="loginForm.role"
-                            placeholder="请选择登录角色"
-                            size="large"
-                            style="width: 100%;">
-                            <el-option
-                                v-for="role in roleOptions"
-                                :key="role.value"
-                                :label="role.label"
-                                :value="role.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </div>
-                
-                <el-form-item>
-                    <el-button 
-                        type="primary" 
-                        class="login-button"
-                        :loading="loading"
-                        @click="handleLogin">
-                        登录
+            <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
+                <el-form-item prop="username">
+                    <el-input v-model="loginForm.username" placeholder="请输入系统账号" prefix-icon="el-icon-user"></el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input v-model="loginForm.password" type="password" placeholder="请输入系统密码" prefix-icon="el-icon-lock" @keyup.enter.native="handleLogin"></el-input>
+                </el-form-item>
+                <el-form-item prop="role">
+                    <el-select v-model="loginForm.role" placeholder="请选择登录身份" style="width: 100%;">
+                        <el-option v-for="role in roleOptions" :key="role.value" :label="role.label" :value="role.value"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item style="margin-bottom: 0;">
+                    <el-button class="btn-login" :loading="loading" @click="handleLogin">
+                        {{ loading ? '权限验证中...' : '启动数据驾驶舱' }}
                     </el-button>
                 </el-form-item>
             </el-form>
-
-            
-            <!-- <div class="demo-account">
-                <h4>演示账号</h4>
-                <div class="demo-item">管理员：admin / 123123</div>
-                <div class="demo-item">普通用户：user1 / 123456</div> 
-            </div> -->
+            <div class="footer-text">&copy; 2026 基于机器学习的幸福感挖掘与可视化系统</div>
         </div>
     </div>
 
@@ -176,18 +102,10 @@
                 return {
                     loading: false,
                     roleOptions: LayoutConfig.roleOptions,
-                    loginForm: {
-                        username: '',
-                        password: '',
-                        role: ''
-                    },
+                    loginForm: { username: '', password: '', role: '' },
                     loginRules: {
-                        username: [
-                            { required: true, message: '请输入用户名', trigger: 'blur' }
-                        ],
-                        role: [
-                            { required: true, message: '请选择登录角色', trigger: 'change' }
-                        ],
+                        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+                        role: [{ required: true, message: '请选择登录角色', trigger: 'change' }],
                         password: [
                             { required: true, message: '请输入密码', trigger: 'blur' },
                             { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
@@ -200,31 +118,27 @@
                     this.$refs.loginForm.validate((valid) => {
                         if (valid) {
                             this.loading = true;
-                            
-                            axios.post('/api/auth/login', this.loginForm)
-                                .then(response => {
-                                    if (response.data.code === 200) {
-                                        // 保存用户信息到本地缓存
-                                        localStorage.setItem('token', 'logged_in');
-                                        localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
-                                        
-                                        this.$message.success(response.data.message);
-                                        
-                                        // 根据角色跳转到不同页面
-                                        setTimeout(() => {
-                                            window.location.href = response.data.data.redirect_url;
-                                        }, 1000);
-                                    } else {
-                                        this.$message.error(response.data.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('登录失败:', error);
-                                    this.$message.error('登录失败，请稍后重试');
-                                })
-                                .finally(() => {
-                                    this.loading = false;
-                                });
+                            axios.post('/api/auth/login', this.loginForm).then(response => {
+                                if (response.data.code === 200) {
+                                    localStorage.setItem('token', 'logged_in');
+                                    localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
+                                    this.$message.success('验证通过，正在载入系统...');
+
+                                    setTimeout(() => {
+                                        const role = this.loginForm.role;
+                                        if (role === 'user') {
+                                            window.location.href = '/admin/happiness_prediction.html';
+                                        } else {
+                                            window.location.href = '/admin/users.html';
+                                        }
+                                    }, 1000);
+                                } else {
+                                    this.$message.error(response.data.message || '账号或密码错误');
+                                }
+                            }).catch(error => {
+                                console.error('登录失败:', error);
+                                this.$message.error('登录失败，请检查后端服务是否启动');
+                            }).finally(() => { this.loading = false; });
                         }
                     });
                 }

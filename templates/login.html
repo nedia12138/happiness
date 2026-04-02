@@ -3,91 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 幸福感智能分析系统</title>
+    <title>✨ 幸福感流体收集舱 ✨</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
-        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #0f172a; }
-        .bg-container {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;
-            background: radial-gradient(circle at 15% 50%, rgba(20, 83, 154, 0.4), transparent 50%),
-                        radial-gradient(circle at 85% 30%, rgba(14, 165, 233, 0.3), transparent 50%);
-            animation: bg-pulse 15s infinite alternate;
-        }
-        @keyframes bg-pulse { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-        .orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6; animation: float 10s infinite ease-in-out alternate; }
-        .orb-1 { width: 300px; height: 300px; background: #38bdf8; top: -10%; left: -10%; }
-        .orb-2 { width: 400px; height: 400px; background: #818cf8; bottom: -10%; right: -5%; animation-delay: -5s; }
-        @keyframes float { 0% { transform: translateY(0) translateX(0); } 100% { transform: translateY(50px) translateX(30px); } }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="font-size: 20px;"><text y="18">✨</text></svg>'), auto; }
 
-        #app { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; }
-        .login-card {
-            width: 420px; padding: 40px; border-radius: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            text-align: center; color: #fff; transition: transform 0.3s ease;
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #fdfbfb; }
+
+        /* 1. 粉蓝交织的流体极光背景 */
+        .bg-gradient {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background: linear-gradient(-45deg, #a1c4fd, #ff9a9e, #c2e9fb, #fecfef);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite alternate;
         }
-        .login-card:hover { transform: translateY(-5px); border-color: rgba(56, 189, 248, 0.4); }
-        .logo-box i { font-size: 48px; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .system-title { font-size: 24px; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; color: #f8fafc; }
-        .system-subtitle { font-size: 13px; color: #94a3b8; letter-spacing: 1px; margin-bottom: 30px; text-transform: uppercase; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* 2. 流体光斑 (Bokeh) */
+        .bokeh-container { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .bokeh { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.6; animation: floatBokeh infinite alternate ease-in-out; }
+        .bokeh-1 { width: 45vw; height: 45vw; background: #ff9a9e; top: -10%; left: -10%; animation-duration: 12s; }
+        .bokeh-2 { width: 40vw; height: 40vw; background: #a1c4fd; bottom: -10%; right: -10%; animation-duration: 15s; }
+        .bokeh-3 { width: 35vw; height: 35vw; background: #e0c3fc; top: 40%; left: 35%; animation-duration: 18s; }
+        @keyframes floatBokeh { 0% { transform: translate(0, 0) scale(0.8); } 100% { transform: translate(80px, 40px) scale(1.1); } }
+
+        /* 3. 梦幻闪烁繁星 */
+        .stars { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .star { position: absolute; background: #ffffff; border-radius: 50%; animation: twinkle infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff; } }
+
+        /* 4. 原有的动态漂浮气泡 */
+        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: hidden; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; border: 1px solid rgba(255,255,255,0.6); animation: floatUp infinite ease-in, wobble 3s infinite ease-in-out alternate; }
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 30px; height: 30px; left: 20%; animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 80px; height: 80px; left: 40%; animation-duration: 10s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 40px; height: 40px; left: 60%; animation-duration: 7s; animation-delay: 0s; }
+        .bubble:nth-child(5) { width: 50px; height: 50px; left: 80%; animation-duration: 6s; animation-delay: 1.5s; }
+        .bubble:nth-child(6) { width: 25px; height: 25px; left: 90%; animation-duration: 9s; animation-delay: 3s; }
+        @keyframes floatUp { 0% { bottom: -100px; opacity: 0; } 20% { opacity: 1; } 100% { bottom: 120vh; opacity: 0; } }
+        @keyframes wobble { 0% { transform: translateX(0px); } 100% { transform: translateX(30px); } }
+
+        /* ★全新替换：软萌漂浮云朵★ */
+        .floating-clouds { position: absolute; bottom: 10%; width: 100%; height: 50%; z-index: 4; pointer-events: none; overflow: hidden; }
+        .floating-cloud {
+            position: absolute;
+            animation: floatCloud 16s linear infinite, swayCloud 5s ease-in-out infinite alternate;
+            font-size: 40px; opacity: 0.9;
+            filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.6)); /* 柔和的发光感 */
+        }
+        .floating-cloud:nth-child(1) { left: 12%; animation-duration: 18s; font-size: 45px; }
+        .floating-cloud:nth-child(2) { left: 45%; animation-delay: 4s; animation-duration: 22s; font-size: 35px; }
+        .floating-cloud:nth-child(3) { left: 78%; animation-delay: 7s; animation-duration: 15s; font-size: 55px; }
+        .floating-cloud:nth-child(4) { left: 28%; animation-delay: 1s; animation-duration: 19s; font-size: 30px; }
+        @keyframes floatCloud { 0% { bottom: -10%; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { bottom: 110%; opacity: 0; } }
+        @keyframes swayCloud { 0% { transform: translateX(0px); } 100% { transform: translateX(45px); } }
+
+        /* 5. 粉蓝双色交错海浪 */
+        .waves-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 20vh; z-index: 3; pointer-events: none; }
+        .waves { position: relative; width: 100%; height: 20vh; margin-bottom: -7px; min-height: 100px; max-height: 150px; }
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(161, 196, 253, 0.5); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(255, 154, 158, 0.5); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(255, 255, 255, 0.7); }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: rgba(255, 255, 255, 1); }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+
+        /* --- 3D 容器与卡片部分 --- */
+        #app { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: relative; z-index: 10; perspective: 1000px; }
+
+        .login-card {
+            width: 420px; padding: 50px 45px; border-radius: 35px;
+            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 25px 55px rgba(161, 196, 253, 0.4), 0 -10px 40px rgba(255, 154, 158, 0.2), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease;
+            animation: breatheCard 5s ease-in-out infinite;
+        }
+        @keyframes breatheCard { 0% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); } 50% { transform: translateY(-8px) rotateY(0deg) rotateX(0deg); } 100% { transform: translateY(0px) rotateY(0deg) rotateX(0deg); } }
+
+        .logo-box { margin-bottom: 25px; transform: translateZ(30px); }
+        .logo-box i { font-size: 60px; color: #ff9a9e; text-shadow: 0 5px 20px rgba(255, 154, 158, 0.6); animation: floatIcon 3s ease-in-out infinite; display: inline-block; }
+        @keyframes floatIcon { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+        .system-title { font-size: 28px; font-weight: 900; background: linear-gradient(90deg, #8ec5fc 0%, #ff9a9e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 10px; letter-spacing: 3px; transform: translateZ(30px); }
+
+        .system-subtitle { font-size: 14px; color: #ffaebb; margin-bottom: 40px; font-weight: bold; overflow: hidden; white-space: nowrap; margin: 0 auto 40px auto; border-right: 2px solid #ffaebb; width: 0; animation: typing 2.5s steps(30, end) forwards, blink-caret .75s step-end infinite; transform: translateZ(30px); }
+        @keyframes typing { from { width: 0 } to { width: 220px } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #ffaebb; } }
 
         .el-input__inner {
-            background-color: rgba(15, 23, 42, 0.6) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: #f8fafc !important; height: 48px; border-radius: 8px; font-size: 15px;
+            height: 52px; border-radius: 26px !important; border: 2px solid #ffffff;
+            color: #8ec5fc !important; background-color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: bold; text-align: center; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
-        .el-input__inner:focus { border-color: #38bdf8 !important; box-shadow: 0 0 10px rgba(56, 189, 248, 0.2); }
-        .el-input__prefix { left: 10px; color: #94a3b8; font-size: 18px; }
-        .el-form-item { margin-bottom: 22px; }
-        .el-form-item__error { color: #f87171; padding-top: 5px; }
-
-        .el-select-dropdown { background-color: #1e293b !important; border: 1px solid #334155 !important; }
-        .el-select-dropdown__item { color: #cbd5e1 !important; }
-        .el-select-dropdown__item.hover, .el-select-dropdown__item:hover { background-color: #334155 !important; }
-        .el-select-dropdown__item.selected { color: #38bdf8 !important; font-weight: bold; }
+        .el-input__inner:focus { border-color: #a1c4fd !important; box-shadow: 0 10px 25px rgba(161, 196, 253, 0.3); transform: scale(1.03) translateZ(10px); }
+        .el-input__prefix { left: 18px; color: #a1c4fd; font-size: 20px; transition: color 0.3s; }
+        .el-input__inner:focus + .el-input__prefix { color: #ff9a9e; }
+        .el-form-item { margin-bottom: 26px; transform: translateZ(10px); }
 
         .btn-login {
-            width: 100%; height: 50px; border-radius: 8px; font-size: 16px; font-weight: bold; letter-spacing: 2px; border: none;
-            background: linear-gradient(90deg, #0ea5e9, #6366f1); color: white; cursor: pointer;
-            box-shadow: 0 10px 20px -10px rgba(99, 102, 241, 0.8); transition: all 0.3s; margin-top: 10px;
+            width: 100%; height: 52px; border-radius: 26px; font-size: 18px; font-weight: 900; border: none; letter-spacing: 4px;
+            background: linear-gradient(90deg, #a1c4fd 0%, #ff9a9e 100%); color: #ffffff;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); margin-top: 15px; position: relative; overflow: hidden;
+            box-shadow: 0 12px 28px rgba(161, 196, 253, 0.5); transform: translateZ(10px);
         }
-        .btn-login:hover { transform: scale(1.02); box-shadow: 0 15px 25px -10px rgba(99, 102, 241, 0.9); }
-        .btn-login.is-loading { pointer-events: none; opacity: 0.8; }
-        .footer-text { margin-top: 25px; font-size: 12px; color: #64748b; }
+        .btn-login::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: rgba(255,255,255,0.25); transform: rotate(45deg); transition: all 0.3s ease; opacity: 0;
+        }
+        .btn-login:hover { transform: scale(1.05) translateY(-5px) translateZ(20px); box-shadow: 0 18px 35px rgba(255, 154, 158, 0.6); background: linear-gradient(90deg, #ff9a9e 0%, #a1c4fd 100%); }
+        .btn-login:hover::after { opacity: 1; left: 100%; transition: all 0.6s ease-in-out; }
+
+        .footer-text { margin-top: 30px; font-size: 13px; color: #a1c4fd; font-weight: bold; transform: translateZ(30px); text-shadow: 0 1px 1px rgba(255,255,255,0.8);}
     </style>
 </head>
 <body>
-    <div class="bg-container">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
+    <div class="bg-gradient"></div>
+    <div class="bokeh-container">
+        <div class="bokeh bokeh-1"></div>
+        <div class="bokeh bokeh-2"></div>
+        <div class="bokeh bokeh-3"></div>
     </div>
-    <div id="app">
-        <div class="login-card">
-            <div class="logo-box"><i class="el-icon-cpu"></i></div>
-            <h2 class="system-title">幸福感挖掘系统</h2>
-            <p class="system-subtitle">Well-being Intelligent Platform</p>
 
-            <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
-                <el-form-item prop="username">
-                    <el-input v-model="loginForm.username" placeholder="请输入系统账号" prefix-icon="el-icon-user"></el-input>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input v-model="loginForm.password" type="password" placeholder="请输入系统密码" prefix-icon="el-icon-lock" @keyup.enter.native="handleLogin"></el-input>
-                </el-form-item>
-                <el-form-item prop="role">
-                    <el-select v-model="loginForm.role" placeholder="请选择登录身份" style="width: 100%;">
-                        <el-option v-for="role in roleOptions" :key="role.value" :label="role.label" :value="role.value"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item style="margin-bottom: 0;">
-                    <el-button class="btn-login" :loading="loading" @click="handleLogin">
-                        {{ loading ? '权限验证中...' : '启动数据驾驶舱' }}
-                    </el-button>
-                </el-form-item>
-            </el-form>
-            <div class="footer-text">&copy; 2026 基于机器学习的幸福感挖掘与可视化系统</div>
+    <div class="stars" id="stars-container"></div>
+
+    <div class="bubbles">
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    </div>
+
+    <div class="floating-clouds">
+        <div class="floating-cloud">☁️</div>
+        <div class="floating-cloud">☁️</div>
+        <div class="floating-cloud">☁️</div>
+        <div class="floating-cloud">☁️</div>
+    </div>
+
+    <div class="waves-container">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" />
+                <use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" />
+                <use xlink:href="#gentle-wave" x="48" y="7" />
+            </g>
+        </svg>
+    </div>
+
+    <div id="app">
+        <div class="login-card" id="card3d">
+            <div class="card-inner-element">
+                <div class="logo-box">
+                    <i class="el-icon-magic-stick"></i>
+                    <h2 class="system-title">✨ 幸福分析驾驶舱 ✨</h2>
+                    <div class="system-subtitle">WELL-BEING MODULE</div>
+                </div>
+
+                <el-form :model="loginForm" :rules="loginRules" ref="loginForm">
+                    <el-form-item prop="username">
+                        <el-input v-model="loginForm.username" placeholder="系统加密账号" prefix-icon="el-icon-user"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input v-model="loginForm.password" type="password" placeholder="验证口令" prefix-icon="el-icon-lock" @keyup.enter.native="handleLogin"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="role">
+                        <el-select v-model="loginForm.role" placeholder="选择接入权限" style="width: 100%;">
+                            <el-option v-for="role in roleOptions" :key="role.value" :label="role.label" :value="role.value"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item style="margin-bottom: 0;">
+                        <el-button class="btn-login" :loading="loading" @click="handleLogin">
+                            {{ loading ? '连接中...' : '启动幸福感分析 🚀' }}
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+                <div class="footer-text">&copy; 2026 基于机器学习与全域可视化的幸福感挖掘系统</div>
+            </div>
         </div>
     </div>
 
@@ -96,22 +190,42 @@
     <script src="/static/js/axios.min.js"></script>
     <script src="/static/js/config/layout-config.js"></script>
     <script>
+        // JS 动态生成 40 颗星星
+        const starsContainer = document.getElementById('stars-container');
+        for (let i = 0; i < 40; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 4 + 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = Math.random() * 3 + 1.5 + 's';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
         new Vue({
             el: '#app',
-            data() {
-                return {
-                    loading: false,
-                    roleOptions: LayoutConfig.roleOptions,
-                    loginForm: { username: '', password: '', role: '' },
-                    loginRules: {
-                        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-                        role: [{ required: true, message: '请选择登录角色', trigger: 'change' }],
-                        password: [
-                            { required: true, message: '请输入密码', trigger: 'blur' },
-                            { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
-                        ]
-                    }
-                }
+            data() { return { loading: false, roleOptions: LayoutConfig.roleOptions, loginForm: { username: '', password: '', role: '' }, loginRules: { username: [{ required: true, message: 'REQ: USERNAME', trigger: 'blur' }], role: [{ required: true, message: 'REQ: PERMISSION', trigger: 'change' }], password: [{ required: true, message: 'REQ: KEY CODE', trigger: 'blur' }] } } },
+            mounted() {
+                // 3D 鼠标跟随交互
+                const card = document.getElementById('card3d');
+                const appContainer = document.getElementById('app');
+
+                appContainer.addEventListener('mousemove', (e) => {
+                    card.style.animation = 'none';
+                    let xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+                    let yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+                    card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+
+                appContainer.addEventListener('mouseenter', () => { card.style.transition = 'none'; });
+
+                appContainer.addEventListener('mouseleave', () => {
+                    card.style.transition = 'transform 0.5s ease-out';
+                    card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+                    setTimeout(() => { card.style.animation = 'breatheCard 5s ease-in-out infinite'; }, 500);
+                });
             },
             methods: {
                 handleLogin() {
@@ -120,25 +234,11 @@
                             this.loading = true;
                             axios.post('/api/auth/login', this.loginForm).then(response => {
                                 if (response.data.code === 200) {
-                                    localStorage.setItem('token', 'logged_in');
-                                    localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
-                                    this.$message.success('验证通过，正在载入系统...');
-
-                                    setTimeout(() => {
-                                        const role = this.loginForm.role;
-                                        if (role === 'user') {
-                                            window.location.href = '/admin/happiness_prediction.html';
-                                        } else {
-                                            window.location.href = '/admin/users.html';
-                                        }
-                                    }, 1000);
-                                } else {
-                                    this.$message.error(response.data.message || '账号或密码错误');
-                                }
-                            }).catch(error => {
-                                console.error('登录失败:', error);
-                                this.$message.error('登录失败，请检查后端服务是否启动');
-                            }).finally(() => { this.loading = false; });
+                                    localStorage.setItem('token', 'logged_in'); localStorage.setItem('userInfo', JSON.stringify(response.data.data.user));
+                                    this.$message.success('ACCESS GRANTED');
+                                    setTimeout(() => { window.location.href = this.loginForm.role === 'user' ? '/admin/happiness_prediction.html' : '/admin/users.html'; }, 800);
+                                } else this.$message.error(response.data.message);
+                            }).finally(() => this.loading = false);
                         }
                     });
                 }

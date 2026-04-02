@@ -7,7 +7,8 @@
 
 body {
     font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-    background-color: #dae9ff;
+    /* 去掉了原本死板的蓝色背景，让 JS 动态接管 */
+    background-color: transparent;
 }
 
 /* 后台容器 */
@@ -17,7 +18,7 @@ body {
 
 /* 侧边栏 */
 .sidebar {
-    background-color: #5e8ed9;
+    /* 删除了 background-color: #5e8ed9; */
     transition: width 0.3s;
     overflow: hidden;
 }
@@ -27,7 +28,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1b4a9b;
+    /* 删除了 background-color: #1b4a9b; */
     color: white;
     font-size: 18px;
     font-weight: 600;
@@ -96,7 +97,8 @@ body {
 /* 主要内容区域 */
 .main-content {
     padding: 20px;
-    background-color: #dae9ff;
+    /* 删除了强制蓝底，使用透明让新主题透出来 */
+    background-color: transparent;
     overflow-y: auto;
 }
 
@@ -110,6 +112,7 @@ body {
     max-width: 100%;
     margin: 0 auto;
     padding: 20px;
+    background: transparent;
 }
 
 .user-management-container {
@@ -280,34 +283,7 @@ body {
     color: #1890ff;
 }
 
-/* Element UI 组件样式覆盖 */
-.el-menu {
-    border-right: none;
-    background-color: #5e8ed9 !important;
-}
-
-.el-menu-item {
-    height: 50px;
-    line-height: 50px;
-    background-color: #5e8ed9 !important;
-}
-
-.el-menu-item:hover {
-    background-color: #4a7bc8 !important;
-}
-
-.el-menu-item.is-active {
-    background-color: #ffffff !important;
-    color: #333333 !important;
-}
-
-.el-submenu__title {
-    background-color: #5e8ed9 !important;
-}
-
-.el-submenu__title:hover {
-    background-color: #4a7bc8 !important;
-}
+/* ★ 已经把以前这里强制写死的蓝色侧边栏代码全部删除了！让它回归自由！ ★ */
 
 .el-header {
     height: 60px;
@@ -327,15 +303,15 @@ body {
     .stats-row .el-col {
         margin-bottom: 15px;
     }
-    
+
     .activity-row .el-col {
         margin-bottom: 15px;
     }
-    
+
     .header {
         padding: 0 10px;
     }
-    
+
     .main-content {
         padding: 10px;
     }
@@ -508,10 +484,6 @@ body {
     align-items: flex-start;
 }
 
-.profile-row .el-col {
-    /* display: flex; */
-}
-
 /* 右侧内容区域 */
 .right-content {
     display: flex;
@@ -532,12 +504,6 @@ body {
 .avatar-container {
     position: relative;
     margin-right: 20px;
-}
-
-.avatar-uploader {
-    position: absolute;
-    bottom: 0;
-    right: 0;
 }
 
 .user-info h3 {
@@ -762,30 +728,6 @@ body {
     border-bottom: 2px solid #f0f0f0;
 }
 
-/* 仪表盘样式 */
-.dashboard-container {
-    padding: 20px;
-    background: #dae9ff;
-    min-height: calc(100vh - 60px);
-}
-
-.page-header {
-    margin-bottom: 24px;
-}
-
-.page-header h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1f2937;
-    margin: 0 0 8px 0;
-}
-
-.page-header p {
-    color: #6b7280;
-    margin: 0;
-    font-size: 14px;
-}
-
 /* 统计卡片样式 */
 .stats-row {
     margin-bottom: 24px;
@@ -893,14 +835,6 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 600;
-    color: #1f2937;
-}
-
 /* 活动区域样式 */
 .activities-row {
     margin-bottom: 24px;
@@ -919,11 +853,6 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
-.activity-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
 .no-data {
     text-align: center;
     padding: 40px 20px;
@@ -934,17 +863,6 @@ body {
     font-size: 48px;
     margin-bottom: 16px;
     display: block;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #f3f4f6;
-}
-
-.activity-item:last-child {
-    border-bottom: none;
 }
 
 .activity-icon {
@@ -968,22 +886,10 @@ body {
     flex: 1;
 }
 
-.activity-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #1f2937;
-    margin-bottom: 4px;
-}
-
 .activity-user {
     font-size: 12px;
     color: #6b7280;
     margin-bottom: 4px;
-}
-
-.activity-time {
-    font-size: 12px;
-    color: #9ca3af;
 }
 
 /* 快速操作样式 */
@@ -1017,29 +923,29 @@ body {
     .dashboard-container {
         padding: 16px;
     }
-    
+
     .stat-content {
         padding: 16px;
     }
-    
+
     .stat-icon {
         width: 48px;
         height: 48px;
     }
-    
+
     .stat-icon i {
         font-size: 20px;
     }
-    
+
     .stat-info h3 {
         font-size: 24px;
     }
-    
+
     .quick-actions {
         grid-template-columns: 1fr;
         gap: 12px;
     }
-    
+
     .quick-actions .el-button {
         height: 44px;
     }

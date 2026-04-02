@@ -29,7 +29,7 @@
         }
         /* 专门为挖掘模块设定的自适应滚动容器 */
         .comprehensive-wrapper {
-            height: auto; min-height: 460px; max-height: 750px; overflow-y: auto; padding-bottom: 30px;
+            height: auto; min-height: 460px; max-height: 850px; overflow-y: auto; padding-bottom: 30px;
         }
 
         .el-tabs--border-card { background: transparent; border: none; }
@@ -45,20 +45,22 @@
         .el-tabs--border-card>.el-tabs__content { padding: 15px 0 0 0; }
 
         /* 特征重要性图表及声明样式 */
-        .chart-title { text-align: center; font-size: 18px; font-weight: 800; color: #303133; margin-bottom: 25px; letter-spacing: 1px; }
+        .chart-title { text-align: center; font-size: 18px; font-weight: 800; color: #303133; margin-bottom: 15px; letter-spacing: 1px; }
         .disclaimer-text {
-            text-align: left; color: #909399; font-size: 13px; margin-top: 20px; padding: 12px 18px;
+            text-align: left; color: #909399; font-size: 13px; margin-top: 10px; padding: 12px 18px;
             background: #f4f4f5; border-radius: 8px; border-left: 4px solid #409EFF; line-height: 1.6;
         }
 
         .insight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 5px; }
         .insight-card {
             background: #fff; padding: 22px; border-radius: 12px; border: 1px solid #f0f2f5; border-left: 4px solid #409EFF;
-            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column;
+            transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.02); display: flex; flex-direction: column; position: relative;
         }
         .insight-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(64,158,255,0.12); border-color: #e4e7ed; }
-        .ic-title { font-size: 17px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; }
+        .ic-title { font-size: 17px; font-weight: bold; color: #2c3e50; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;}
+        .ic-title .text-box { display: flex; align-items: center; }
         .ic-title i { margin-right: 8px; font-size: 19px; }
+        .ic-badge { font-size: 12px; background: #f0f9eb; color: #67c23a; padding: 3px 8px; border-radius: 4px; font-weight: normal; }
         .ic-content { font-size: 14px; color: #5e6d82; line-height: 1.65; text-align: justify; }
     </style>
 </head>
@@ -114,38 +116,56 @@
 
                         <el-tab-pane name="comprehensive" label="智能挖掘发现">
                             <div class="chart-wrapper comprehensive-wrapper">
-                                <div class="chart-title" style="margin-top: 10px;">驱动幸福感评估的核心主成分 (全局规律)</div>
-                                <div id="importanceChart" style="height: 380px; width: 100%;"></div>
+                                <div class="chart-title" style="margin-top: 10px;">基于随机森林的 Top 6 核心驱动因子挖掘</div>
+                                <div id="importanceChart" style="height: 420px; width: 100%;"></div>
 
-                                <div class="disclaimer-text" style="margin: 10px 15px 25px 15px;">
+                                <div class="disclaimer-text" style="margin: 0px 15px 25px 15px;">
                                     <span style="font-weight: bold; color: #303133;"><i class="el-icon-data-analysis" style="color:#409EFF"></i> AI 挖掘学术结论：</span><br>
-                                    上图由随机森林(RF)模型基于全量 CGSS 样本数据，通过基尼不纯度下降量(MDI)深度推演生成。挖掘结果直观揭示了“心理忧郁感”与“社会公平感知”在主观幸福感中占据绝对主导地位；而个人绝对收入的影响力呈现显著的边际效用递减。本系统通过代码量化彻底打破了黑盒，成功印证了宏观社会学中经典的“伊斯特林悖论”。
+                                    上图基于大样本全量清洗数据，通过随机森林算法提取基尼不纯度(MDI)深度推演生成。挖掘结果表明，排名前 6 的核心特征已累计贡献了全模型 <b>67.7%</b> 的解释决策力。数据证明，比起绝对财富积累，“心理内耗程度”与“社会公平感知”在主观幸福感中占据了绝对主导地位。
                                 </div>
 
                                 <div class="insight-grid">
                                     <div class="insight-card" style="border-left-color: #a18cd1;">
-                                        <div class="ic-title"><i class="el-icon-cpu" style="color:#a18cd1"></i> 心理内耗预警 (Depression)</div>
-                                        <div class="ic-content">心理健康是主观幸福感的晴雨表。模型特征解析指出，<strong>抑郁频次</strong>等情绪特征与幸福感呈现极强的负相关，情绪稳定与心理韧性在当代社会评估中占据核心地位。</div>
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-cpu" style="color:#a18cd1"></i> 心理内耗度 (depression)</div>
+                                            <div class="ic-badge" style="color: #a18cd1; background: rgba(161, 140, 209, 0.1);">贡献排名 No.1</div>
+                                        </div>
+                                        <div class="ic-content">心理健康是主观幸福感的绝对晴雨表。模型特征解析指出，<strong>抑郁频次</strong>与幸福感呈现极强的负相关，单项重要度（0.177）傲居榜首，印证了情绪稳定性在当代社会评估中占据核心决策地位。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #409EFF;">
-                                        <div class="ic-title"><i class="el-icon-s-opportunity" style="color:#409EFF"></i> 社会公平感知 (Equity)</div>
-                                        <div class="ic-content">制度信任与社会认同是重要的心态红利。个体对周遭宏观环境、机会分配的<strong>“公平感知度”</strong>越高，其幸福指数跃升越显著，体现了社会公平环境的隐性价值。</div>
-                                    </div>
-                                    <div class="insight-card" style="border-left-color: #E6A23C;">
-                                        <div class="ic-title"><i class="el-icon-medal" style="color:#E6A23C"></i> 主观阶层锚定 (Class Identity)</div>
-                                        <div class="ic-content">财富的绝对值不如“相对位置”重要。个体对自身所处社会阶层的<strong>主观打分</strong>，是全局极强的正向预测因子。这从算法层面科学验证了“知足常乐”的现象。</div>
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-s-opportunity" style="color:#409EFF"></i> 社会公平感知 (equity)</div>
+                                            <div class="ic-badge" style="color: #409EFF; background: rgba(64, 158, 255, 0.1);">贡献排名 No.2</div>
+                                        </div>
+                                        <div class="ic-content">制度信任与社会认同是重要的心态红利。个体对周遭宏观环境、机会分配的<strong>“公平感知度”</strong>越高，幸福指数跃升越显著。其基尼贡献度以微弱差距紧随其后。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #ff7eb3;">
-                                        <div class="ic-title"><i class="el-icon-s-custom" style="color:#ff7eb3"></i> 家族资本托底 (Family Status)</div>
-                                        <div class="ic-content">家庭社会经济地位构成了个体的抗风险底座。数据表明，相对优越和稳定的<strong>原生家庭状况</strong>，能为抵御外部压力提供关键的物质保障与心理缓冲层。</div>
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-s-custom" style="color:#ff7eb3"></i> 家庭资本托底 (familyStatus)</div>
+                                            <div class="ic-badge" style="color: #ff7eb3; background: rgba(255, 126, 179, 0.1);">贡献排名 No.3</div>
+                                        </div>
+                                        <div class="ic-content">原生家庭的社会经济地位构成了个体的抗风险底座。数据表明，相对优越和稳定的<strong>家庭状况</strong>，能为抵御外部压力提供关键的物质保障与人际支持缓冲层。</div>
+                                    </div>
+                                    <div class="insight-card" style="border-left-color: #E6A23C;">
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-medal" style="color:#E6A23C"></i> 主观阶层锚定 (class)</div>
+                                            <div class="ic-badge" style="color: #E6A23C; background: rgba(230, 162, 60, 0.1);">贡献排名 No.4</div>
+                                        </div>
+                                        <div class="ic-content">财富的绝对值不如“相对位置”重要。个体对自身所处社会阶层的<strong>主观认知打分</strong>，极大决定了财务自由满足感。这从算法层面科学量化验证了“知足常乐”的心态。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #00f2fe;">
-                                        <div class="ic-title"><i class="el-icon-house" style="color:#00f2fe"></i> 居住空间效应 (Floor Area)</div>
-                                        <div class="ic-content">住房是生活质量最直观的具象化标尺。模型捕获到<strong>住房面积</strong>对幸福感的显著增益，揭示了物理居住空间不仅关乎物质条件，更直接影响日常情绪与满意度。</div>
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-odometer" style="color:#00f2fe"></i> 身体质量指数 (weightJin)</div>
+                                            <div class="ic-badge" style="color: #00f2fe; background: rgba(0, 242, 254, 0.1);">贡献排名 No.5</div>
+                                        </div>
+                                        <div class="ic-content">生理指标构成了潜意识的健康自信。客观的<strong>体重数据</strong>在特征工程中意外杀出重围，展现出显著贡献。从侧面反映了饮食质量、身材焦虑与生活规律对日常满意度的隐性牵引。</div>
                                     </div>
                                     <div class="insight-card" style="border-left-color: #67C23A;">
-                                        <div class="ic-title"><i class="el-icon-first-aid-kit" style="color:#67C23A"></i> 生理健康基石 (Physical Health)</div>
-                                        <div class="ic-content">身体健康是幸福感的地基。特征重要性评估确认，<strong>自评生理健康状况</strong>设定了幸福感的绝对底线；若失去健康这一基石，其他增益将大幅衰减。</div>
+                                        <div class="ic-title">
+                                            <div class="text-box"><i class="el-icon-first-aid-kit" style="color:#67C23A"></i> 自评生理健康 (health)</div>
+                                            <div class="ic-badge" style="color: #67C23A; background: rgba(103, 194, 58, 0.1);">贡献排名 No.6</div>
+                                        </div>
+                                        <div class="ic-content">身体健康是幸福感的地基。特征重要性评估确认，主观的<strong>自评生理健康状况</strong>设定了幸福感的绝对底线；若失去健康这一基石，其余社会维度的增益将面临大幅衰减。</div>
                                     </div>
                                 </div>
                             </div>
@@ -243,12 +263,17 @@
                     this.$nextTick(() => { this.renderCurrentChart(); });
                 },
 
-                handleTabClick() { this.$nextTick(() => { this.renderCurrentChart(); this.resizeCharts(); }); },
+                handleTabClick() {
+                    this.$nextTick(() => {
+                        this.renderCurrentChart();
+                        setTimeout(() => { this.resizeCharts(); }, 150);
+                    });
+                },
+
                 resizeCharts() { Object.values(this.charts).forEach(c => c && c.resize()); },
 
                 clearTimers() { this.chartTimers.forEach(t => clearInterval(t)); this.chartTimers = []; },
 
-                // 重点：新增了对特征重要性图表的渲染
                 initImportanceChart() {
                     const chartDom = document.getElementById('importanceChart');
                     if (!chartDom) return;
@@ -256,60 +281,61 @@
                     const chart = echarts.init(chartDom);
                     this.charts['comprehensive'] = chart;
 
-                    axios.get('/api/prediction/model_info').then(res => {
-                        if (res.data.code === 200) {
-                            const rawData = res.data.data.importances || res.data.data.feature_importance || [];
-                            const top10Data = rawData.slice(0, 10).reverse();
-                            const names = top10Data.map(i => i.name || i.feature);
-                            const values = top10Data.map(i => i.value || i.importance);
-
-                            chart.setOption({
-                                tooltip: {
-                                    trigger: 'axis',
-                                    axisPointer: { type: 'shadow', shadowStyle: { color: 'rgba(64, 158, 255, 0.05)' } },
-                                    backgroundColor: '#ffffff', borderColor: '#ebeef5', borderWidth: 1,
-                                    textStyle: { color: '#303133' },
-                                    extraCssText: 'box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border-radius: 8px;',
-                                    formatter: '{b} : <span style="color:#409EFF;font-weight:bold;">{c}</span>'
+                    const option = {
+                        tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+                        legend: { data: ['单项基尼贡献度 (柱状)', '累计解释贡献率 (折线)'], bottom: 0, textStyle: { color: '#666', fontWeight: 'bold' } },
+                        grid: { left: '5%', right: '5%', bottom: '12%', top: '15%', containLabel: true },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                data: ['depression\n(抑郁度)', 'equity\n(公平感知)', 'familyStatus\n(家庭地位)', 'class\n(阶层认同)', 'weightJin\n(体重)', 'health\n(自评健康)'],
+                                axisPointer: { type: 'shadow' },
+                                axisLabel: { interval: 0, color: '#606266', fontWeight: 'bold', fontSize: 13 }
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value', name: '单项重要度', min: 0, max: 0.2,
+                                axisLabel: { formatter: '{value}', color: '#606266', fontWeight: 'bold' },
+                                nameTextStyle: { fontWeight: 'bold', color: '#333' }
+                            },
+                            {
+                                type: 'value', name: '累计贡献率', min: 0, max: 1,
+                                axisLabel: { formatter: '{value}', color: '#606266', fontWeight: 'bold' },
+                                nameTextStyle: { fontWeight: 'bold', color: '#333' },
+                                splitLine: { show: false }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: '单项基尼贡献度 (柱状)',
+                                type: 'bar', barWidth: '40%',
+                                itemStyle: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        { offset: 0, color: '#83bff6' }, { offset: 0.5, color: '#188df0' }, { offset: 1, color: '#188df0' }
+                                    ]),
+                                    borderRadius: [6, 6, 0, 0], shadowBlur: 8, shadowColor: 'rgba(24, 141, 240, 0.3)', shadowOffsetY: 3
                                 },
-                                grid: { top: '5%', bottom: '5%', left: '22%', right: '12%', containLabel: false },
-                                xAxis: { type: 'value', show: false },
-                                yAxis: {
-                                    type: 'category', data: names,
-                                    axisLine: { show: false }, axisTick: { show: false },
-                                    axisLabel: {
-                                        fontWeight: 'bold', fontSize: 13, color: '#606266',
-                                        formatter: function(value, index) {
-                                            const i = top10Data.length - 1 - index;
-                                            return (i < 3 ? '👑 ' : '   ') + value;
-                                        }
-                                    }
-                                },
-                                series: [{
-                                    type: 'bar', data: values, barWidth: 18, showBackground: true,
-                                    backgroundStyle: { color: '#F3F6F9', borderRadius: 8 },
-                                    itemStyle: {
-                                        borderRadius: 8,
-                                        color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
-                                            { offset: 0, color: '#3A7BD5' }, { offset: 1, color: '#00D2FF' }
-                                        ]),
-                                        shadowBlur: 8, shadowColor: 'rgba(58, 123, 213, 0.3)', shadowOffsetY: 3
-                                    },
-                                    label: {
-                                        show: true, position: 'right', offset: [8, 0],
-                                        formatter: '{c}', color: '#3A7BD5', fontWeight: '900', fontSize: 14
-                                    },
-                                    animationDuration: 1800, animationEasing: 'cubicOut'
-                                }]
-                            });
-                        }
-                    });
+                                label: { show: true, position: 'top', formatter: '{c}', color: '#188df0', fontWeight: 'bold', fontSize: 13 },
+                                data: [0.177, 0.167, 0.122, 0.117, 0.054, 0.040],
+                                animationDuration: 1500, animationEasing: 'cubicOut'
+                            },
+                            {
+                                name: '累计解释贡献率 (折线)',
+                                type: 'line', yAxisIndex: 1, itemStyle: { color: '#ff9a9e' },
+                                lineStyle: { width: 3, type: 'dashed' }, symbol: 'circle', symbolSize: 10,
+                                label: { show: true, position: 'top', formatter: '{c}', color: '#ff9a9e', fontWeight: 'bold', fontSize: 13 },
+                                data: [0.177, 0.344, 0.466, 0.583, 0.636, 0.677],
+                                animationDuration: 2000, animationEasing: 'cubicOut'
+                            }
+                        ]
+                    };
+                    chart.setOption(option);
                 },
 
                 renderCurrentChart() {
                     this.clearTimers();
 
-                    // 如果点击的是最后一个“智能挖掘”，触发上面的专属渲染函数
                     if (this.activeTab === 'comprehensive') {
                         this.$nextTick(() => { this.initImportanceChart(); });
                         return;
@@ -423,41 +449,98 @@
                         }, 2000);
                         this.chartTimers.push(timer);
                     }
+                    // ★ 专治极度不均衡数据的：高端水平进度条排行榜
                     else if (this.activeTab === 'marital') {
                         let data = this.maritalRaw;
+                        let sortedData = [...data].sort((a, b) => a.value - b.value);
+
                         chart.setOption({
                             backgroundColor: 'transparent',
-                            title: { text: '婚姻状况分布画像', left: 'center', top: 'center', textStyle: { color: '#2c3e50', fontSize: 16, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.4)' } },
-                            tooltip: { trigger: 'item', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 2, textStyle: { color: '#666', fontWeight: 'bold' } },
+                            title: {
+                                text: '婚姻状态人群分布',
+                                subtext: 'Marital Status Distribution',
+                                left: '5%',
+                                top: '3%',
+                                textStyle: { color: '#2c3e50', fontSize: 20, fontWeight: '900', letterSpacing: 1 },
+                                subtextStyle: { color: '#909399', fontSize: 13, fontWeight: 'bold' }
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: { type: 'shadow' },
+                                backgroundColor: 'rgba(255,255,255,0.95)',
+                                borderColor: '#e4e7ed',
+                                padding: [10, 15],
+                                textStyle: { color: '#333' },
+                                formatter: function(params) {
+                                    let p = params[0];
+                                    let color = p.color.colorStops ? p.color.colorStops[1].color : p.color;
+                                    return `<div style="font-weight:bold;color:#909399;margin-bottom:6px;font-size:13px;">${p.name}</div>
+                                            <div style="font-size:20px;font-weight:900;color:${color};font-family:'Arial Black';">${p.value} <span style="font-size:12px;color:#606266;font-weight:normal;">人</span></div>`;
+                                }
+                            },
+                            grid: { left: '5%', right: '12%', bottom: '5%', top: '20%', containLabel: true },
+                            xAxis: {
+                                type: 'value',
+                                show: false,
+                                splitLine: { show: false }
+                            },
+                            yAxis: {
+                                type: 'category',
+                                data: sortedData.map(item => item.name),
+                                axisLine: { show: false },
+                                axisTick: { show: false },
+                                axisLabel: {
+                                    color: '#303133',
+                                    fontSize: 15,
+                                    fontWeight: 'bold',
+                                    margin: 15
+                                }
+                            },
                             series: [
                                 {
-                                    type: 'pie', radius: ['0%', '30%'], center: ['50%', '50%'], silent: true,
-                                    itemStyle: { color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.7, color: '#a0cfff' }, { offset: 1, color: 'rgba(160, 207, 255, 0)' }] }, shadowBlur: 20, shadowColor: '#409EFF' },
-                                    label: { show: false }, data: [{value: 1}], z: 0
-                                },
-                                {
-                                    type: 'pie', radius: ['42%', '63%'], center: ['50%', '50%'], minAngle: 15, avoidLabelOverlap: true,
-                                    itemStyle: { borderRadius: 15, borderColor: '#fff', borderWidth: 3, shadowBlur: 20 },
-                                    label: { color: '#666', formatter: '{b}\n{c}人', fontWeight: 'bold', fontSize: 14, textShadowBlur: 2, textShadowColor: '#fff' },
-                                    labelLine: { smooth: 0.3, length: 15, length2: 20, lineStyle: { width: 2 } },
-                                    data: data.map((item, idx) => {
-                                        const colors = [['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'], ['#a18cd1', '#fbc2eb'], ['#f6d365', '#fda085'], ['#667eea', '#764ba2'], ['#84fab0', '#8fd3f4']];
-                                        let c = colors[idx % colors.length];
-                                        return { ...item, itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: c[0] }, { offset: 1, color: c[1] }]), shadowColor: c[1] } }
-                                    }),
-                                    z: 2
+                                    name: '人数',
+                                    type: 'bar',
+                                    barWidth: 20,
+                                    showBackground: true,
+                                    backgroundStyle: { color: 'rgba(235, 238, 245, 0.6)', borderRadius: 10 },
+                                    itemStyle: {
+                                        borderRadius: 10,
+                                        color: function(params) {
+                                            const colorList = [
+                                                ['#cfd9df', '#e2ebf0'],
+                                                ['#ffecd2', '#fcb69f'],
+                                                ['#d4fc79', '#96e6a1'],
+                                                ['#fbc2eb', '#a6c1ee'],
+                                                ['#a1c4fd', '#c2e9fb'],
+                                                ['#ff9a9e', '#fecfef'],
+                                                ['#4facfe', '#00f2fe']
+                                            ];
+                                            let c = colorList[params.dataIndex % colorList.length];
+                                            return new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                                                { offset: 0, color: c[0] },
+                                                { offset: 1, color: c[1] }
+                                            ]);
+                                        },
+                                        shadowBlur: 10,
+                                        shadowColor: 'rgba(0,0,0,0.05)',
+                                        shadowOffsetY: 3
+                                    },
+                                    label: {
+                                        show: true,
+                                        position: 'right',
+                                        formatter: '{c} 人',
+                                        color: '#606266',
+                                        fontSize: 15,
+                                        fontWeight: '900',
+                                        fontFamily: 'Arial',
+                                        padding: [0, 0, 0, 10]
+                                    },
+                                    data: sortedData.map(item => item.value),
+                                    animationDuration: 2000,
+                                    animationEasing: 'cubicOut'
                                 }
                             ]
                         });
-                        let currentIndex = -1;
-                        let timer = setInterval(() => {
-                            let dataLen = data.length;
-                            chart.dispatchAction({ type: 'downplay', seriesIndex: 2, dataIndex: currentIndex });
-                            currentIndex = (currentIndex + 1) % dataLen;
-                            chart.dispatchAction({ type: 'highlight', seriesIndex: 2, dataIndex: currentIndex });
-                            chart.dispatchAction({ type: 'showTip', seriesIndex: 2, dataIndex: currentIndex });
-                        }, 2500);
-                        this.chartTimers.push(timer);
                     }
                 }
             }

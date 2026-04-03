@@ -27,7 +27,6 @@
             margin-bottom: 10px; height: 460px; position: relative;
             border: 1px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;
         }
-        /* 专门为挖掘模块设定的自适应滚动容器 */
         .comprehensive-wrapper {
             height: auto; min-height: 460px; max-height: 850px; overflow-y: auto; padding-bottom: 30px;
         }
@@ -44,7 +43,6 @@
         }
         .el-tabs--border-card>.el-tabs__content { padding: 15px 0 0 0; }
 
-        /* 特征重要性图表及声明样式 */
         .chart-title { text-align: center; font-size: 18px; font-weight: 800; color: #303133; margin-bottom: 15px; letter-spacing: 1px; }
         .disclaimer-text {
             text-align: left; color: #909399; font-size: 13px; margin-top: 10px; padding: 12px 18px;
@@ -210,55 +208,57 @@
             mounted() { this.loadAllData(); window.addEventListener('resize', this.resizeCharts); },
             beforeDestroy() { window.removeEventListener('resize', this.resizeCharts); this.clearTimers(); },
             methods: {
+                // 彻底极简版翻译函数：不干涉后端数据，只负责强制中文排序
                 translateData(rawData, type) {
                     if (!rawData) return [];
                     let list = Array.isArray(rawData) ? rawData : (rawData.data || []);
-                    const dict = {
-                        'education': {
-                            '-8': '其他/未知', '0': '其他/未知', '14': '其他/未知', '1': '未受教育', '2': '私塾/扫盲',
-                            '3': '小学', '4': '初中', '5': '职高', '6': '普高', '7': '中专', '8': '技校',
-                            '9': '大专', '10': '本科', '11': '研究生及以上', '12': '研究生及以上', '13': '研究生及以上'
-                        },
-                        'marital': { '1': '未婚', '2': '同居', '3': '初婚', '4': '再婚', '5': '分居', '6': '离婚', '7': '丧偶' },
-                        'health': { '1': '很不健康', '2': '比较不健康', '3': '一般', '4': '比较健康', '5': '很健康', '-8': '未知' }
-                    };
-                    let processed = list.map(item => {
-                        let originalKey = String(Array.isArray(item) ? item[0] : (item.name || '未知'));
-                        let value = Number(Array.isArray(item) ? item[1] : (item.value || item.count || 0));
-                        let translatedName = (dict[type] && dict[type][originalKey]) ? dict[type][originalKey] : originalKey;
-                        return { name: translatedName, value: value };
-                    }).filter(i => i.value > 0);
 
-                    let aggregatedMap = {};
-                    processed.forEach(item => { aggregatedMap[item.name] = (aggregatedMap[item.name] || 0) + item.value; });
-                    let finalData = Object.keys(aggregatedMap).map(k => ({ name: k, value: aggregatedMap[k] }));
+                    let finalData = list.map(item => ({
+                        name: String(item.name || item[0] || '未知'),
+                        value: Number(item.value || item[1] || item.count || 0)
+                    })).filter(i => i.value > 0);
 
                     const sortOrder = {
-                        'education': ['未受教育', '私塾/扫盲', '小学', '初中', '职高', '普高', '中专', '技校', '大专', '本科', '研究生及以上', '其他/未知'],
-                        'health': ['很不健康', '比较不健康', '一般', '比较健康', '很健康', '未知']
+                        'education': ['未受教育', '私塾/扫盲', '小学', '初中', '职高', '普高', '中专', '技校', '大专', '本科', '研究生及以上', '拒绝回答/未知'],
+                        'health': ['很不健康', '比较不健康', '一般', '比较健康', '很健康', '拒绝回答/未知'],
+                        'income': ['低收入 (<3万)', '中下收入 (3万-8万)', '中等收入 (8万-15万)', '较高收入 (15万-30万)', '高收入 (>30万)', '拒绝回答/未知'],
+                        'marital': ['未婚', '同居', '初婚', '再婚', '分居', '离婚', '丧偶', '拒绝回答/未知']
                     };
+
                     if (sortOrder[type]) {
                         return finalData.sort((a, b) => {
                             let idxA = sortOrder[type].indexOf(a.name); let idxB = sortOrder[type].indexOf(b.name);
                             return (idxA === -1 ? 999 : idxA) - (idxB === -1 ? 999 : idxB);
                         });
                     }
-                    return finalData.sort((a, b) => b.value - a.value);
+
+                    return finalData.sort((a, b) => {
+                        if (a.name === '拒绝回答/未知') return 1;
+                        if (b.name === '拒绝回答/未知') return -1;
+                        return b.value - a.value;
+                    });
                 },
 
                 async loadAllData() {
                     this.loading = true;
-                    const safeGet = url => axios.get(url).then(res => res.data).catch(() => ({data: {}}));
+                    // 加入毫秒级时间戳，强制突破浏览器缓存！
+                    const t = new Date().getTime();
+                    const safeGet = url => axios.get(url + '?t=' + t).then(res => res.data).catch(() => ({data: {}}));
+
                     const [resOverview, resEdu, resInc, resHealth, resMarital] = await Promise.all([
-                        safeGet('/api/data_analysis/overview'), safeGet('/api/data_analysis/education'),
-                        safeGet('/api/data_analysis/income'), safeGet('/api/data_analysis/health'),
+                        safeGet('/api/data_analysis/overview'),
+                        safeGet('/api/data_analysis/education'),
+                        safeGet('/api/data_analysis/income'),
+                        safeGet('/api/data_analysis/health'),
                         safeGet('/api/data_analysis/marital')
                     ]);
+
                     this.overviewRaw = resOverview.data || {};
                     this.educationRaw = this.translateData(resEdu.data, 'education');
-                    this.incomeRaw = resInc.data || [];
+                    this.incomeRaw = this.translateData(resInc.data, 'income');
                     this.healthRaw = this.translateData(resHealth.data, 'health');
                     this.maritalRaw = this.translateData(resMarital.data, 'marital');
+
                     this.loading = false;
                     this.$nextTick(() => { this.renderCurrentChart(); });
                 },
@@ -379,80 +379,176 @@
                     }
                     else if (this.activeTab === 'income') {
                         let data = this.incomeRaw;
-                        let sortedData = [...data].sort((a, b) => b.value - a.value);
+                        let maxVal = data.length > 0 ? Math.max(...data.map(i => i.value)) : 100;
+                        let tubeHeight = maxVal * 1.15;
+
+                        const colorThemes = [
+                            { top: '#ffeab0', body: ['#ffd86f', '#d49a37'], bottom: '#a67420' },
+                            { top: '#b2e8ff', body: ['#6dd5ed', '#2193b0'], bottom: '#156a82' },
+                            { top: '#ffcfdf', body: ['#ff9a9e', '#fecfef'], bottom: '#d87b80' },
+                            { top: '#d1fdff', body: ['#4facfe', '#00f2fe'], bottom: '#00a3ab' },
+                            { top: '#e0c3fc', body: ['#8ec5fc', '#e0c3fc'], bottom: '#5a8ab8' },
+                            { top: '#a1ffce', body: ['#11998e', '#38ef7d'], bottom: '#0b7369' },
+                            { top: '#e4e7ed', body: ['#c0c4cc', '#909399'], bottom: '#606266' }
+                        ];
+
+                        let processedData = data.map((item, idx) => {
+                            let isRefused = item.name === '拒绝回答/未知';
+                            let c = isRefused ? colorThemes[colorThemes.length - 1] : colorThemes[idx % (colorThemes.length - 1)];
+                            return {
+                                name: item.name, value: item.value,
+                                itemStyle: {
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        { offset: 0, color: c.body[0] }, { offset: 1, color: c.body[1] }
+                                    ])
+                                },
+                                topColor: c.top, bottomColor: c.bottom
+                            };
+                        });
+
                         chart.setOption({
                             backgroundColor: 'transparent',
-                            title: { text: '收入水平分布画像', left: 'center', top: 15, textStyle: { color: '#2c3e50', fontSize: 18, fontWeight: 'bold', textShadowBlur: 10, textShadowColor: 'rgba(64, 158, 255, 0.3)' } },
-                            tooltip: { trigger: 'item', formatter: '{b} <br/> {c}人 ({d}%)', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 1, textStyle: {color: '#333'} },
-                            legend: { type: 'scroll', bottom: '2%', left: 'center', textStyle: { color: '#666' }, icon: 'circle' },
-                            series: [
-                                {
-                                    type: 'pie', radius: ['0%', '15%'], center: ['50%', '48%'], silent: true,
-                                    itemStyle: { color: { type: 'radial', x: 0.5, y: 0.5, r: 0.5, colorStops: [{ offset: 0, color: '#ffffff' }, { offset: 0.6, color: '#a0cfff' }, { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }] }, shadowBlur: 30, shadowColor: '#409EFF' },
-                                    label: { show: false }, data: [{value: 1}], z: 0
-                                },
-                                {
-                                    name: '收入分布', type: 'pie', radius: ['20%', '68%'], center: ['50%', '48%'], roseType: 'area',
-                                    itemStyle: { borderRadius: 12, borderColor: '#ffffff', borderWidth: 2, shadowBlur: 25 },
-                                    label: { show: true, formatter: '{b}\n{c}', color: '#2c3e50', fontWeight: 'bold', fontSize: 14, textShadowBlur: 2, textShadowColor: '#fff' },
-                                    labelLine: { smooth: 0.2, length: 10, length2: 15, lineStyle: { width: 2 } },
-                                    data: sortedData.map((item, index) => {
-                                        const colors = [['#A0CFFF', '#E0C3FC'], ['#409EFF', '#79cbff'], ['#ffd966', '#ff9f43'], ['#b39ddb', '#ffcaff'], ['#69f0ae', '#b9f6ca'], ['#ff5252', '#ff867c'], ['#64ffda', '#a7ffeb']];
-                                        let c = colors[index % colors.length];
-                                        return { name: item.name, value: item.value, itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 1, 1, [{ offset: 0, color: c[0] }, { offset: 1, color: c[1] }]), shadowColor: c[1] } };
-                                    }),
-                                    z: 1
+                            title: {
+                                text: '全息资产阶层试管洞察',
+                                subtext: 'Holographic Liquid Asset Accumulation',
+                                left: 'center',
+                                top: '2%',
+                                textStyle: { color: '#2c3e50', fontSize: 20, fontWeight: '900', letterSpacing: 1 },
+                                subtextStyle: { color: '#909399', fontSize: 13, fontWeight: 'bold' }
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: { type: 'none' },
+                                formatter: function(params) {
+                                    let bar = params.find(p => p.seriesName === '核心人数');
+                                    if(!bar) return '';
+                                    return `<div style="padding:10px 14px; border-radius:10px; background:rgba(255,255,255,0.95); box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+                                                <div style="color:#909399; font-weight:bold; font-size:13px; margin-bottom:5px;">收入梯队：${bar.name}</div>
+                                                <div style="color:#333; font-size:22px; font-weight:900; font-family:'Arial Black';">${bar.value} <span style="font-size:12px; font-weight:normal;">人</span></div>
+                                            </div>`;
                                 }
+                            },
+                            grid: { left: '4%', right: '3%', bottom: '10%', top: '25%', containLabel: true },
+                            xAxis: {
+                                type: 'category',
+                                name: '收入梯队',
+                                nameTextStyle: { color: '#909399', fontWeight: 'bold', fontSize: 13, padding: [0, 0, 0, 10] },
+                                data: processedData.map(i => i.name),
+                                axisLine: { show: true, lineStyle: { color: '#e4e7ed', width: 2 } },
+                                axisTick: { show: false },
+                                axisLabel: { color: '#606266', fontSize: 13, fontWeight: 'bold', interval: 0, margin: 18 }
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name: '样本人数 (人)',
+                                nameTextStyle: { color: '#909399', fontWeight: 'bold', fontSize: 13, padding: [0, 25, 10, 0] },
+                                axisLine: { show: false },
+                                axisTick: { show: false },
+                                axisLabel: { color: '#909399', fontSize: 12, fontWeight: 'bold' },
+                                splitLine: { show: true, lineStyle: { type: 'dashed', color: 'rgba(228, 231, 237, 0.6)' } }
+                            },
+                            series: [
+                                { name: '试管底', type: 'pictorialBar', symbol: 'circle', symbolSize: [45, 18], symbolOffset: [0, 9], symbolPosition: 'start', z: 1, itemStyle: { color: '#e4e7ed' }, data: processedData.map(i => i.value), silent: true },
+                                { name: '玻璃管', type: 'bar', barWidth: 45, barGap: '-100%', z: 2, itemStyle: { color: 'rgba(235, 238, 245, 0.5)' }, data: processedData.map(() => tubeHeight), silent: true },
+                                { name: '试管顶', type: 'pictorialBar', symbol: 'circle', symbolSize: [45, 18], symbolOffset: [0, -9], symbolPosition: 'end', z: 3, itemStyle: { color: '#f0f2f5', borderColor: '#dcdfe6', borderWidth: 1 }, data: processedData.map(() => tubeHeight), silent: true },
+                                { name: '液底', type: 'pictorialBar', symbol: 'circle', symbolSize: [45, 18], symbolOffset: [0, 9], symbolPosition: 'start', z: 4, itemStyle: { color: function(p){ return processedData[p.dataIndex].bottomColor; } }, data: processedData.map(i => i.value) },
+                                { name: '核心人数', type: 'bar', barWidth: 45, barGap: '-100%', z: 5, itemStyle: { color: function(p){ return processedData[p.dataIndex].itemStyle.color; }, opacity: 0.95 }, data: processedData.map(i => i.value) },
+                                { name: '液面', type: 'pictorialBar', symbol: 'circle', symbolSize: [45, 18], symbolOffset: [0, -9], symbolPosition: 'end', z: 6, itemStyle: { color: function(p){ return processedData[p.dataIndex].topColor; }, shadowBlur: 15, shadowColor: 'rgba(255,255,255,0.9)' }, label: { show: true, position: 'top', distance: 15, formatter: '{c}', color: '#303133', fontSize: 18, fontWeight: '900', fontFamily: 'Arial' }, data: processedData.map(i => i.value) }
                             ]
                         });
+
                         let currentIndex = -1;
                         let timer = setInterval(() => {
-                            let dataLen = sortedData.length;
-                            chart.dispatchAction({ type: 'downplay', seriesIndex: 1, dataIndex: currentIndex });
+                            let dataLen = processedData.length;
+                            chart.dispatchAction({ type: 'downplay', seriesIndex: 4, dataIndex: currentIndex });
                             currentIndex = (currentIndex + 1) % dataLen;
-                            chart.dispatchAction({ type: 'highlight', seriesIndex: 1, dataIndex: currentIndex });
-                            chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
-                        }, 2000);
+                            chart.dispatchAction({ type: 'highlight', seriesIndex: 4, dataIndex: currentIndex });
+                            chart.dispatchAction({ type: 'showTip', seriesIndex: 4, dataIndex: currentIndex });
+                        }, 2500);
                         this.chartTimers.push(timer);
                     }
                     else if (this.activeTab === 'health') {
                         let data = this.healthRaw;
+
                         chart.setOption({
-                            backgroundColor: 'transparent', title: { show: false },
-                            tooltip: { trigger: 'axis', formatter: '{b} <br/>人数: {c0} 人', backgroundColor: 'rgba(255,255,255,0.9)', borderColor: '#409EFF', borderWidth: 2, textStyle: { color: '#606266', fontWeight: 'bold' } },
-                            grid: { left: '5%', right: '5%', bottom: '8%', top: '10%', containLabel: true },
-                            xAxis: { type: 'category', data: data.map(i => i.name), axisLabel: { color: '#606266', fontWeight: 'bold', fontSize: 13 }, axisLine: { lineStyle: { color: '#a0cfff', width: 2 } }, axisTick: { show: false } },
-                            yAxis: { type: 'value', axisLabel: { color: '#606266' }, splitLine: { lineStyle: { type: 'dashed', color: '#e6f0fa' } } },
+                            backgroundColor: 'transparent',
+                            title: {
+                                text: '国民生命体征与健康画像',
+                                subtext: 'Vital Signs & Health Distribution Scan',
+                                left: 'center',
+                                top: '2%',
+                                textStyle: { color: '#2c3e50', fontSize: 20, fontWeight: '900', letterSpacing: 1 },
+                                subtextStyle: { color: '#11998e', fontSize: 13, fontWeight: 'bold' }
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: { type: 'cross', crossStyle: { color: '#999', type: 'dashed' } },
+                                backgroundColor: 'rgba(255,255,255,0.95)',
+                                borderColor: '#38ef7d',
+                                borderWidth: 2,
+                                padding: [12, 16],
+                                formatter: function(params) {
+                                    let point = params.find(p => p.seriesName === '生命波幅');
+                                    if(!point) return '';
+                                    return `<div style="font-weight:bold;color:#909399;margin-bottom:6px;font-size:13px;">自评健康状况：${point.name}</div>
+                                            <div style="font-size:22px;font-weight:900;color:#11998e;font-family:'Arial Black';">
+                                                ${point.value} <span style="font-size:12px;color:#606266;font-weight:bold;">人</span>
+                                            </div>`;
+                                }
+                            },
+                            grid: { left: '4%', right: '10%', bottom: '10%', top: '22%', containLabel: true },
+                            xAxis: {
+                                type: 'category',
+                                name: '健康评价指数',
+                                nameTextStyle: { color: '#909399', fontWeight: 'bold', fontSize: 13, padding: [0, 0, 0, 10] },
+                                data: data.map(i => i.name),
+                                axisLine: { lineStyle: { color: '#e4e7ed', width: 2 } },
+                                axisTick: { show: false },
+                                axisLabel: { color: '#606266', fontSize: 14, fontWeight: 'bold', margin: 15, interval: 0 }
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name: '样本分布 (人)',
+                                nameTextStyle: { color: '#909399', fontWeight: 'bold', fontSize: 13, padding: [0, 25, 10, 0] },
+                                axisLine: { show: false },
+                                axisTick: { show: false },
+                                axisLabel: { color: '#909399', fontSize: 12, fontWeight: 'bold' },
+                                splitLine: { show: true, lineStyle: { type: 'dashed', color: 'rgba(228, 231, 237, 0.8)' } }
+                            },
                             series: [
                                 {
-                                    name: '健康波', type: 'line', smooth: 0.4, symbolSize: 0,
-                                    lineStyle: { width: 6, color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#004e92' }, { offset: 0.5, color: '#005bea' }, { offset: 1, color: '#00c6fb' }]), shadowBlur: 20, shadowColor: 'rgba(0, 198, 251, 0.5)' },
-                                    areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(0, 91, 234, 0.3)' }, { offset: 1, color: 'rgba(0, 198, 251, 0.0)' }]) },
+                                    name: '基准支撑', type: 'bar', barWidth: 8,
+                                    itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(56, 239, 125, 0.7)' }, { offset: 1, color: 'rgba(56, 239, 125, 0.05)' }]), borderRadius: 4 },
+                                    data: data.map(i => i.value), z: 1, silent: true
+                                },
+                                {
+                                    name: '生命波幅', type: 'line', smooth: 0.5, symbol: 'none',
+                                    lineStyle: { width: 5, color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#11998e' }, { offset: 0.5, color: '#38ef7d' }, { offset: 1, color: '#a1ffce' }]), shadowBlur: 20, shadowColor: 'rgba(56, 239, 125, 0.6)', shadowOffsetY: 5 },
+                                    areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(56, 239, 125, 0.4)' }, { offset: 0.8, color: 'rgba(17, 153, 142, 0.05)' }, { offset: 1, color: 'rgba(17, 153, 142, 0)' }]) },
                                     data: data.map(i => i.value), z: 2
                                 },
                                 {
-                                    name: '分布点', type: 'effectScatter', symbol: 'diamond', symbolSize: 18, rippleEffect: { period: 2.5, scale: 4, brushType: 'stroke' },
-                                    itemStyle: { color: '#e0ffff', shadowBlur: 20, shadowColor: '#00c6fb', borderColor: '#005bea', borderWidth: 2 },
-                                    data: data.map((i, idx) => [idx, i.value]),
-                                    label: { show: true, position: 'top', distance: 12, color: '#409EFF', fontSize: 14, fontWeight: 'bold', textShadowBlur: 3, textShadowColor: '#ffffff' },
-                                    z: 3
+                                    name: '脉动节点', type: 'effectScatter', symbol: 'circle', symbolSize: 15,
+                                    rippleEffect: { period: 3, scale: 4.5, brushType: 'stroke' },
+                                    itemStyle: { color: '#ffffff', borderColor: '#38ef7d', borderWidth: 3, shadowBlur: 15, shadowColor: '#38ef7d' },
+                                    label: { show: true, position: 'top', distance: 12, formatter: '{c}', color: '#2c3e50', fontSize: 18, fontWeight: '900', fontFamily: 'Arial', textShadowBlur: 3, textShadowColor: '#fff' },
+                                    data: data.map(i => i.value), z: 3
                                 }
                             ]
                         });
+
                         let currentIndex = -1;
                         let timer = setInterval(() => {
                             let dataLen = data.length;
-                            chart.dispatchAction({ type: 'downplay', seriesIndex: 1, dataIndex: currentIndex });
+                            chart.dispatchAction({ type: 'downplay', seriesIndex: 2, dataIndex: currentIndex });
                             currentIndex = (currentIndex + 1) % dataLen;
-                            chart.dispatchAction({ type: 'highlight', seriesIndex: 1, dataIndex: currentIndex });
-                            chart.dispatchAction({ type: 'showTip', seriesIndex: 1, dataIndex: currentIndex });
+                            chart.dispatchAction({ type: 'highlight', seriesIndex: 2, dataIndex: currentIndex });
+                            chart.dispatchAction({ type: 'showTip', seriesIndex: 2, dataIndex: currentIndex });
                         }, 2000);
                         this.chartTimers.push(timer);
                     }
-                    // ★ 专治极度不均衡数据的：高端水平进度条排行榜
                     else if (this.activeTab === 'marital') {
                         let data = this.maritalRaw;
-                        let sortedData = [...data].sort((a, b) => a.value - b.value);
 
                         chart.setOption({
                             backgroundColor: 'transparent',
@@ -479,65 +575,36 @@
                                 }
                             },
                             grid: { left: '5%', right: '12%', bottom: '5%', top: '20%', containLabel: true },
-                            xAxis: {
-                                type: 'value',
-                                show: false,
-                                splitLine: { show: false }
-                            },
+                            xAxis: { type: 'value', show: false, splitLine: { show: false } },
                             yAxis: {
                                 type: 'category',
-                                data: sortedData.map(item => item.name),
+                                data: data.map(item => item.name),
                                 axisLine: { show: false },
                                 axisTick: { show: false },
-                                axisLabel: {
-                                    color: '#303133',
-                                    fontSize: 15,
-                                    fontWeight: 'bold',
-                                    margin: 15
-                                }
+                                axisLabel: { color: '#303133', fontSize: 15, fontWeight: 'bold', margin: 15 }
                             },
                             series: [
                                 {
-                                    name: '人数',
-                                    type: 'bar',
-                                    barWidth: 20,
-                                    showBackground: true,
+                                    name: '人数', type: 'bar', barWidth: 20, showBackground: true,
                                     backgroundStyle: { color: 'rgba(235, 238, 245, 0.6)', borderRadius: 10 },
                                     itemStyle: {
                                         borderRadius: 10,
                                         color: function(params) {
+                                            if(params.name === '拒绝回答/未知') {
+                                                return new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#e4e7ed' }, { offset: 1, color: '#c0c4cc' }]);
+                                            }
                                             const colorList = [
-                                                ['#cfd9df', '#e2ebf0'],
-                                                ['#ffecd2', '#fcb69f'],
-                                                ['#d4fc79', '#96e6a1'],
-                                                ['#fbc2eb', '#a6c1ee'],
-                                                ['#a1c4fd', '#c2e9fb'],
-                                                ['#ff9a9e', '#fecfef'],
-                                                ['#4facfe', '#00f2fe']
+                                                ['#cfd9df', '#e2ebf0'], ['#ffecd2', '#fcb69f'], ['#d4fc79', '#96e6a1'],
+                                                ['#fbc2eb', '#a6c1ee'], ['#a1c4fd', '#c2e9fb'], ['#ff9a9e', '#fecfef'], ['#4facfe', '#00f2fe']
                                             ];
                                             let c = colorList[params.dataIndex % colorList.length];
-                                            return new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                                                { offset: 0, color: c[0] },
-                                                { offset: 1, color: c[1] }
-                                            ]);
+                                            return new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: c[0] }, { offset: 1, color: c[1] }]);
                                         },
-                                        shadowBlur: 10,
-                                        shadowColor: 'rgba(0,0,0,0.05)',
-                                        shadowOffsetY: 3
+                                        shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.05)', shadowOffsetY: 3
                                     },
-                                    label: {
-                                        show: true,
-                                        position: 'right',
-                                        formatter: '{c} 人',
-                                        color: '#606266',
-                                        fontSize: 15,
-                                        fontWeight: '900',
-                                        fontFamily: 'Arial',
-                                        padding: [0, 0, 0, 10]
-                                    },
-                                    data: sortedData.map(item => item.value),
-                                    animationDuration: 2000,
-                                    animationEasing: 'cubicOut'
+                                    label: { show: true, position: 'right', formatter: '{c} 人', color: '#606266', fontSize: 15, fontWeight: '900', fontFamily: 'Arial', padding: [0, 0, 0, 10] },
+                                    data: data.map(item => item.value),
+                                    animationDuration: 2000, animationEasing: 'cubicOut'
                                 }
                             ]
                         });

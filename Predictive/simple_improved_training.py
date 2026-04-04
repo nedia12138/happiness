@@ -17,11 +17,11 @@ warnings.filterwarnings('ignore')
 
 
 # ==========================================
-# 1. 核心算法类
+# 1. 核心算法类 (已加入强力防过拟合约束)
 # ==========================================
 
 class SuperiorLinearRegression:
-    def __init__(self, alpha=0.5):
+    def __init__(self, alpha=10.0):  # 优化：提升正则化惩罚力度，防止权重过大
         self.alpha = alpha
         self.weights = None
         self.bias = 0
@@ -39,16 +39,20 @@ class SuperiorLinearRegression:
 
 
 class SuperiorRandomForest:
-    def __init__(self, n_estimators=400, max_depth=14):
+    # 优化：最大深度设为10，叶子节点最少5个样本，强制模型进行“物理剪枝”
+    def __init__(self, n_estimators=400, max_depth=10, min_samples_leaf=5):
         self.n_estimators = n_estimators
         self.max_depth = max_depth
+        self.min_samples_leaf = min_samples_leaf
         self.trees = []
 
     def fit(self, X, y):
         self.trees = []
         for _ in range(self.n_estimators):
             indices = np.random.choice(len(X), len(X), replace=True)
-            tree = DecisionTreeRegressor(max_depth=self.max_depth, random_state=np.random.randint(1000))
+            # 传递早停和剪枝参数
+            tree = DecisionTreeRegressor(max_depth=self.max_depth, min_samples_leaf=self.min_samples_leaf,
+                                         random_state=np.random.randint(1000))
             tree.fit(X[indices], y[indices])
             self.trees.append(tree)
 
@@ -62,7 +66,8 @@ class SuperiorRandomForest:
 
 class SimpleImprovedModel:
     def __init__(self):
-        self.db_config = {"host": "localhost", "user": "root", "password": "12121212", "database": "0_80123xingfuganwajue",
+        self.db_config = {"host": "localhost", "user": "root", "password": "12121212",
+                          "database": "0_80123xingfuganwajue",
                           "charset": "utf8mb4"}
         self.scaler = RobustScaler()
         self.base_path = os.path.dirname(os.path.abspath(__file__))
@@ -87,9 +92,8 @@ class SimpleImprovedModel:
         valid_features = [c for c in core_cols if c in data.columns]
         for c in valid_features:
             data[c] = pd.to_numeric(data[c], errors='coerce').fillna(data[c].median())
-        # class_wealth（体现主观地位与财富的交互）：
-        # age_u（体现幸福感随年龄的U型波动）：
-        # log_income（解决收入边际效用递减）：
+
+        # 特征变换工程
         data['log_income'] = np.log1p(data['income'].clip(lower=0))
         data['age'] = 2015 - data['birth']
         data['age_u'] = (data['age'] - 48) ** 2
@@ -104,37 +108,45 @@ class SimpleImprovedModel:
         rmse = np.sqrt(mse)
         mae = mean_absolute_error(y_true, y_pred)
         r2 = r2_score(y_true, y_pred)
-        print(f"| {name:<12} | {r2:.4f} | {mse:.4f} | {rmse:.4f} | {mae:.4f} |")
+        print(f"| {name:<14} | {r2:.4f} | {mse:.4f} | {rmse:.4f} | {mae:.4f} |")
 
     def run(self):
-        print(f"-> 🚨 启动全指标对比训练流程...")
+        print(f"-> 🚨 启动全指标对比训练流程 (开启过拟合强约束)...")
         df = self.load_data()
         data, all_cols = self.feature_engineering(df)
         X, y = self.scaler.fit_transform(data[all_cols].values), data['happiness'].values
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        # 初始化模型
-        lr = SuperiorLinearRegression(alpha=0.5)
-        rf = SuperiorRandomForest(n_estimators=400, max_depth=14)
+        # 优化：初始化强约束模型
+        lr = SuperiorLinearRegression(alpha=10.0)
+        rf = SuperiorRandomForest(n_estimators=400, max_depth=10, min_samples_leaf=5)
 
         # 训练
-        print("-> 正在进行模型拟合...")
+        print("-> 正在进行模型拟合与物理剪枝...")
         lr.fit(X_train, y_train)
         rf.fit(X_train, y_train)
 
-        # 分别获取预测结果
+        # 优化：微调混合模型的权力分配 (0.4 LR + 0.6 RF)
         y_pred_lr = np.clip(lr.predict(X_test), 1, 5)
         y_pred_rf = np.clip(rf.predict(X_test), 1, 5)
-        y_pred_hybrid = np.clip(0.3 * y_pred_lr + 0.7 * y_pred_rf, 1, 5)
+        y_pred_hybrid = np.clip(0.4 * y_pred_lr + 0.6 * y_pred_rf, 1, 5)
+
+        # 获取训练集的预测结果
+        y_train_pred_rf = np.clip(rf.predict(X_train), 1, 5)
+        y_train_pred_hybrid = np.clip(0.4 * np.clip(lr.predict(X_train), 1, 5) + 0.6 * y_train_pred_rf, 1, 5)
 
         # 打印结果表格
-        print("\n" + "=" * 65)
-        print(f"| {'算法模型':<10} | {'R2 (↑)':<6} | {'MSE (↓)':<6} | {'RMSE (↓)':<6} | {'MAE (↓)':<6} |")
-        print("-" * 65)
-        self.print_metrics_table(y_test, y_pred_lr, "线性回归")
-        self.print_metrics_table(y_test, y_pred_rf, "随机森林")
-        self.print_metrics_table(y_test, y_pred_hybrid, "混合模型")
-        print("=" * 65)
+        print("\n" + "=" * 70)
+        print(f"| {'算法模型':<14} | {'R2 (↑)':<6} | {'MSE (↓)':<6} | {'RMSE (↓)':<6} | {'MAE (↓)':<6} |")
+        print("-" * 70)
+        self.print_metrics_table(y_test, y_pred_lr, "线性回归(测试集)")
+        print("-" * 70)
+        self.print_metrics_table(y_train, y_train_pred_rf, "👉随机森林(训练集)")
+        self.print_metrics_table(y_test, y_pred_rf, "👉随机森林(测试集)")
+        print("-" * 70)
+        self.print_metrics_table(y_train, y_train_pred_hybrid, "🔥混合模型(训练集)")
+        self.print_metrics_table(y_test, y_pred_hybrid, "🔥混合模型(测试集)")
+        print("=" * 70)
 
         # 保存为网页端需要的格式
         save_path = os.path.join(self.model_save_path, 'random_forest.pkl')
@@ -145,7 +157,7 @@ class SimpleImprovedModel:
                 'scaler': self.scaler,
                 'cols': all_cols
             }, f)
-        print(f"\n✅ 最佳模型（混合权重版）已同步至: {save_path}")
+        print(f"\n✅ 最佳鲁棒模型（已剪枝版）已同步至: {save_path}")
 
 
 if __name__ == '__main__':

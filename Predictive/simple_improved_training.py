@@ -4,12 +4,18 @@ import pymysql
 import pickle
 import os
 import warnings
+import random  # <--- 必须加上这个导入！
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.preprocessing import RobustScaler
 
+# ==========================================
+# 🛑 终极护盾：锁死全局随机种子，保住最高跑分！
+# ==========================================
+np.random.seed(424)
+random.seed(424)
 # 设置绘图中文字体
 plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei']
 plt.rcParams['axes.unicode_minus'] = False

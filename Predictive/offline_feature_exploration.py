@@ -8,11 +8,17 @@ import numpy as np
 import pymysql
 import json
 import os
+import sys
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 import warnings
 
 warnings.filterwarnings('ignore')
+
+project_root = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, project_root)
+
+from config.config import DB_CONFIG
 
 # 设置绘图中文字体
 plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei']
@@ -23,10 +29,7 @@ def run_accurate_exploration():
     print("🚀 [高精度离线引擎] 启动！正在连接数据库...")
 
     try:
-        conn = pymysql.connect(
-            host='127.0.0.1', port=3306, user='root',
-            password='12121212', database='0_80123xingfuganwajue', charset='utf8mb4'
-        )
+        conn = pymysql.connect(**DB_CONFIG)
         query = "SELECT * FROM py_happiness_survey"
         df = pd.read_sql(query, conn)
         conn.close()

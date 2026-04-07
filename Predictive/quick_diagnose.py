@@ -2,17 +2,16 @@
 快速数据诊断脚本
 """
 
+import os
+import sys
+
 import pandas as pd
 import pymysql
 
-DB_CONFIG = {
-    'host': '127.0.0.1',
-    'port': 3306,
-    'user': 'root',
-    'password': '12121212',
-    'database': '0_80123xingfuganwajue',
-    'charset': 'utf8mb4'
-}
+project_root = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, project_root)
+
+from config.config import DB_CONFIG
 
 def quick_diagnose():
     conn = pymysql.connect(**DB_CONFIG)

@@ -1,110 +1,74 @@
-import json
-import pickle
-import numpy as np
 import os
+import pickle
+
+import numpy as np
 import pandas as pd
 
-
-# ==========================================
-# 核心算法类定义
-# ==========================================
-class SuperiorLinearRegression:
-    def __init__(self, alpha=5.0):
-        self.alpha = alpha
-        self.weights = None
-        self.bias = 0
-
-    def predict(self, X):
-        return X @ self.weights + self.bias
-
-
-class SuperiorRandomForest:
-    def __init__(self, n_estimators=300, max_depth=15):
-        self.n_estimators = n_estimators
-        self.max_depth = max_depth
-        self.trees = []
-
-    def predict(self, X):
-        return np.mean([t.predict(X) for t in self.trees], axis=0)
+try:
+    from Predictive.manual_models import ManualRandomForestRegressor, ManualRidgeRegression
+    from Predictive.prediction_schema import (
+        FEATURE_COLUMNS,
+        apply_scaler_state,
+        build_display_importances,
+        canonicalize_payload,
+        prepare_model_features,
+    )
+except ImportError:
+    from manual_models import ManualRandomForestRegressor, ManualRidgeRegression
+    from prediction_schema import (
+        FEATURE_COLUMNS,
+        apply_scaler_state,
+        build_display_importances,
+        canonicalize_payload,
+        prepare_model_features,
+    )
 
 
 class HappinessPredictor:
     def __init__(self, model_path=None):
         if model_path is None:
             base_path = os.path.dirname(os.path.abspath(__file__))
-            model_path = os.path.join(base_path, 'models', 'random_forest.pkl')
+            model_path = os.path.join(base_path, "models", "random_forest.pkl")
 
-        with open(model_path, 'rb') as f:
-            data = pickle.load(f)
-            self.lr = data['lr']
-            self.rf = data['rf']
-            self.scaler = data['scaler']
-            self.cols = data['cols']
-        print("✅ 完善稳定的高分模型及归因引擎已就绪")
+        with open(model_path, "rb") as file_obj:
+            self.state = pickle.load(file_obj)
 
-    def predict(self, data_dict):
-        df = pd.DataFrame([data_dict])
-        # 自动补全缺失字段
-        for col in self.cols:
-            if col not in df.columns:
-                df[col] = 0
+        self.feature_columns = self.state["feature_columns"]
+        self.fill_values = self.state["fill_values"]
+        self.scaler_state = self.state["scaler_state"]
+        self.hybrid_weight = float(self.state["hybrid_weight"])
+        self.lr_model = ManualRidgeRegression.from_state(self.state["ridge_state"])
+        self.rf_model = ManualRandomForestRegressor.from_state(self.state["forest_state"])
+        self.display_importances = self.state.get("display_importances") or build_display_importances(
+            self.feature_columns,
+            self.rf_model.feature_importances_,
+        )
+        self.model_name = self.state.get("model_name", "Manual Ensemble")
 
-        # 特征工程同步
-        df['age'] = 2015 - pd.to_numeric(df.get('birth', 1980))
-        df['age_u'] = (df['age'] - 48) ** 2
-        df['log_income'] = np.log1p(pd.to_numeric(df.get('income', 0)))
-        df['class_wealth'] = pd.to_numeric(df.get('class', 5)) * df['log_income']
+        print("✅ 手写幸福感预测模型已就绪")
 
-        df = df.apply(pd.to_numeric, errors='coerce').fillna(0)
-        # 严格按照 cols 顺序对齐
-        X_vals = df[self.cols].values
-        X_scaled = self.scaler.transform(X_vals)
+    def _prepare_input_matrix(self, payload):
+        canonical_payload = canonicalize_payload(payload or {})
+        feature_frame = prepare_model_features(pd.DataFrame([canonical_payload]), fill_values=self.fill_values)
+        feature_frame = feature_frame.reindex(columns=self.feature_columns, fill_value=0.0)
+        return apply_scaler_state(feature_frame.values, self.scaler_state)
 
-        p1 = float(self.lr.predict(X_scaled)[0])
-        p2 = float(self.rf.predict(X_scaled)[0])
+    def predict(self, payload):
+        X = self._prepare_input_matrix(payload)
+        lr_score = float(self.lr_model.predict(X)[0])
+        rf_score = float(self.rf_model.predict(X)[0])
+        hybrid_score = self.hybrid_weight * lr_score + (1.0 - self.hybrid_weight) * rf_score
 
         return {
-            "lr": round(float(np.clip(p1, 1, 5)), 2),
-            "rf": round(float(np.clip(p2, 1, 5)), 2),
-            "hybrid": round(float(np.clip(0.5 * p1 + 0.5 * p2, 1, 5)), 2)
+            "lr": round(float(np.clip(lr_score, 1, 5)), 2),
+            "rf": round(float(np.clip(rf_score, 1, 5)), 2),
+            "hybrid": round(float(np.clip(hybrid_score, 1, 5)), 2),
         }
 
     def get_model_info(self):
-        """
-        修复版：如果模型对象没有重要性属性，则使用预设的科学权重
-        """
-        # 定义展示名称映射
-        name_map = {
-            'depression': '心理忧郁感', 'equity': '社会公平感', 'class': '社会阶层',
-            'health': '健康状况', 'income': '个人收入', 'familyIncome': '家庭收入',
-            'edu': '受教育程度', 'floorArea': '住房面积', 'age': '年龄因素'
-        }
-
-        # 尝试从模型获取重要性，如果失败则使用基于训练数据的标准权重(热补丁)
-        try:
-            if hasattr(self.rf, 'feature_importances_'):
-                importances = self.rf.feature_importances_
-            else:
-                # 预设权重（根据项目 0.24 模型的实际贡献度分布）
-                weights = {
-                    'depression': 0.21, 'equity': 0.19, 'class': 0.21,
-                    'health': 0.06, 'income': 0.06, 'familyIncome': 0.08,
-                    'edu': 0.03, 'floorArea': 0.09, 'age': 0.09                }
-                importances = [weights.get(c, 0.01) for c in self.cols]
-        except:
-            importances = [0.04] * len(self.cols)
-
-        imp_list = []
-        for name, val in zip(self.cols, importances):
-            if name in name_map:
-                imp_list.append({
-                    "name": name_map[name],
-                    "value": round(float(val) * 100, 2)
-                })
-
-        # 排序并取前 8 名
-        imp_list.sort(key=lambda x: x['value'], reverse=True)
         return {
-            "model_name": "Superior Ensemble (Enchanced)",
-            "importances": imp_list[:10]
+            "model_name": self.model_name,
+            "importances": self.display_importances,
+            "hybrid_weight": round(self.hybrid_weight, 2),
+            "metrics": self.state.get("test_metrics", {}),
         }

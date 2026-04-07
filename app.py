@@ -1,22 +1,4 @@
-import sys
-import numpy as np
-
-# --- 必须放在 app.py 最顶部以解决 Pickle 导入错误 ---
-class SuperiorLinearRegression:
-    def __init__(self, alpha=5.0): pass
-    def predict(self, X): return X @ self.weights + self.bias
-class SuperiorRandomForest:
-    def __init__(self, n_estimators=300, max_depth=15): pass
-    def predict(self, X): return np.mean([t.predict(X) for t in self.trees], axis=0)
-
-# 将这些类强行挂载到 __main__ 模块，彻底解决属性错误
-import __main__
-__main__.SuperiorLinearRegression = SuperiorLinearRegression
-__main__.SuperiorRandomForest = SuperiorRandomForest
-# --- 结束注入 ---
-
-
-from flask import Flask, send_from_directory, request, redirect, url_for, session, abort
+from flask import Flask, abort, redirect, request, send_from_directory, session, url_for
 import os
 from datetime import datetime
 from config.config import *
@@ -102,6 +84,8 @@ def static_files(filename):
 def upload_files(filename):
     """上传文件访问"""
     return send_from_directory('upload', filename)
+
+
 def init_predictor():
     try:
         # 这里必须是 get_predictor
@@ -117,6 +101,3 @@ def init_predictor():
 if __name__ == '__main__':
     init_predictor()
     app.run(debug=True, port=5001)
-
-
-

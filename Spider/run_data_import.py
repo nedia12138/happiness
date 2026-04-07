@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 幸福感数据导入执行脚本
-快速执行数据清洗和导入流程
+快速执行数据库初始化和数据导入流程
 """
 
 import sys
@@ -18,7 +18,9 @@ def main():
     data_dir = os.path.join(os.path.dirname(__file__), 'data')
     required_files = [
         'happiness_train_abbr.csv',
-        'happiness_test_abbr.csv'
+        'happiness_test_abbr.csv',
+        'happiness_train_complete.csv',
+        'happiness_test_complete.csv',
     ]
 
     missing_files = []
@@ -49,23 +51,23 @@ def main():
 
     # 导入并运行数据清洗脚本
     try:
-        print("\n开始执行数据导入...")
+        print("\n开始执行数据库初始化与数据导入...")
         from data_cleaning_import import HappinessDataImporter
 
         importer = HappinessDataImporter()
         importer.run_import()
 
         print("\n" + "=" * 60)
-        print("[SUCCESS] 数据导入完成！")
+        print("[SUCCESS] 数据库初始化与数据导入完成！")
         print("=" * 60)
         print("\n接下来您可以：")
-        print("1. 查看数据库中的数据")
-        print("2. 运行数据分析脚本")
-        print("3. 开始机器学习模型训练")
+        print("1. 查看数据库中的幸福感数据")
+        print("2. 运行机器学习训练脚本")
+        print("3. 启动系统查看调查列表和分析页面")
 
 
     except Exception as e:
-        print(f"\n[ERROR] 数据导入失败: {e}")
+        print(f"\n[ERROR] 数据库初始化失败: {e}")
         print("请查看 data_import.log 文件获取详细错误信息")
         sys.exit(1)
 

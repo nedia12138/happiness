@@ -1048,3 +1048,29 @@
 2026-02-12 20:48:22,724 - INFO - ==================================================
 2026-02-12 20:48:24,287 - INFO - ✅ py_happiness_survey_complete 入库成功
 2026-02-12 20:48:24,305 - INFO - 🎉 数据导入流程全部圆满完成！
+2026-04-07 08:42:01,095 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:43:44,779 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:45:13,908 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:46:00,795 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:47:47,740 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:48:46,751 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:49:56,588 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:50:40,384 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:50:47,539 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:51:25,686 - INFO - 准备创建数据库 0_80123xingfuganwajue
+2026-04-07 08:51:25,714 - INFO - 数据库 0_80123xingfuganwajue 已就绪
+2026-04-07 08:51:25,714 - INFO - ============================================================
+2026-04-07 08:51:25,714 - INFO - 开始初始化表 py_happiness_survey
+2026-04-07 08:51:25,735 - INFO - 已读取 happiness_train_abbr.csv，记录数 8000
+2026-04-07 08:51:25,743 - INFO - 已读取 happiness_test_abbr.csv，记录数 2968
+2026-04-07 08:51:25,835 - INFO - 表 py_happiness_survey 已重建完成
+2026-04-07 08:51:26,333 - INFO - 表 py_happiness_survey 已写入 10968 条记录
+2026-04-07 08:51:26,341 - INFO - py_happiness_survey 数据分布: [{'dataSource': 'test', 'total': 2968}, {'dataSource': 'train', 'total': 8000}]
+2026-04-07 08:51:26,341 - INFO - ============================================================
+2026-04-07 08:51:26,341 - INFO - 开始初始化表 py_happiness_survey_complete
+2026-04-07 08:51:26,493 - INFO - 已读取 happiness_train_complete.csv，记录数 8000
+2026-04-07 08:51:26,530 - INFO - 已读取 happiness_test_complete.csv，记录数 2968
+2026-04-07 08:51:26,677 - INFO - 表 py_happiness_survey_complete 已重建完成
+2026-04-07 08:51:28,080 - INFO - 表 py_happiness_survey_complete 已写入 10968 条记录
+2026-04-07 08:51:28,093 - INFO - py_happiness_survey_complete 数据分布: [{'dataSource': 'test', 'total': 2968}, {'dataSource': 'train', 'total': 8000}]
+2026-04-07 08:51:28,093 - INFO - 🎉 幸福感数据库初始化完成

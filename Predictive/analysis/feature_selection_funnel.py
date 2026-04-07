@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import pymysql
 import os
+import sys
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.ensemble import RandomForestRegressor
@@ -14,6 +15,11 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 import warnings
 
 warnings.filterwarnings('ignore')
+
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+sys.path.insert(0, project_root)
+
+from config.config import DB_CONFIG
 
 # 设置中文字体，防止图表乱码
 plt.rcParams['font.sans-serif'] = ['Arial Unicode MS', 'SimHei']
@@ -24,10 +30,7 @@ def run_feature_funnel():
     print("🚀 [特征工程漏斗] 启动！正在连接数据库读取海量原始特征...")
 
     try:
-        conn = pymysql.connect(
-            host='127.0.0.1', port=3306, user='root',
-            password='12121212', database='0_80123xingfuganwajue', charset='utf8mb4'
-        )
+        conn = pymysql.connect(**DB_CONFIG)
         query = "SELECT * FROM py_happiness_survey"
         df = pd.read_sql(query, conn)
         conn.close()

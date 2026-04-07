@@ -3,20 +3,18 @@
 快速分析数据质量和可预测性问题
 """
 
+import os
+import sys
+
 import pandas as pd
 import numpy as np
 import pymysql
 from scipy import stats
 
-DB_CONFIG = {
-    'host': '127.0.0.1',
-    'port': 3306,
-    'user': 'root',
-    'password': '12121212',
-    'database': '0_80123xingfuganwajue',
-    'charset': 'utf8mb4',
-    'cursorclass': pymysql.cursors.DictCursor
-}
+project_root = os.path.dirname(os.path.dirname(__file__))
+sys.path.insert(0, project_root)
+
+from config.config import DB_CONFIG
 
 def diagnose():
     """诊断数据问题"""

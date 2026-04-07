@@ -5,7 +5,13 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
+#     "age",                       # 年龄：由当前年份减去出生年份得出
+#     "age_sq",                    # 年龄平方：用于捕捉幸福感与年龄之间的“U型曲线”关系
+#     "log_income",                # 收入对数：平滑高收入人群的数据波动，减少离群点干扰
+#     "log_family_income",         # 家庭收入对数：同上，处理家庭总收入
+#     "income_gap",                # 家庭收入差：计算个人收入在家庭中的占比权重
+#     "class_income_interaction",  # 阶层收入交互项：分析“主观社会地位”与“实际经济收入”的耦合影响
+#     "health_depression_gap",     # 健康抑郁差值：综合评估身体健康与心理健康之间的差额
 
 MISSING_SENTINELS = (-8, -3, -2, -1)
 
@@ -177,13 +183,21 @@ def engineer_features(base_df):
     features = base_df.copy()
 
     features["age"] = 2015.0 - features["birth"]
+    # 2. 年龄平方：社会学研究表明幸福感随年龄呈先降后升的 U 型，平方项能捕捉这种非线性关系
     features["age_sq"] = np.square(features["age"])
+    # 3. 收入取对数：解决收入分布极度偏态的问题，np.log1p 处理了收入为 0 的情况
+    # 因为社会中的收入差距极大，直接使用原始金额会导致数据分布极度偏斜。通过 np.log1p（即 $\ln(x+1)$），你将数据压缩到了一个更平稳的区间，
+    # 让模型更容易捕捉收入与幸福感之间的边际效应。
     features["log_income"] = np.log1p(np.clip(features["income"], a_min=0, a_max=None))
-    features["log_family_income"] = np.log1p(np.clip(features["family_income"], a_min=0, a_max=None))
-    features["income_gap"] = features["log_family_income"] - features["log_income"]
-    features["class_income_interaction"] = features["class"] * features["log_income"]
-    features["health_depression_gap"] = features["health"] - features["depression"]
 
+    features["log_family_income"] = np.log1p(np.clip(features["family_income"], a_min=0, a_max=None))
+    # 4. 收入差距：反映个人在家庭经济结构中的地位
+    features["income_gap"] = features["log_family_income"] - features["log_income"]
+    # 5. 交互项（高级特征）：反映了“如果你认为自己阶层高，那么增加收入是否会更显著地提升幸福感”
+    features["class_income_interaction"] = features["class"] * features["log_income"]
+    # 6. 身心差值：如果身体很健康但心理很抑郁，这个差值会提醒模型注意心理健康对总分的拉低作用
+    features["health_depression_gap"] = features["health"] - features["depression"]
+    # 返回最终合并后的 32 维特征向量
     return features[FEATURE_COLUMNS]
 
 

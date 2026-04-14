@@ -1,42 +1,56 @@
 from dataclasses import dataclass
-
 import numpy as np
-
+"""
+    纯手写线性回归L2正则化
+    原理：通过矩阵正规方程求解，并引入 L2 正则化项防止过拟合
+    公式：beta = (X.T * X + alpha * I)^-1 * X.T * y
+    """
 
 @dataclass
 class SplitResult:
-    feature_index: int
-    threshold: float
-    gain: float
-    left_mask: np.ndarray
-    right_mask: np.ndarray
+    """存储决策树节点分裂结果的结构体"""
+    feature_index: int  # 分裂使用的特征索引
+    threshold: float    # 分裂的数值阈值
+    gain: float         #本次分裂带来的均方误差(MSE)减少量（增益）
+    left_mask: np.ndarray # 左子树的数据掩码
+    right_mask: np.ndarray # 右子树的数据掩码
 
 
 class ManualRidgeRegression:
+    """
+        纯手写线性回归 (L2正则化/岭回归)
+        原理：通过矩阵正规方程求解，并引入 I 矩阵乘以 alpha 防止过拟合
+        公式底层：beta = (X.T @ X + alpha * I)^-1 @ X.T @ y
+        """
     def __init__(self, alpha=1.0):
-        self.alpha = float(alpha)
-        self.weights = None
-        self.bias = 0.0
+        self.alpha = float(alpha) # 正则化强度
+        self.weights = None # 存储计算出的特征权重向量
+        self.bias = 0.0     # 截距项 (b)
 
     def fit(self, X, y):
+        # 1. 数据格式标准化
         X = np.asarray(X, dtype=float)
         y = np.asarray(y, dtype=float).reshape(-1)
-
+        # 2. 构造增广矩阵：在 X 第一列加上全 1，用于统一计算截距项
         X_bias = np.column_stack([np.ones(X.shape[0]), X])
+        # 3. 构建正则化矩阵：alpha * I (单位矩阵)
         regularizer = np.eye(X_bias.shape[1], dtype=float)
         regularizer[0, 0] = 0.0
-        lhs = X_bias.T @ X_bias + self.alpha * regularizer
-        rhs = X_bias.T @ y
-        params = np.linalg.pinv(lhs) @ rhs
-        self.bias = float(params[0])
-        self.weights = params[1:]
+        # 4. 求解正规方程：使用 pinv (广义逆) 提高矩阵求逆的数值稳定性
+        lhs = X_bias.T @ X_bias + self.alpha * regularizer# 左半部分
+        rhs = X_bias.T @ y# 右半部分
+        params = np.linalg.pinv(lhs) @ rhs# 得到最优参数向量
+        self.bias = float(params[0]) # 第一个元素是截距
+        self.weights = params[1:] # 剩余是各特征的权重
         return self
 
     def predict(self, X):
+        """执行线性预测：y = XW + b"""
         X = np.asarray(X, dtype=float)
         return X @ self.weights + self.bias
 
     def to_state(self):
+        """将模型参数导出为字典，方便后续存入 .pkl 文件"""
         return {
             "alpha": self.alpha,
             "bias": self.bias,
@@ -45,6 +59,7 @@ class ManualRidgeRegression:
 
     @classmethod
     def from_state(cls, state):
+        """从字典状态恢复模型对象"""
         model = cls(alpha=state["alpha"])
         model.bias = float(state["bias"])
         model.weights = np.asarray(state["weights"], dtype=float)
@@ -52,15 +67,16 @@ class ManualRidgeRegression:
 
 
 class ManualRegressionTree:
+    """纯手写回归决策树 (CART算法)"""
     def __init__(
         self,
-        max_depth=8,
-        min_samples_split=10,
-        min_samples_leaf=5,
-        max_features="sqrt",
-        min_gain=1e-6,
-        max_thresholds=16,
-        random_state=None,
+        max_depth=8,    # 最大树深，防止过拟合
+        min_samples_split=10,# 节点分裂所需的最小样本数
+        min_samples_leaf=5,# 叶子节点必须包含的最小样本数
+        max_features="sqrt",# 每次分裂考虑的随机特征数量
+        min_gain=1e-6,# 允许分裂的最小增益阈值
+        max_thresholds=16,# 分位数采样数，用于加速寻找分裂点
+        random_state=None,# 存储树的嵌套字典结构
     ):
         self.max_depth = int(max_depth)
         self.min_samples_split = int(min_samples_split)
@@ -82,6 +98,7 @@ class ManualRegressionTree:
         self.n_features_in_ = X.shape[1]
         self.feature_importances_ = np.zeros(self.n_features_in_, dtype=float)
         self._rng = np.random.default_rng(self.random_state)
+        # 递归构建整棵树
         self.root_ = self._build_tree(X, y, depth=0)
 
         total_gain = self.feature_importances_.sum()
@@ -107,9 +124,11 @@ class ManualRegressionTree:
         }
 
     def _candidate_thresholds(self, values):
+        """寻找分裂候选点：使用分位数采样法提高效率"""
         unique_values = np.unique(values)
         if unique_values.size <= 1:
             return np.array([], dtype=float)
+
 
         if unique_values.size <= self.max_thresholds + 1:
             return (unique_values[:-1] + unique_values[1:]) / 2.0
@@ -123,52 +142,41 @@ class ManualRegressionTree:
         n_samples = X.shape[0]
         if n_samples < max(self.min_samples_split, self.min_samples_leaf * 2):
             return None
-
         parent_ss = float(np.sum((y - np.mean(y)) ** 2))
         if parent_ss <= 1e-12:
             return None
-
         feature_count = self._resolve_max_features()
         feature_indices = self._rng.choice(self.n_features_in_, size=feature_count, replace=False)
         total_sum = float(np.sum(y))
         total_sq_sum = float(np.sum(np.square(y)))
-
         best = None
-
         for feature_index in feature_indices:
             feature_values = X[:, feature_index]
             thresholds = self._candidate_thresholds(feature_values)
             if thresholds.size == 0:
                 continue
-
             masks = feature_values[:, None] <= thresholds[None, :]
             left_count = masks.sum(axis=0).astype(float)
             right_count = float(n_samples) - left_count
-
             valid = (left_count >= self.min_samples_leaf) & (right_count >= self.min_samples_leaf)
             if not np.any(valid):
                 continue
-
             y_column = y[:, None]
             left_sum = np.sum(y_column * masks, axis=0)
             left_sq_sum = np.sum(np.square(y_column) * masks, axis=0)
             right_sum = total_sum - left_sum
             right_sq_sum = total_sq_sum - left_sq_sum
-
             left_ss = left_sq_sum - np.square(left_sum) / np.maximum(left_count, 1.0)
             right_ss = right_sq_sum - np.square(right_sum) / np.maximum(right_count, 1.0)
             gain = parent_ss - left_ss - right_ss
             gain = np.where(valid, gain, -np.inf)
-
             best_index = int(np.argmax(gain))
             best_gain = float(gain[best_index])
             if best_gain <= self.min_gain:
                 continue
-
             threshold = float(thresholds[best_index])
             left_mask = feature_values <= threshold
             right_mask = ~left_mask
-
             if best is None or best_gain > best.gain:
                 best = SplitResult(
                     feature_index=int(feature_index),
@@ -177,7 +185,6 @@ class ManualRegressionTree:
                     left_mask=left_mask,
                     right_mask=right_mask,
                 )
-
         return best
 
     def _build_tree(self, X, y, depth):

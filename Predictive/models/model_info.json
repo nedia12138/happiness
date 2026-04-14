@@ -1,56 +1,56 @@
 {
   "model_name": "Manual Ensemble (Ridge + CART Forest)",
-  "description": "手写 Ridge + 手写 CART 随机森林融合模型",
+  "description": "手写 线性 + 手写 CART 随机森林融合模型",
   "feature_importances": [
     {
       "key": "depression",
       "name": "心理忧郁感",
-      "value": 13.03
+      "value": 12.62
     },
     {
       "key": "equity",
       "name": "社会公平感",
-      "value": 13.02
-    },
-    {
-      "key": "family_status",
-      "name": "家庭社会地位",
-      "value": 7.62
+      "value": 12.39
     },
     {
       "key": "class",
       "name": "主观社会阶层",
-      "value": 7.5
+      "value": 7.33
     },
     {
-      "key": "status_peer",
-      "name": "同龄人地位感知",
-      "value": 4.51
+      "key": "family_status",
+      "name": "家庭社会地位",
+      "value": 7.23
     },
     {
       "key": "class_income_interaction",
       "name": "阶层收入交互项",
-      "value": 4.19
+      "value": 4.43
+    },
+    {
+      "key": "status_peer",
+      "name": "同龄人地位感知",
+      "value": 4.28
     },
     {
       "key": "health",
       "name": "健康状况",
-      "value": 4.18
+      "value": 4.03
     },
     {
       "key": "floor_area",
       "name": "住房面积",
-      "value": 3.81
+      "value": 3.88
     },
     {
       "key": "weight_jin",
       "name": "体重",
-      "value": 3.41
+      "value": 3.48
     },
     {
       "key": "height_cm",
       "name": "身高",
-      "value": 2.99
+      "value": 3.18
     }
   ],
   "hybrid_weight": 0.4,
@@ -62,16 +62,16 @@
       "mse": 0.490943
     },
     "forest": {
-      "r2": 0.282174,
-      "rmse": 0.694298,
-      "mae": 0.505325,
-      "mse": 0.48205
+      "r2": 0.284424,
+      "rmse": 0.69321,
+      "mae": 0.505687,
+      "mse": 0.48054
     },
     "hybrid": {
-      "r2": 0.287387,
-      "rmse": 0.691773,
-      "mae": 0.507645,
-      "mse": 0.47855
+      "r2": 0.28855,
+      "rmse": 0.691208,
+      "mae": 0.508074,
+      "mse": 0.477769
     }
   }
 }

@@ -2,7 +2,15 @@ import hashlib
 import math
 import re
 from pathlib import Path
-
+# 数据清洗（Clean Data）：通过 MISSING_SENTINELS 准确识别了问卷中的异常逻辑，避免了错误数据对模型的干扰。
+#
+# 特征衍生（Feature Engineering）：你通过 engineer_features 将原始特征进行了升维。例如：
+#
+# age_sq 捕捉了幸福感的 U 型规律。
+#
+# log_income 处理了收入的 长尾偏态分布。     * interaction 捕捉了 变量间的协同效应。
+#
+# 工业化部署：使用了 apply_scaler_state。这意味着你的后端系统在预测时不需要加载庞大的 sklearn 对象，仅凭几个参数列表就能完成同样的缩放计算。这体现了你对高性能部署的理解。
 import numpy as np
 import pandas as pd
 #     "age",                       # 年龄：由当前年份减去出生年份得出
@@ -41,6 +49,9 @@ BASE_FEATURES = [
     "inc_ability",
     "height_cm",
     "weight_jin",
+    "trust",            # 新增：社会信任度
+    "media_tv",         # 新增：看电视频率
+    "media_internet"    # 新增：上网频率
 ]
 
 DERIVED_FEATURES = [
@@ -108,6 +119,13 @@ _EXPLICIT_ALIASES = {
     "heightCm": "height_cm",
     "weightjin": "weight_jin",
     "weightJin": "weight_jin",
+    "trust1": "trust",        # 假设你用 trust1 代表整体社会信任度
+    "media4": "media_tv",     # CGSS中 media4 通常是电视
+    "media5": "media_internet",
+    "mediatv": "media_tv",
+    "mediaTv": "media_tv",
+    "mediainternet": "media_internet",
+    "mediaInternet": "media_internet"
 }
 
 _CANONICAL_LOOKUP = {feature: feature for feature in BASE_FEATURES}
@@ -139,6 +157,7 @@ def canonicalize_key(key):
 
 
 def canonicalize_payload(payload):
+    """规范化用户上传的 JSON：只保留后端模型需要的字段，过滤掉干扰信息"""
     normalized = {}
     for key, value in (payload or {}).items():
         canonical_key = canonicalize_key(key)
@@ -148,11 +167,13 @@ def canonicalize_payload(payload):
 
 
 def _coerce_numeric(series):
+    """强制数值化：将数据转为浮点数，并将 -8 等无效哨兵值置为 NaN（标准空值）"""
     numeric = pd.to_numeric(series, errors="coerce")
     return numeric.mask(numeric.isin(MISSING_SENTINELS))
 
 
 def prepare_base_feature_frame(df, fill_values=None):
+    """准备基础特征矩阵：负责字段对齐和空值填充"""
     normalized = df.copy()
     normalized = normalized.rename(columns={column: canonicalize_key(column) for column in normalized.columns})
 
@@ -160,12 +181,14 @@ def prepare_base_feature_frame(df, fill_values=None):
     learned_fill_values = {}
 
     for feature in BASE_FEATURES:
+        # 提取字段数据并清洗
         if feature in normalized.columns:
             series = _coerce_numeric(normalized[feature])
         else:
             series = pd.Series(np.nan, index=normalized.index, dtype=float)
 
         if fill_values is None:
+            # 训练阶段：计算该字段的中位数作为填充标准，并记录下来
             valid_values = series.dropna()
             fill_value = float(valid_values.median()) if not valid_values.empty else 0.0
             learned_fill_values[feature] = fill_value
@@ -202,6 +225,7 @@ def engineer_features(base_df):
 
 
 def prepare_model_features(df, fill_values=None):
+    """入口函数：一键完成数据规范化、空值填充和特征衍生"""
     if fill_values is None:
         base_df, learned_fill_values = prepare_base_feature_frame(df, fill_values=None)
         return engineer_features(base_df), learned_fill_values
@@ -210,6 +234,7 @@ def prepare_model_features(df, fill_values=None):
 
 
 def build_scaler_state(scaler):
+    """导出 Scaler 状态：将 RobustScaler 的中轴和缩放系数转为列表，方便存入 JSON/PKL"""
     return {
         "center": scaler.center_.tolist(),
         "scale": scaler.scale_.tolist(),
@@ -224,6 +249,7 @@ def apply_scaler_state(X, scaler_state):
 
 
 def build_display_importances(feature_names, importances, limit=10):
+    """重要性构建器：将算法输出的 Gini 重要性分数映射回中文名，给前端画图用"""
     pairs = []
     for feature_name, importance in zip(feature_names, importances):
         label = FEATURE_LABELS.get(feature_name, feature_name)

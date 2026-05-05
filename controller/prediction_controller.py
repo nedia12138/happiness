@@ -40,7 +40,7 @@ def predict():
         print(">>> 收到新的前端个体特征数据，开启在线智能预测！")
         print(">>> 正在启动底层混合算法引擎 (Hybrid Engine)...")
         # 从 res 字典中提取出三个分数进行终端打印
-        print(f" [模型 1] 线性回归 (LR) 并行推演结果 : {res.get('lr', 0):.3f}")
+        print(f" [模型 1] 岭回归 (Ridge) 并行推演结果 : {res.get('lr', 0):.3f}")
         print(f" [模型 2] 随机森林 (RF) 并行推演结果 : {res.get('rf', 0):.3f}")
         print("-" * 37)
         print(f" [最终决策] 软投票加权融合输出 (Hybrid) : {res.get('hybrid', 0):.3f}")

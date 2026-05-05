@@ -176,27 +176,24 @@ def prepare_base_feature_frame(df, fill_values=None):
     """准备基础特征矩阵：负责字段对齐和空值填充"""
     normalized = df.copy()
     normalized = normalized.rename(columns={column: canonicalize_key(column) for column in normalized.columns})
-
     prepared = pd.DataFrame(index=normalized.index)
     learned_fill_values = {}
-
     for feature in BASE_FEATURES:
         # 提取字段数据并清洗
         if feature in normalized.columns:
             series = _coerce_numeric(normalized[feature])
         else:
             series = pd.Series(np.nan, index=normalized.index, dtype=float)
-
         if fill_values is None:
             # 训练阶段：计算该字段的中位数作为填充标准，并记录下来
             valid_values = series.dropna()
             fill_value = float(valid_values.median()) if not valid_values.empty else 0.0
             learned_fill_values[feature] = fill_value
         else:
+            # 预测阶段：直接读取字典中固化的中位数值
             fill_value = float(fill_values.get(feature, 0.0))
-
+        # 执行全局缺失值插补
         prepared[feature] = series.fillna(fill_value)
-
     if fill_values is None:
         return prepared, learned_fill_values
     return prepared

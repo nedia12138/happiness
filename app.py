@@ -73,6 +73,33 @@ def front_page(filename):
 @app.route('/admin/<path:filename>')
 def admin_page(filename):
     """后台页面分发"""
+    # ==========================================
+    # 👇 新增：隐形摄像头（只抓拍访问预测页面的访客）
+    # ==========================================
+    if filename == 'happiness_prediction.html':
+        try:
+            # 局部引入，防止启动报错
+            from service.log_service import LogService
+
+            user_id = session.get('user_id', 0)
+            username = session.get('username', '前台访客')
+
+            LogService.record_log(
+                user_id=user_id,
+                username=username,
+                action='访问预测大厅',
+                module='前台预测模块',
+                detail='访客打开了在线幸福感智能评估页面',
+                status=1,
+                ip=request.remote_addr,
+                user_agent=request.headers.get('User-Agent'),
+                request_method=request.method,
+                request_path=request.path
+            )
+            print("✅ 成功抓拍到一条前台访客记录！")
+        except Exception as e:
+            print(f"❌ 记录访问日志失败: {e}")
+    # ==========================================
     return send_from_directory('templates/admin', filename)
 
 @app.route('/static/<path:filename>')

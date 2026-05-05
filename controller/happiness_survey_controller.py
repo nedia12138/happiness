@@ -153,3 +153,13 @@ class HappinessSurveyController:
         except Exception as e:
             print(f"获取幸福感统计数据失败: {str(e)}")
             return error(f"获取幸福感统计数据失败: {str(e)}")
+
+    @staticmethod
+    def add_happiness_survey():
+        """处理前台的新增问卷请求"""
+        try:
+            data = request.json
+            return HappinessSurveyService.add_happiness_survey(data)
+        except Exception as e:
+            print(f"处理保存请求异常: {str(e)}")
+            return error(f"处理保存请求异常: {str(e)}")

@@ -147,75 +147,58 @@ class HappinessSurveyService:
             return error(f"获取幸福感调查表详情失败: {str(e)}")
 
     @staticmethod
-    def get_happiness_statistics():
+    def add_happiness_survey(data):
         """
-        获取幸福感统计数据
-
-        Returns:
-            dict: 统计数据
+        新增问卷 (带数据库自增检测的严谨版)
         """
         try:
             with get_db_connection() as conn:
                 with conn.cursor() as cursor:
-                    # 幸福感评分分布统计
-                    happiness_stats_sql = """
-                        SELECT happiness, COUNT(*) as count
-                        FROM py_happiness_survey
-                        GROUP BY happiness
-                        ORDER BY happiness
-                    """
-                    print(f"执行SQL: {happiness_stats_sql}")
-                    cursor.execute(happiness_stats_sql)
-                    happiness_stats = cursor.fetchall()
+                    # 1. 字段翻译与白名单过滤 (保持原样)
+                    field_mapping = {
+                        'family_income': 'familyIncome', 'floor_area': 'floorArea',
+                        'status_peer': 'statusPeer', 'work_status': 'workStatus',
+                        'family_status': 'familyStatus', 'inc_ability': 'incAbility',
+                        'height_cm': 'heightCm', 'weight_jin': 'weightJin'
+                    }
+                    valid_columns = {
+                        'happiness', 'surveyType', 'province', 'city', 'gender', 'birth',
+                        'edu', 'income', 'political', 'floorArea', 'heightCm', 'weightJin',
+                        'health', 'depression', 'hukou', 'socialize', 'relax', 'learn',
+                        'equity', 'class', 'workStatus', 'familyIncome', 'familyStatus',
+                        'house', 'car', 'marital', 'statusPeer', 'incAbility', 'dataSource'
+                    }
 
-                    # 性别分布统计
-                    gender_stats_sql = """
-                        SELECT gender, COUNT(*) as count
-                        FROM py_happiness_survey
-                        WHERE gender IS NOT NULL
-                        GROUP BY gender
-                        ORDER BY gender
-                    """
-                    print(f"执行SQL: {gender_stats_sql}")
-                    cursor.execute(gender_stats_sql)
-                    gender_stats = cursor.fetchall()
+                    clean_data = {}
+                    for k, v in data.items():
+                        if k != 'id' and v is not None and v != "":
+                            db_key = field_mapping.get(k, k)
+                            if db_key in valid_columns:
+                                clean_data[db_key] = v
 
-                    # 教育水平分布统计
-                    edu_stats_sql = """
-                        SELECT edu, COUNT(*) as count
-                        FROM py_happiness_survey
-                        WHERE edu IS NOT NULL
-                        GROUP BY edu
-                        ORDER BY edu
-                    """
-                    print(f"执行SQL: {edu_stats_sql}")
-                    cursor.execute(edu_stats_sql)
-                    edu_stats = cursor.fetchall()
+                    if 'dataSource' not in clean_data:
+                        clean_data['dataSource'] = 'web_predict'
 
-                    # 数据来源统计
-                    source_stats_sql = """
-                        SELECT dataSource, COUNT(*) as count
-                        FROM py_happiness_survey
-                        GROUP BY dataSource
-                    """
-                    print(f"执行SQL: {source_stats_sql}")
-                    cursor.execute(source_stats_sql)
-                    source_stats = cursor.fetchall()
+                    keys = list(clean_data.keys())
+                    values = list(clean_data.values())
 
-                    # 总记录数
-                    total_sql = "SELECT COUNT(*) as total FROM py_happiness_survey"
-                    print(f"执行SQL: {total_sql}")
-                    cursor.execute(total_sql)
-                    total = cursor.fetchone()['total']
+                    # 2. 插入数据
+                    cols = ", ".join(keys)
+                    placeholders = ", ".join(["%s"] * len(keys))
+                    sql = f"INSERT INTO py_happiness_survey ({cols}, createTime) VALUES ({placeholders}, NOW())"
 
-                    return success({
-                        "total": total,
-                        "happinessStats": happiness_stats,
-                        "genderStats": gender_stats,
-                        "eduStats": edu_stats,
-                        "sourceStats": source_stats
-                    })
+                    print(f"🚀 正在尝试原生入库: {sql}")
+                    cursor.execute(sql, values)
+                    conn.commit()
 
+                    # 3. 获取最真实的数据库生成 ID
+                    real_id = cursor.lastrowid
+
+                    if real_id == 0:
+                        print("⚠️ 警告：数据库插入成功但未返回自增ID，请检查表结构是否真的开启了 AUTO_INCREMENT")
+
+                    return success({"id": real_id}, "问卷数据保存成功")
         except Exception as e:
-            print(f"获取幸福感统计数据失败: {str(e)}")
-            return error(f"获取幸福感统计数据失败: {str(e)}")
+            # 如果还是报 1364，说明数据库配置真的没改成功
+            print(f"❌ 关键错误：{str(e)}")
+            return error(f"数据库拒绝保存，原因：{str(e)}")

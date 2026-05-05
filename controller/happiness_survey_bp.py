@@ -4,7 +4,7 @@
 from flask import Blueprint, jsonify
 from controller.happiness_survey_controller import HappinessSurveyController
 from utils.auth_utils import operation_required
-
+from utils.auth_utils import auto_record_log
 # 创建蓝图
 happiness_survey_bp = Blueprint('happiness_survey', __name__)
 
@@ -28,4 +28,13 @@ def admin_happiness_survey_detail():
 def admin_happiness_statistics():
     """后台获取幸福感统计数据"""
     result = HappinessSurveyController.get_happiness_statistics()
+    return jsonify(result)
+# =========================================================
+# 暴露给前端的对外保存接口 (无需操作员权限即可提交)
+# =========================================================
+@happiness_survey_bp.route('/add', methods=['POST'])
+
+def add_survey():
+    """前台受访者提交幸福感问卷"""
+    result = HappinessSurveyController.add_happiness_survey()
     return jsonify(result)

@@ -295,26 +295,68 @@
                     this.$refs.predictForm.validate((valid) => {
                         if (valid) {
                             this.loading = true;
-                            axios.post('/api/prediction/predict', this.predictionForm).then(res => {
+
+                            // ==========================================
+                            // 👇 核心闭环修改：先保存问卷，再进行预测 👇
+                            // ==========================================
+
+                            // 第一步：先调用我们刚刚写好的 add 接口，把表单存进数据库
+                            axios.post('/api/happiness_survey/add', this.predictionForm).then(res => {
                                 if (res.data.code === 200) {
-                                    this.predictionResult = res.data.data;
-                                    this.$message.success('个体特征分析与模型推演完成');
-                                    this.$nextTick(() => {
-                                        setTimeout(() => {
-                                            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
-                                            this.initGaugeChart(this.predictionResult.hybrid);
-                                        }, 300);
+
+                                    // 第二步：存成功了！拿到后端返回的真实 ID，塞进表单数据里
+                                    const realId = res.data.data.id;
+                                    this.predictionForm.id = realId;       // 保证后端能拿到
+                                    this.predictionForm.surveyId = realId; // 双保险
+
+                                    console.log("问卷已存入数据库，获得的真实 ID 为: ", realId);
+
+                                    // 第三步：带着这个真实 ID，发起真正的算法预测请求
+                                    axios.post('/api/prediction/predict', this.predictionForm).then(predictRes => {
+                                        if (predictRes.data.code === 200) {
+
+                                            // 保留你原有的酷炫展示逻辑
+                                            this.predictionResult = predictRes.data.data;
+                                            this.$message.success('个体特征分析与模型推演完成');
+                                            this.$nextTick(() => {
+                                                setTimeout(() => {
+                                                    document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+                                                    this.initGaugeChart(this.predictionResult.hybrid);
+                                                }, 300);
+                                            });
+
+                                        } else {
+                                            this.$message.error(predictRes.data.msg || '预测失败');
+                                        }
+                                    }).finally(() => {
+                                        this.loading = false;
                                     });
+
+                                } else {
+                                    // 如果存问卷失败了
+                                    this.$message.error(res.data.msg || '问卷存档失败');
+                                    this.loading = false;
                                 }
-                            }).finally(() => { this.loading = false; });
+                            }).catch(err => {
+                                this.$message.error('请求发生异常，请检查网络');
+                                console.error(err);
+                                this.loading = false;
+                            });
+                            // ==========================================
+                            // 👆 修改结束 👆
+                            // ==========================================
+
                         } else {
                             this.$message.warning('请检查并补全必填的基础特征');
                             return false;
                         }
                     });
                 },
+
+                // initGaugeChart 方法保持原样不动...
                 initGaugeChart(val) {
                     const dom = document.getElementById('scoreGauge');
+
                     if (this.gaugeInstance) this.gaugeInstance.dispose();
                     this.gaugeInstance = echarts.init(dom);
                     this.gaugeInstance.setOption({

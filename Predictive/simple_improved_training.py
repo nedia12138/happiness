@@ -545,6 +545,20 @@ class SimpleImprovedModel:
         # 7.1 构建特征重要性展示格式
         display_importances = build_display_importances(FEATURE_COLUMNS, final["forest"].feature_importances_)
         # 7.2 构建完整的模型artifact（包含所有必要信息）
+        # --- 严谨性校验打印开始 ---
+        print("\n" + "★" * 30)
+        print(f"【模型寻优最终报告】")
+        # 检查你的变量名，确保 ridge_search 包含 alpha 键
+        if 'alpha' in ridge_search:
+            print(f"▶ 岭回归最优惩罚系数 (Alpha): {ridge_search['alpha']}")
+
+        # 检查 forest_search 是否包含最佳参数字典
+        if 'params' in forest_search:
+            print(f"▶ 随机森林最优参数组合: {forest_search['params']}")
+
+
+        print("★" * 30 + "\n")
+        # --- 严谨性校验打印结束 ---
         artifact = {
             "version": 2,  # 模型版本
             "model_name": MODEL_NAME,  # 模型名称

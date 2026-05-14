@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -331,6 +332,25 @@
                         ]
                     };
                     chart.setOption(option);
+
+                    // ==================== 核心：自动静默保存代码加在这里 ====================
+                    setTimeout(() => {
+                        let base64Image = chart.getDataURL({
+                            type: 'png',
+                            pixelRatio: 2,
+                            backgroundColor: '#ffffff'
+                        });
+                        axios.post('/api/data_analysis/save_chart', {
+                            image: base64Image,
+                            fileName: `chart_comprehensive.png`
+                        }).then(res => {
+                            if (res.data.code === 200) {
+                                console.log(`[自动化落盘成功] chart_comprehensive.png 已存入 models`);
+                            }
+                        }).catch(err => console.error('图像静默保存异常:', err));
+                    }, 2500);
+                    // =======================================================================
+
                 },
 
                 renderCurrentChart() {
@@ -474,7 +494,7 @@
                             backgroundColor: 'transparent',
                             title: {
                                 text: '国民生命体征与健康画像',
-                                subtext: 'Vital Signs & Health Distribution Scan',
+
                                 left: 'center',
                                 top: '2%',
                                 textStyle: { color: '#2c3e50', fontSize: 20, fontWeight: '900', letterSpacing: 1 },
@@ -609,9 +629,30 @@
                             ]
                         });
                     }
+
+                    // ==================== 核心：自动静默保存代码加在这里 ====================
+                    setTimeout(() => {
+                        if (!chart) return;
+                        let base64Image = chart.getDataURL({
+                            type: 'png',
+                            pixelRatio: 2,
+                            backgroundColor: '#ffffff'
+                        });
+                        axios.post('/api/data_analysis/save_chart', {
+                            image: base64Image,
+                            fileName: `chart_${this.activeTab}.png`
+                        }).then(res => {
+                            if (res.data.code === 200) {
+                                console.log(`[自动化落盘成功] chart_${this.activeTab}.png 已存入 models`);
+                            }
+                        }).catch(err => console.error('图像静默保存异常:', err));
+                    }, 2500);
+                    // =======================================================================
+
                 }
             }
         });
     </script>
 </body>
 </html>
+

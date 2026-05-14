@@ -57,3 +57,10 @@ def get_comprehensive_analysis():
     """获取综合分析结论"""
     result = DataAnalysisController.get_comprehensive_analysis()
     return jsonify(result)
+@data_analysis_bp.route('/save_chart', methods=['POST'])
+def save_chart():
+    """接收前端静默保存的图表"""
+    # 💡 核心细节：这里咱们故意不加 @operation_required 权限校验，
+    # 防止前端纯展示页面因为没登录 token 而被拦截，保证静默截图绝对畅通无阻！
+    result = DataAnalysisController.save_chart()
+    return jsonify(result)

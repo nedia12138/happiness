@@ -100,7 +100,7 @@ def simple_compare():
         'leisure_12': 'leisure12',
         'social_neighbor': 'socialNeighbor',
         'social_friend': 'socialFriend',
-        'socia_outing': 'socialOuting',
+        'social_outing': 'socialOuting',
         'class_10_before': 'class10Before',
         'class_10_after': 'class10After',
         'class_14': 'class14',

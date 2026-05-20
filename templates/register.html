@@ -3,170 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户注册 - 管理系统</title>
+    <title>✨ 幸福感流体收集舱 - 注册 ✨</title>
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
-            background: url('/static/image/bg.jpg') center center no-repeat;
-            background-size: cover;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif; cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" style="font-size: 20px;"><text y="18">✨</text></svg>'), auto; }
+
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #fdfbfb; }
+
+        /* 1. 粉蓝交织的流体极光背景 */
+        .bg-gradient {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+            background: linear-gradient(-45deg, #a1c4fd, #ff9a9e, #c2e9fb, #fecfef);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite alternate;
         }
-        
-        .register-container {
-            width: 450px;
-            padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        
-        .register-header {
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* 2. 流体光斑 (Bokeh) */
+        .bokeh-container { position: absolute; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .bokeh { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.6; animation: floatBokeh infinite alternate ease-in-out; }
+        .bokeh-1 { width: 45vw; height: 45vw; background: #ff9a9e; top: -10%; left: -10%; animation-duration: 12s; }
+        .bokeh-2 { width: 40vw; height: 40vw; background: #a1c4fd; bottom: -10%; right: -10%; animation-duration: 15s; }
+        .bokeh-3 { width: 35vw; height: 35vw; background: #e0c3fc; top: 40%; left: 35%; animation-duration: 18s; }
+        @keyframes floatBokeh { 0% { transform: translate(0, 0) scale(0.8); } 100% { transform: translate(80px, 40px) scale(1.1); } }
+
+        /* 3. 梦幻闪烁繁星 */
+        .stars { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .star { position: absolute; background: #ffffff; border-radius: 50%; animation: twinkle infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 8px #fff; } }
+
+        /* 4. 原有的动态漂浮气泡 */
+        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 2; pointer-events: none; overflow: hidden; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; border: 1px solid rgba(255,255,255,0.6); animation: floatUp infinite ease-in, wobble 3s infinite ease-in-out alternate; }
+        .bubble:nth-child(1) { width: 60px; height: 60px; left: 10%; animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 30px; height: 30px; left: 20%; animation-duration: 5s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 80px; height: 80px; left: 40%; animation-duration: 10s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 40px; height: 40px; left: 60%; animation-duration: 7s; animation-delay: 0s; }
+        .bubble:nth-child(5) { width: 50px; height: 50px; left: 80%; animation-duration: 6s; animation-delay: 1.5s; }
+        .bubble:nth-child(6) { width: 25px; height: 25px; left: 90%; animation-duration: 9s; animation-delay: 3s; }
+        @keyframes floatUp { 0% { bottom: -100px; opacity: 0; } 20% { opacity: 1; } 100% { bottom: 120vh; opacity: 0; } }
+        @keyframes wobble { 0% { transform: translateX(0px); } 100% { transform: translateX(30px); } }
+
+        /* 漂浮云朵 */
+        .floating-clouds { position: absolute; bottom: 10%; width: 100%; height: 50%; z-index: 4; pointer-events: none; overflow: hidden; }
+        .floating-cloud { position: absolute; animation: floatCloud 16s linear infinite, swayCloud 5s ease-in-out infinite alternate; font-size: 40px; opacity: 0.9; filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.6)); }
+        .floating-cloud:nth-child(1) { left: 12%; animation-duration: 18s; font-size: 45px; }
+        .floating-cloud:nth-child(2) { left: 45%; animation-delay: 4s; animation-duration: 22s; font-size: 35px; }
+        .floating-cloud:nth-child(3) { left: 78%; animation-delay: 7s; animation-duration: 15s; font-size: 55px; }
+        .floating-cloud:nth-child(4) { left: 28%; animation-delay: 1s; animation-duration: 19s; font-size: 30px; }
+        @keyframes floatCloud { 0% { bottom: -10%; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { bottom: 110%; opacity: 0; } }
+        @keyframes swayCloud { 0% { transform: translateX(0px); } 100% { transform: translateX(45px); } }
+
+        /* 5. 粉蓝双色交错海浪 */
+        .waves-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 20vh; z-index: 3; pointer-events: none; }
+        .waves { position: relative; width: 100%; height: 20vh; margin-bottom: -7px; min-height: 100px; max-height: 150px; }
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(161, 196, 253, 0.5); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(255, 154, 158, 0.5); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(255, 255, 255, 0.7); }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: rgba(255, 255, 255, 1); }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+
+        /* --- 3D 容器与卡片部分 --- */
+        #app { display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw; position: relative; z-index: 10; perspective: 1000px; }
+
+        .login-card {
+            width: 440px; padding: 40px 45px; border-radius: 35px;
+            background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 25px 55px rgba(161, 196, 253, 0.4), 0 -10px 40px rgba(255, 154, 158, 0.2), inset 0 0 0 2px rgba(255, 255, 255, 0.6);
             text-align: center;
-            margin-bottom: 30px;
+            animation: breatheCard 5s ease-in-out infinite;
         }
-        
-        .register-header h2 {
-            color: #2563eb;
-            margin: 0;
-            font-size: 28px;
-            font-weight: 600;
+        @keyframes breatheCard { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+
+        .logo-box { margin-bottom: 20px; }
+        .logo-box i { font-size: 50px; color: #ff9a9e; text-shadow: 0 5px 20px rgba(255, 154, 158, 0.6); animation: floatIcon 3s ease-in-out infinite; display: inline-block; }
+        @keyframes floatIcon { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+        .system-title { font-size: 26px; font-weight: 900; background: linear-gradient(90deg, #8ec5fc 0%, #ff9a9e 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 5px; letter-spacing: 2px; }
+
+        .system-subtitle { font-size: 13px; color: #ffaebb; margin-bottom: 25px; font-weight: bold; overflow: hidden; white-space: nowrap; margin: 0 auto 25px auto; border-right: 2px solid #ffaebb; width: 0; animation: typing 2.5s steps(30, end) forwards, blink-caret .75s step-end infinite; }
+        @keyframes typing { from { width: 0 } to { width: 220px } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: #ffaebb; } }
+
+        .el-input__inner {
+            height: 48px; border-radius: 24px !important; border: 2px solid #ffffff;
+            color: #8ec5fc !important; background-color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: bold; text-align: center; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
-        
-        .register-header p {
-            color: #64748b;
-            margin: 10px 0 0 0;
-            font-size: 14px;
+        .el-input__inner:focus { border-color: #a1c4fd !important; box-shadow: 0 10px 25px rgba(161, 196, 253, 0.3); transform: scale(1.03); }
+        .el-input__prefix { left: 18px; color: #a1c4fd; font-size: 18px; transition: color 0.3s; }
+        .el-input__inner:focus + .el-input__prefix { color: #ff9a9e; }
+        .el-form-item { margin-bottom: 18px; }
+
+        .btn-login {
+            width: 100%; height: 50px; border-radius: 25px; font-size: 17px; font-weight: 900; border: none; letter-spacing: 4px;
+            background: linear-gradient(90deg, #a1c4fd 0%, #ff9a9e 100%); color: #ffffff;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); margin-top: 10px; position: relative; overflow: hidden;
+            box-shadow: 0 12px 28px rgba(161, 196, 253, 0.5);
         }
-        
-        .register-form {
-            margin-top: 20px;
-        }
-        
-        .form-item {
-            margin-bottom: 20px;
-        }
-        
-        .register-button {
-            width: 100%;
-            height: 45px;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-        
-        .register-footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #64748b;
-            font-size: 14px;
-        }
-        
-        .register-footer a {
-            color: #2563eb;
-            text-decoration: none;
-        }
-        
-        .register-footer a:hover {
-            text-decoration: underline;
-        }
+        .btn-login::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: rgba(255,255,255,0.25); transform: rotate(45deg); transition: all 0.3s ease; opacity: 0; }
+        .btn-login:hover { transform: scale(1.05) translateY(-5px); box-shadow: 0 18px 35px rgba(255, 154, 158, 0.6); background: linear-gradient(90deg, #ff9a9e 0%, #a1c4fd 100%); }
+        .btn-login:hover::after { opacity: 1; left: 100%; transition: all 0.6s ease-in-out; }
     </style>
 </head>
 <body>
-    <div class="register-container">
-        <div class="register-header">
-            <h2>用户注册</h2>
-            <p>创建您的账号</p>
-        </div>
-        
-        <div id="app">
-            <el-form :model="registerForm" :rules="registerRules" ref="registerForm" class="register-form">
-                <div class="form-item">
+    <div class="bg-gradient"></div>
+    <div class="bokeh-container">
+        <div class="bokeh bokeh-1"></div><div class="bokeh bokeh-2"></div><div class="bokeh bokeh-3"></div>
+    </div>
+    <div class="stars" id="stars-container"></div>
+    <div class="bubbles">
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+        <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    </div>
+    <div class="floating-clouds">
+        <div class="floating-cloud">☁️</div><div class="floating-cloud">☁️</div>
+        <div class="floating-cloud">☁️</div><div class="floating-cloud">☁️</div>
+    </div>
+    <div class="waves-container">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" /><use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" /><use xlink:href="#gentle-wave" x="48" y="7" />
+            </g>
+        </svg>
+    </div>
+
+    <div id="app">
+        <div class="login-card" id="card3d">
+            <div class="card-inner-element">
+                <div class="logo-box">
+                    <i class="el-icon-position"></i>
+                    <h2 class="system-title">✨ 申请分析舱位 ✨</h2>
+                    <div class="system-subtitle">NEW PASSENGER REGISTRATION</div>
+                </div>
+
+                <el-form :model="registerForm" :rules="registerRules" ref="registerForm">
                     <el-form-item prop="username">
-                        <el-input
-                            v-model="registerForm.username"
-                            placeholder="请输入用户名"
-                            prefix-icon="el-icon-user"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.username" placeholder="设置舱位账号 (用户名)" prefix-icon="el-icon-user"></el-input>
                     </el-form-item>
-                </div>
-                
-                <div class="form-item">
+
                     <el-form-item prop="password">
-                        <el-input
-                            v-model="registerForm.password"
-                            type="password"
-                            placeholder="请输入密码"
-                            prefix-icon="el-icon-lock"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.password" type="password" placeholder="设置安全口令 (密码)" prefix-icon="el-icon-lock"></el-input>
                     </el-form-item>
-                </div>
-                
-                <div class="form-item">
+
                     <el-form-item prop="confirmPassword">
-                        <el-input
-                            v-model="registerForm.confirmPassword"
-                            type="password"
-                            placeholder="请确认密码"
-                            prefix-icon="el-icon-lock"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.confirmPassword" type="password" placeholder="再次确认安全口令" prefix-icon="el-icon-key"></el-input>
                     </el-form-item>
-                </div>
-                
-                <div class="form-item">
+
                     <el-form-item prop="nickname">
-                        <el-input
-                            v-model="registerForm.nickname"
-                            placeholder="请输入真实姓名"
-                            prefix-icon="el-icon-user-solid"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.nickname" placeholder="乘客真实姓名" prefix-icon="el-icon-s-custom"></el-input>
                     </el-form-item>
-                </div>
-                
-                <div class="form-item">
+
                     <el-form-item prop="email">
-                        <el-input
-                            v-model="registerForm.email"
-                            placeholder="请输入邮箱"
-                            prefix-icon="el-icon-message"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.email" placeholder="联络邮箱 (选填)" prefix-icon="el-icon-message"></el-input>
                     </el-form-item>
-                </div>
-                
-                <div class="form-item">
+
                     <el-form-item prop="phone">
-                        <el-input
-                            v-model="registerForm.phone"
-                            placeholder="请输入手机号"
-                            prefix-icon="el-icon-phone"
-                            size="large">
-                        </el-input>
+                        <el-input v-model="registerForm.phone" placeholder="接收信号手机号 (选填)" prefix-icon="el-icon-mobile-phone"></el-input>
                     </el-form-item>
+
+                    <el-form-item style="margin-bottom: 0;">
+                        <el-button class="btn-login" :loading="loading" @click="handleRegister">
+                            {{ loading ? '分配中...' : '注册专属舱位 🚀' }}
+                        </el-button>
+                    </el-form-item>
+                </el-form>
+
+                <div style="margin-top: 15px; text-align: center; position: relative; z-index: 999;">
+                        <span style="color: #fff; font-size: 13px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">已有通行凭证？</span>
+                        <span @click="window.location.href = '/login'" style="color: #a1c4fd; font-size: 14px; font-weight: 900; transition: color 0.3s; text-shadow: 0 1px 2px rgba(161, 196, 253, 0.5); cursor: pointer;" onmouseover="this.style.color='#ff9a9e'" onmouseout="this.style.color='#a1c4fd'">
+                            直接登录 ✨
+                        </span>
                 </div>
-                
-                <el-form-item>
-                    <el-button 
-                        type="primary" 
-                        class="register-button"
-                        :loading="loading"
-                        @click="handleRegister">
-                        注册
-                    </el-button>
-                </el-form-item>
-            </el-form>
-            
-            <div class="register-footer">
-                已有账号？<a href="/login">立即登录</a>
             </div>
         </div>
     </div>
@@ -175,77 +186,75 @@
     <script src="/static/js/element-ui.min.js"></script>
     <script src="/static/js/axios.min.js"></script>
     <script>
+        // JS 动态生成 40 颗星星
+        const starsContainer = document.getElementById('stars-container');
+        for (let i = 0; i < 40; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 4 + 2 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = Math.random() * 3 + 1.5 + 's';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            starsContainer.appendChild(star);
+        }
+
         new Vue({
             el: '#app',
             data() {
                 return {
                     loading: false,
-                    registerForm: {
-                        username: '',
-                        password: '',
-                        confirmPassword: '',
-                        nickname: '',
-                        email: '',
-                        phone: ''
-                    },
+                    registerForm: { username: '', password: '', confirmPassword: '', nickname: '', email: '', phone: '' },
                     registerRules: {
                         username: [
-                            { required: true, message: '请输入用户名', trigger: 'blur' },
-                            { min: 3, max: 20, message: '用户名长度在3到20个字符', trigger: 'blur' }
+                            { required: true, message: '请输入系统账号', trigger: 'blur' },
+                            { min: 3, max: 20, message: '账号长度需在3到20个字符', trigger: 'blur' }
                         ],
                         password: [
-                            { required: true, message: '请输入密码', trigger: 'blur' },
-                            { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+                            { required: true, message: '请设置安全口令', trigger: 'blur' },
+                            { min: 6, message: '口令长度不能少于6位', trigger: 'blur' }
                         ],
                         confirmPassword: [
-                            { required: true, message: '请确认密码', trigger: 'blur' },
+                            { required: true, message: '请再次确认安全口令', trigger: 'blur' },
                             { validator: this.validateConfirmPassword, trigger: 'blur' }
                         ],
                         nickname: [
-                            { required: true, message: '请输入真实姓名', trigger: 'blur' }
+                            { required: true, message: '请提供真实姓名', trigger: 'blur' }
                         ],
                         email: [
-                            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+                            { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
                         ],
                         phone: [
-                            { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
+                            { pattern: /^1[3-9]\d{9}$/, message: '手机号格式不符合规范', trigger: 'blur' }
                         ]
                     }
                 }
             },
             methods: {
                 validateConfirmPassword(rule, value, callback) {
-                    if (value !== this.registerForm.password) {
-                        callback(new Error('两次输入密码不一致'));
-                    } else {
-                        callback();
-                    }
+                    if (value !== this.registerForm.password) { callback(new Error('两次输入口令不一致')); } else { callback(); }
                 },
                 handleRegister() {
                     this.$refs.registerForm.validate((valid) => {
                         if (valid) {
                             this.loading = true;
-                            
                             const { confirmPassword, ...formData } = this.registerForm;
-                            
+
                             axios.post('/api/auth/register', formData)
                                 .then(response => {
                                     if (response.data.code === 200) {
-                                        this.$message.success(response.data.message);
-                                        setTimeout(() => {
-                                            window.location.href = '/login';
-                                        }, 1500);
+                                        this.$message.success('注册成功，即将前往登舱门！');
+                                        setTimeout(() => { window.location.href = '/login'; }, 1500);
                                     } else {
                                         this.$message.error(response.data.message);
                                     }
                                 })
                                 .catch(error => {
-                                    console.error('注册失败:', error);
-                                    this.$message.error('注册失败，请稍后重试');
+                                    console.error('注册异常:', error);
+                                    this.$message.error('网络信号中断，请稍后重试');
                                 })
-                                .finally(() => {
-                                    this.loading = false;
-                                });
+                                .finally(() => { this.loading = false; });
                         }
                     });
                 }

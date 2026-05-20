@@ -180,6 +180,12 @@
                         </el-button>
                     </el-form-item>
                 </el-form>
+                <div style="margin-top: 15px; text-align: center; position: relative; z-index: 999;">
+                        <span style="color: #fff; font-size: 13px; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">还没有舱位？</span>
+                        <span @click="goToRegister" style="color: #ff9a9e; font-size: 14px; font-weight: 900; transition: color 0.3s; text-shadow: 0 1px 2px rgba(255, 154, 158, 0.4); cursor: pointer;" onmouseover="this.style.color='#a1c4fd'" onmouseout="this.style.color='#ff9a9e'">
+                            立即自助注册 ✨
+                        </span>
+                </div>
                 <div class="footer-text">&copy; 2026 基于机器学习的幸福感数据分析与可视化实现</div>
             </div>
         </div>
@@ -228,6 +234,9 @@
                 });
             },
             methods: {
+                goToRegister() {
+                    window.location.href = '/register';
+                },
                 handleLogin() {
                     this.$refs.loginForm.validate((valid) => {
                         if (valid) {

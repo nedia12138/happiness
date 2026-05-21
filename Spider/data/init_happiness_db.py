@@ -4,7 +4,7 @@
 独立的幸福感数据库初始化入口。
 """
 
-from data_cleaning_import import HappinessDataImporter
+from Spider.data.data_cleaning_import import HappinessDataImporter
 
 
 def main():

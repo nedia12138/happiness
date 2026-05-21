@@ -5,7 +5,6 @@
 快速执行数据库初始化和数据导入流程
 """
 
-import sys
 import os
 
 def main():
@@ -17,8 +16,7 @@ def main():
     # 检查数据文件是否存在
     data_dir = os.path.join(os.path.dirname(__file__), 'data')
     required_files = [
-        'happiness_train_abbr.csv',
-        'happiness_test_abbr.csv',
+
         'happiness_train_complete.csv',
         'happiness_test_complete.csv',
     ]
@@ -52,7 +50,7 @@ def main():
     # 导入并运行数据清洗脚本
     try:
         print("\n开始执行数据库初始化与数据导入...")
-        from data_cleaning_import import HappinessDataImporter
+        from Spider.data.data_cleaning_import import HappinessDataImporter
 
         importer = HappinessDataImporter()
         importer.run_import()

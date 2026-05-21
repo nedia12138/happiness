@@ -131,7 +131,7 @@ class SimpleImprovedModel:
         # 当前脚本所在目录
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         # 数据集路径（幸福感训练数据）
-        self.data_path = os.path.join(self.base_path, "..", "Spider", "data", "happiness_train_abbr.csv")
+        self.data_path = os.path.join(self.base_path, "..", "Spider", "data", "happiness_train_complete..csv")
         # 模型保存目录
         self.model_dir = os.path.join(self.base_path, "models")
         # 模型二进制保存路径（pickle）

@@ -17,16 +17,13 @@ from config.config import DB_CONFIG
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("data_import.log", encoding="utf-8"), logging.StreamHandler()],
+    handlers=[logging.FileHandler("../data_import.log", encoding="utf-8"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
 
 TABLE_SPECS = {
-    "py_happiness_survey": [
-        ("happiness_train_abbr.csv", "train"),
-        ("happiness_test_abbr.csv", "test"),
-    ],
+
     "py_happiness_survey_complete": [
         ("happiness_train_complete.csv", "train"),
         ("happiness_test_complete.csv", "test"),

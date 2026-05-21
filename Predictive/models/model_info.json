@@ -3,75 +3,75 @@
   "description": "手写 线性 + 手写 CART 随机森林融合模型",
   "feature_importances": [
     {
-      "key": "depression",
-      "name": "心理忧郁感",
-      "value": 12.62
-    },
-    {
       "key": "equity",
       "name": "社会公平感",
-      "value": 12.39
+      "value": 12.51
+    },
+    {
+      "key": "depression",
+      "name": "心理忧郁感",
+      "value": 12.49
     },
     {
       "key": "class",
       "name": "主观社会阶层",
-      "value": 7.33
+      "value": 7.52
     },
     {
       "key": "family_status",
       "name": "家庭社会地位",
-      "value": 7.23
-    },
-    {
-      "key": "class_income_interaction",
-      "name": "阶层收入交互项",
-      "value": 4.43
+      "value": 7.16
     },
     {
       "key": "status_peer",
       "name": "同龄人地位感知",
-      "value": 4.28
+      "value": 4.5
     },
     {
       "key": "health",
       "name": "健康状况",
-      "value": 4.03
+      "value": 4.28
+    },
+    {
+      "key": "class_income_interaction",
+      "name": "阶层收入交互项",
+      "value": 4.17
     },
     {
       "key": "floor_area",
       "name": "住房面积",
-      "value": 3.88
+      "value": 3.34
     },
     {
       "key": "weight_jin",
       "name": "体重",
-      "value": 3.48
+      "value": 3.06
     },
     {
-      "key": "height_cm",
-      "name": "身高",
-      "value": 3.18
+      "key": "income_gap",
+      "name": "家庭收入差",
+      "value": 2.95
     }
   ],
   "hybrid_weight": 0.4,
   "metrics": {
     "ridge": {
-      "r2": 0.268932,
-      "rmse": 0.700673,
-      "mae": 0.523721,
-      "mse": 0.490943
+      "r2": 0.271265,
+      "rmse": 0.699555,
+      "mae": 0.521497,
+      "mse": 0.489377
     },
     "forest": {
-      "r2": 0.284424,
-      "rmse": 0.69321,
-      "mae": 0.505687,
-      "mse": 0.48054
+      "r2": 0.28231,
+      "rmse": 0.694233,
+      "mae": 0.505251,
+      "mse": 0.481959
     },
     "hybrid": {
-      "r2": 0.28855,
-      "rmse": 0.691208,
-      "mae": 0.508074,
-      "mse": 0.477769
+      "r2": 0.288785,
+      "rmse": 0.691094,
+      "mae": 0.507421,
+      "mse": 0.477611
     }
   }
 }

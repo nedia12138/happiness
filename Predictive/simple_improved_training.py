@@ -20,7 +20,8 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 #  sklearn 预处理工具：鲁棒缩放器（对异常值不敏感）
 from sklearn.preprocessing import RobustScaler
-
+from sqlalchemy import create_engine
+import pymysql
 # 导入自定义的模型和配置（先尝试Predictive包导入，失败则本地导入）
 try:
     from Predictive.manual_models import ManualRandomForestRegressor, ManualRidgeRegression
@@ -161,28 +162,56 @@ class SimpleImprovedModel:
         # 创建模型保存目录（如果不存在）
         os.makedirs(self.model_dir, exist_ok=True)
 
+    # def load_data(self):
+    #     """
+    #     加载并预处理原始数据集
+    #     :return: 清洗后的DataFrame
+    #     处理步骤：
+    #     1. 读取CSV文件
+    #     2. 转换happiness列为数值型（处理异常值）
+    #     3. 过滤happiness在1-5之间的数据（幸福感评分范围）
+    #     4. 重置索引
+    #     """
+    #     # 读取CSV文件，low_memory=False避免列类型警告，utf-8编码防止中文乱码
+    #     df = pd.read_csv(self.data_path, low_memory=False, encoding="utf-8")
+    #     # 将happiness列转为数值型，无法转换的设为NaN
+    #     df["happiness"] = pd.to_numeric(df["happiness"], errors="coerce")
+    #     # 过滤出幸福感评分在1-5之间的有效数据（copy避免警告）
+    #     df = df[df["happiness"].between(1, 5)].copy()
+    #     # 确保幸福感为浮点型（方便后续计算）
+    #     df["happiness"] = df["happiness"].astype(float)
+    #     # 重置索引（过滤后索引不连续）
+    #     df.reset_index(drop=True, inplace=True)
+    #     return df
     def load_data(self):
         """
-        加载并预处理原始数据集
-        :return: 清洗后的DataFrame
-        处理步骤：
-        1. 读取CSV文件
-        2. 转换happiness列为数值型（处理异常值）
-        3. 过滤happiness在1-5之间的数据（幸福感评分范围）
-        4. 重置索引
+        加载并预处理原始数据集：优先从 MySQL 直连读取全量完整版数据
         """
-        # 读取CSV文件，low_memory=False避免列类型警告，utf-8编码防止中文乱码
-        df = pd.read_csv(self.data_path, low_memory=False, encoding="utf-8")
-        # 将happiness列转为数值型，无法转换的设为NaN
-        df["happiness"] = pd.to_numeric(df["happiness"], errors="coerce")
-        # 过滤出幸福感评分在1-5之间的有效数据（copy避免警告）
-        df = df[df["happiness"].between(1, 5)].copy()
-        # 确保幸福感为浮点型（方便后续计算）
-        df["happiness"] = df["happiness"].astype(float)
-        # 重置索引（过滤后索引不连续）
-        df.reset_index(drop=True, inplace=True)
-        return df
+        try:
+            print("-> [尝试直连] 正在从 MySQL 数据库读取完整版底层调查数据...")
 
+            # ⚠️ 注意：请把这里的 "你的新数据库名" 换成你刚才在 Navicat 里建好的新库名
+            # 你的本地密码配置已自动帮你填好为 12121212
+            db_url = "mysql+pymysql://root:12121212@127.0.0.1:3306/happiness_db?charset=utf8mb4"
+            engine = create_engine(db_url)
+
+            # 直接拉取咱们那张带有所有特征的完整版问卷数据表
+            sql_query = "SELECT * FROM py_happiness_survey_complete"
+            df = pd.read_sql(sql_query, engine)
+            print(f"-> ✅ 成功读取全量完整版数据：共 {len(df)} 条记录")
+
+        except Exception as e:
+            print(f"-> ⚠️ 数据库连接失败: {e}")
+            print("-> [触发降级保护] 自动退回读取旧版 CSV 简化数据...")
+            df = pd.read_csv(self.data_path, low_memory=False, encoding="utf-8")
+
+        # 原有的底层清洗逻辑原封不动保留
+        df["happiness"] = pd.to_numeric(df["happiness"], errors="coerce")
+        df = df[df["happiness"].between(1, 5)].copy()
+        df["happiness"] = df["happiness"].astype(float)
+        df.reset_index(drop=True, inplace=True)
+
+        return df
     def split_data(self, df):
         """
         拆分数据集为训练集、验证集、测试集

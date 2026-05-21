@@ -18,7 +18,7 @@ _BASE_DB_CONFIG = {
     'port': _get_int_env('MYSQL_PORT', 3306),
     'user': os.getenv('MYSQL_USER', 'root'),
     'password': os.getenv('MYSQL_PASSWORD', '12121212'), # <--- 密码已更新
-    'database': os.getenv('MYSQL_DATABASE', '0_80123xingfuganwajue'),
+    'database': os.getenv('MYSQL_DATABASE', 'happiness_db'),
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
 

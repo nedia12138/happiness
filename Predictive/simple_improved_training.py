@@ -192,7 +192,7 @@ class SimpleImprovedModel:
 
             # ⚠️ 注意：请把这里的 "你的新数据库名" 换成你刚才在 Navicat 里建好的新库名
             # 你的本地密码配置已自动帮你填好为 12121212
-            db_url = "mysql+pymysql://root:12121212@127.0.0.1:3306/happiness_db?charset=utf8mb4"
+            db_url = "mysql+pymysql://root:12121212@localhost/happiness_db?unix_socket=/tmp/mysql.sock&charset=utf8mb4"
             engine = create_engine(db_url)
 
             # 直接拉取咱们那张带有所有特征的完整版问卷数据表

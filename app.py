@@ -17,9 +17,9 @@ if not os.path.exists(UPLOAD_FOLDER):
 from controller.auth_controller import auth_bp
 from controller.user_controller import user_bp
 from controller.upload_controller import upload_bp
-from controller.announcement_bp import announcement_bp
+
 from controller.log_bp import log_bp
-from controller.dashboard_controller import dashboard_bp
+
 from controller.happiness_survey_bp import happiness_survey_bp
 from controller.data_analysis_bp import data_analysis_bp
 # 在 app.py 顶部添加
@@ -28,8 +28,7 @@ from controller.prediction_controller import prediction_bp
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(user_bp, url_prefix='/api/user')
 app.register_blueprint(upload_bp, url_prefix='/open')
-app.register_blueprint(announcement_bp, url_prefix='/api/announcement')
-app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
+
 app.register_blueprint(log_bp, url_prefix='/api/log')
 app.register_blueprint(happiness_survey_bp, url_prefix='/api/happiness_survey')
 app.register_blueprint(data_analysis_bp, url_prefix='/api/data_analysis')

@@ -93,8 +93,8 @@ def run_accurate_exploration():
     print("\n🎯 [真理再现] 高精度纯净数据推演出的客观特征权重如下：")
     print(feature_weights)
 
-    os.makedirs('models', exist_ok=True)
-    with open('models/model_info.json', 'w', encoding='utf-8') as f:
+    os.makedirs('../models', exist_ok=True)
+    with open('../models/model_info.json', 'w', encoding='utf-8') as f:
         json.dump({
             "model": "High-Precision RandomForest (EDA)",
             "description": "基于深度清洗与去噪数据提取的准确先验权重",

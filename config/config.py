@@ -14,14 +14,21 @@ def _get_int_env(name, default):
 
 # --- 数据库配置（已更新密码并增强兼容性） ---
 _BASE_DB_CONFIG = {
-    'host': os.getenv('MYSQL_HOST', '127.0.0.1'),
-    'port': _get_int_env('MYSQL_PORT', 3306),
+    # 'host': os.getenv('MYSQL_HOST', '127.0.0.1'),
+    # 'port': _get_int_env('MYSQL_PORT', 3306),
+    # 'user': os.getenv('MYSQL_USER', 'root'),
+    # 'password': os.getenv('MYSQL_PASSWORD', '12121212'), # <--- 密码已更新
+    # 'database': os.getenv('MYSQL_DATABASE', 'happiness_db'),
+    # 'charset': 'utf8mb4',
+    # 'cursorclass': pymysql.cursors.DictCursor
+    'unix_socket': '/tmp/mysql.sock',
+
+    # --- 3. 下面这些保持原样即可 ---
     'user': os.getenv('MYSQL_USER', 'root'),
-    'password': os.getenv('MYSQL_PASSWORD', '12121212'), # <--- 密码已更新
+    'password': os.getenv('MYSQL_PASSWORD', '12121212'),  # 你的真实密码
     'database': os.getenv('MYSQL_DATABASE', 'happiness_db'),
     'charset': 'utf8mb4',
     'cursorclass': pymysql.cursors.DictCursor
-
 }
 
 def get_db_connection():

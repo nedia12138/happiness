@@ -483,6 +483,7 @@ class SimpleImprovedModel:
         model_info = {
             "model_name": artifact["model_name"],  # 模型名称
             "description": "手写 线性 + 手写 CART 随机森林融合模型",  # 模型描述
+            "best_params": artifact["best_params"],
             "feature_importances": artifact["display_importances"],  # 特征重要性
             "hybrid_weight": artifact["hybrid_weight"],  # 融合权重
             "metrics": report["test_metrics"],  # 测试集指标
@@ -601,12 +602,14 @@ class SimpleImprovedModel:
             "test_metrics": {n: as_serializable_metrics(m) for n, m in test_metrics.items()},  # 测试集指标
             "best_params": {"ridge_alpha": ridge_search["alpha"], "forest": forest_search["params"]},  # 最优参数
             "display_importances": display_importances,  # 特征重要性
-            "data_signature": file_signature(self.data_path),  # 数据文件签名
+            "data_signature": file_signature(self.data_path) if os.path.exists(self.data_path) else "mysql_direct_read",
         }
         # 7.3 构建训练报告
         report = {
             "model_name": MODEL_NAME,
             "created_at": artifact["created_at"],
+            "best_params": artifact["best_params"],
+            "hybrid_weight": artifact["hybrid_weight"],
             "test_metrics": artifact["test_metrics"],
             "train_metrics": {n: as_serializable_metrics(m) for n, m in train_metrics.items()}
         }

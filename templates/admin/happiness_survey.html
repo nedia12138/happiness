@@ -124,7 +124,6 @@
         <admin-layout :active-menu="activeMenu">
             <template #content>
                 <div class="page-container">
-                <!-- 页面标题 -->
                 <div class="page-header">
                     <h2>幸福感调查表管理</h2>
                     <div class="page-actions" v-show="false">
@@ -134,7 +133,6 @@
                     </div>
                 </div>
 
-                <!-- 统计卡片区域 -->
                 <div class="stats-container" v-if="showStats">
                     <div class="stats-card">
                         <div class="stats-title">总记录数</div>
@@ -146,7 +144,6 @@
                     </div>
                 </div>
 
-                <!-- 搜索筛选区域 -->
                 <el-card class="search-card">
                     <el-form :inline="true" :model="searchForm" class="search-form">
                         <el-form-item label="幸福感评分">
@@ -194,14 +191,12 @@
                     </el-form>
                 </el-card>
 
-                <!-- 数据表格 -->
                 <el-card class="table-card">
                     <el-table
                         :data="tableData"
                         v-loading="loading"
                         stripe
                         style="width: 100%">
-                        <!-- <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column> -->
                         <el-table-column prop="happiness" label="幸福感"  align="center">
                             <template slot-scope="scope">
                                 <el-tag :type="getHappinessTagType(scope.row.happiness)">
@@ -209,8 +204,12 @@
                                 </el-tag>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="province" label="省份" align="center"></el-table-column>
-                        <el-table-column prop="city" label="城市" align="center"></el-table-column>
+
+                        <el-table-column prop="province" label="省份" align="center">
+                            <template slot-scope="scope">
+                                {{ getProvinceText(scope.row.province) }}
+                            </template>
+                        </el-table-column>
                         <el-table-column prop="gender" label="性别" align="center">
                             <template slot-scope="scope">
                                 {{ scope.row.gender === 1 ? '男' : scope.row.gender === 2 ? '女' : '未知' }}
@@ -222,23 +221,21 @@
                                 {{ getEduText(scope.row.edu) }}
                             </template>
                         </el-table-column>
+
                         <el-table-column prop="income" label="个人收入" align="center">
                             <template slot-scope="scope">
-                                {{ scope.row.income ? '¥' + scope.row.income : '未填写' }}
+                                <span :style="{ color: scope.row.income <= 0 ? '#909399' : '#67C23A', fontWeight: scope.row.income > 0 ? 'bold' : 'normal' }">
+                                    {{ getIncomeText(scope.row.income) }}
+                                </span>
                             </template>
                         </el-table-column>
+
                         <el-table-column prop="health" label="健康状况" align="center">
                             <template slot-scope="scope">
-                                {{ scope.row.health }}/5
+                                {{ getHealthText(scope.row.health) }}
                             </template>
                         </el-table-column>
-                        <!-- <el-table-column prop="dataSource" label="数据来源" align="center">
-                            <template slot-scope="scope">
-                                <el-tag :type="scope.row.dataSource === 'train' ? 'success' : 'info'">
-                                    {{ scope.row.dataSource === 'train' ? '训练集' : '测试集' }}
-                                </el-tag>
-                            </template>
-                        </el-table-column> -->
+
                         <el-table-column label="操作" align="center" fixed="right" width="120">
                             <template slot-scope="scope">
                                 <el-button size="mini" type="primary" @click="handleViewDetail(scope.row)">详情</el-button>
@@ -246,7 +243,6 @@
                         </el-table-column>
                     </el-table>
 
-                    <!-- 分页 -->
                     <div class="pagination-container">
                         <el-pagination
                             @size-change="handleSizeChange"
@@ -400,7 +396,9 @@
                     return 'danger';
                 },
 
-                // 获取教育水平文本
+                // ====== 以下为补充的字典映射解析器 ======
+
+                // 恢复你原始代码的 1-5 档教育映射！
                 getEduText(edu) {
                     const eduMap = {
                         1: '初中及以下',
@@ -412,7 +410,50 @@
                     return eduMap[edu] || '未知';
                 },
 
-                // 查看详情
+                getSurveyTypeText(val) {
+                    const map = { 1: '城市', 2: '农村' };
+                    return map[val] ? `${map[val]}样本` : '未知';
+                },
+
+                getProvinceText(val) {
+                    const map = {
+                        1: '上海市', 2: '云南省', 3: '内蒙古自治区', 4: '北京市', 5: '吉林省',
+                        6: '四川省', 7: '天津市', 8: '宁夏回族自治区', 9: '安徽省', 10: '山东省',
+                        11: '山西省', 12: '广东省', 13: '广西壮族自治区', 14: '新疆维吾尔自治区', 15: '江苏省',
+                        16: '江西省', 17: '河北省', 18: '河南省', 19: '浙江省', 20: '海南省',
+                        21: '湖北省', 22: '湖南省', 23: '甘肃省', 24: '福建省', 25: '西藏自治区',
+                        26: '贵州省', 27: '辽宁省', 28: '重庆市', 29: '陕西省', 30: '青海省', 31: '黑龙江省'
+                    };
+                    return map[val] || `省份编码 ${val}`;
+                },
+
+                getIncomeText(val) {
+                    if (val === null || val === undefined || val === '') return '未填写';
+                    if (val < 0) {
+                        const missingMap = { '-1': '不适用', '-2': '不知道', '-3': '拒绝回答', '-8': '无法回答' };
+                        return missingMap[val] ? `未公开 (${missingMap[val]})` : '无 / 未知';
+                    }
+                    if (val === 0) return '¥0 (无收入)';
+                    if (val === 9999996) return '¥1,000,000+ (百万以上)';
+                    return '¥' + Number(val).toLocaleString();
+                },
+
+                getHealthText(val) {
+                    const map = { 1: '很不健康', 2: '比较不健康', 3: '一般', 4: '比较健康', 5: '很健康' };
+                    return map[val] ? `${val}分 (${map[val]})` : '未填写';
+                },
+
+                getNationalityText(val) {
+                    const map = { 1: '汉族', 2: '蒙族', 3: '满族', 4: '回族', 5: '藏族', 6: '壮族', 7: '维族', 8: '其他' };
+                    return map[val] || '未填写';
+                },
+
+                getPoliticalText(val) {
+                    const map = { 1: '群众', 2: '共青团员', 3: '民主党派', 4: '共产党员' };
+                    return map[val] || '未填写';
+                },
+
+                // 恢复原代码的查看详情，并按要求补充映射、去掉收入
                 handleViewDetail(row) {
                     let detailHtml = `
                         <div style="text-align: left; max-height: 400px; overflow-y: auto;">
@@ -426,11 +467,11 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">调查类型:</span>
-                                <span class="detail-value">${row.surveyType || '未填写'}</span>
+                                <span class="detail-value">${this.getSurveyTypeText(row.surveyType)}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">地区:</span>
-                                <span class="detail-value">省份${row.province || '未知'} - 城市${row.city || '未知'} - 县区${row.county || '未知'}</span>
+                                <span class="detail-value">${this.getProvinceText(row.province)} - 市级编码${row.city || '未知'} - 县区编码${row.county || '未知'}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">调查时间:</span>
@@ -446,7 +487,7 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">民族:</span>
-                                <span class="detail-value">${row.nationality || '未填写'}</span>
+                                <span class="detail-value">${this.getNationalityText(row.nationality)}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">宗教信仰:</span>
@@ -457,12 +498,8 @@
                                 <span class="detail-value">${this.getEduText(row.edu)}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">个人收入:</span>
-                                <span class="detail-value">${row.income ? '¥' + row.income : '未填写'}</span>
-                            </div>
-                            <div class="detail-row">
                                 <span class="detail-label">政治面貌:</span>
-                                <span class="detail-value">${row.political || '未填写'}</span>
+                                <span class="detail-value">${this.getPoliticalText(row.political)}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">住房面积:</span>
@@ -474,7 +511,7 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">健康状况:</span>
-                                <span class="detail-value">${row.health ? row.health + '/5' : '未填写'}</span>
+                                <span class="detail-value">${this.getHealthText(row.health)}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">数据来源:</span>
